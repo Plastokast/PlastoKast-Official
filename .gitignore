@@ -1,0 +1,26 @@
+# Environment & Secrets (Never commit secrets to GitHub)
+.env
+*.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+# Temporary / Scratch files
+*.log
+*.tmp
+scratch/
+.gemini/
+brain/
+image_cleanup_report.json
+
+# OS files
+.DS_Store
+Thumbs.db

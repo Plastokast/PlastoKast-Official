@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    if (sessionStorage.getItem('plastokast_admin_logged_in') === 'true') {
+      window.location.replace('admin.html');
+    }
+  </script>
+  <title>PlastoKast - Admin Portal</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png?v=300">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-cyan: #0284c7;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-light: #e2e8f0;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Ambient background glowing mesh (Light Mode) */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(2, 132, 199, 0.04) 50%, transparent 70%);
+      top: -150px;
+      left: -150px;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(37, 99, 235, 0.03) 50%, transparent 70%);
+      bottom: -150px;
+      right: -150px;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 1060px;
+      min-height: 560px;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12), 0 0 1px rgba(0, 0, 0, 0.08);
+      display: flex;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      z-index: 10;
+    }
+
+    /* Left Panel: Unobstructed 3D DNA Canvas (Light Medical Theme) */
+    .canvas-panel {
+      flex: 1.15;
+      position: relative;
+      background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 50%, #eff6ff 100%);
+      border-right: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 560px;
+    }
+    
+    #dna-canvas {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    /* Right Panel: Clean Light Form */
+    .form-panel {
+      flex: 1;
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #ffffff;
+      position: relative;
+    }
+
+    /* Unified Header */
+    .form-header {
+      margin-bottom: 30px;
+    }
+
+    .brand-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .brand-badge-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mini-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .brand-name-text {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.4px;
+    }
+
+    .security-tag {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #2563eb;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    .form-header h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .form-header p {
+      color: #64748b;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      color: #94a3b8;
+      font-size: 1rem;
+      transition: color 0.3s;
+      pointer-events: none;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 14px 44px 14px 44px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      color: #0f172a;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+      background: #ffffff;
+    }
+
+    .input-wrapper input:focus ~ .input-icon {
+      color: #2563eb;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 16px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .toggle-pass:hover { color: #0f172a; }
+
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+      transition: all 0.25s ease;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.38);
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-top: 16px;
+      text-align: center;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .login-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+      .login-container { flex-direction: column; height: auto; min-height: initial; }
+      .canvas-panel { display: none; }
+      .form-panel { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    
+    <!-- Left 3D DNA Canvas Panel (Light Theme) -->
+    <div class="canvas-panel" id="canvasContainer">
+      <canvas id="dna-canvas"></canvas>
+    </div>
+
+    <!-- Right Login Form Panel -->
+    <div class="form-panel">
+      
+      <div class="form-header">
+        <!-- Brand Title Bar -->
+        <div class="brand-title-bar">
+          <div class="brand-badge-box">
+            <img src="assets/images/Logo.png?v=200" alt="PlastoKast Logo" class="brand-mini-logo">
+            <span class="brand-name-text">PlastoKast</span>
+          </div>
+          <div class="security-tag">
+            <i class="fa fa-shield"></i> Admin Portal
+          </div>
+        </div>
+
+        <h2>System Sign In</h2>
+        <p>Enter your administrator credentials to access management controls.</p>
+      </div>
+
+      <form id="login-form" autocomplete="off">
+        <div class="input-group">
+          <label for="username">Administrator ID</label>
+          <div class="input-wrapper">
+            <input type="text" id="username" name="admin_user_id_nocache" placeholder="Enter admin username" required autocomplete="off" value="">
+            <i class="fa fa-user input-icon"></i>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="password">Security Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" name="admin_secret_pass_nocache" placeholder="••••••••" required autocomplete="new-password" value="">
+            <i class="fa fa-lock input-icon"></i>
+            <i class="fa fa-eye toggle-pass" id="btnTogglePass" title="Show/Hide Password"></i>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-login">
+          Access Admin Portal <i class="fa fa-arrow-right"></i>
+        </button>
+
+        <div id="error-msg" class="error-message">
+          <i class="fa fa-exclamation-circle"></i> Invalid administrator username or password.
+        </div>
+      </form>
+
+      <div class="login-footer">
+        &copy; 2026 PlastoKast Medical Industries. Authorized Personnel Only.
+      </div>
+    </div>
+    
+  </div>
+
+  <script src="assets/js/admin-auth.js?v=825"></script>
+</body>
+</html>

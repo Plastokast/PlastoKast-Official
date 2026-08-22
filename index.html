@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png?v=300">
+  <script>
+    // Force unregister stale service worker, clear caches, and reset old product DB to version 2
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) {
+          caches.delete(name);
+        }
+      });
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlastoKast™ | Premium Orthopedic Casting & Splinting Solutions</title>
+  <meta name="description" content="PlastoKast offers next-generation orthopedic immobilization products, including synthetic casting tapes, pre-padded splints, and plaster bandages. Manufactured under medical standards.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=823">
+  <style>
+    /* Hero section slideshow styles */
+    .hero-slideshow {
+      position: relative;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      border: 4px solid var(--bg-card);
+      width: 100%;
+      max-width: 580px;
+      height: 440px;
+      overflow: hidden;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Hide language and currency dropdown selector buttons */
+    header select, .nav-actions select, .header-selectors, #lang-selector, #currency-selector, .nav-select-dropdown {
+      display: none !important;
+    }
+
+    /* Hide the sliding indicators (dots/pill) at the bottom of the slideshow */
+    .hero-slide-dots {
+      display: none !important;
+    }
+
+    .hero-slide {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .hero-slide a {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.01); /* Fix subpixel gap */
+    }
+
+    .hero-slide-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(15, 23, 42, 0.85));
+      color: white;
+      padding: 24px 16px 16px 16px;
+      font-family: var(--font-headings);
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+      z-index: 3;
+    }
+
+    .hero-slide-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15, 23, 42, 0.4);
+      border: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      transition: all 0.3s ease;
+      opacity: 0;
+      z-index: 10;
+      font-size: 1rem;
+    }
+
+    .hero-slideshow:hover .hero-slide-btn {
+      opacity: 1;
+    }
+
+    .hero-slide-btn:hover {
+      background: var(--primary);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .hero-slide-btn.prev {
+      left: 15px;
+    }
+
+    .hero-slide-btn.next {
+      right: 15px;
+    }
+
+    .hero-slide-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .hero-slide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hero-slide-dot.active {
+      background: var(--accent);
+      transform: scale(1.25);
+      width: 18px;
+      border-radius: 4px;
+    }
+
+    /* Premium Animation Utilities */
+    .reveal {
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Delay modifiers for sequential reveal */
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+    .reveal-delay-4 { transition-delay: 0.6s; }
+
+    /* Scale reveal for visual elements */
+    .scale-reveal {
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .scale-reveal.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Hero entrance reveal on page load */
+    @keyframes fadeInUpReveal {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-reveal-animate {
+      animation: fadeInUpReveal 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .hero-delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .hero-delay-2 { animation-delay: 0.25s; opacity: 0; }
+    .hero-delay-3 { animation-delay: 0.4s; opacity: 0; }
+    .hero-delay-4 { animation-delay: 0.55s; opacity: 0; }
+  </style>
+</head>
+<body>
+
+    <!-- Visible Dynamic Blue Background & Glass Nodes Layer -->
+  <div class="bg-ambient-layer" aria-hidden="true">
+    <div class="bg-mesh-pattern"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="bg-orb orb-4"></div>
+    <div class="bg-node-1"></div>
+    <div class="bg-node-2"></div>
+    <div class="bg-node-3"></div>
+  </div>
+
+
+  <!-- Glassmorphic Header -->
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">
+          <img src="assets/images/Logo.png?v=200" alt="PlastoKast - Connect Bones" class="logo-img">
+        </a>
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="hamburger" aria-label="Toggle mobile menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sliding Fullscreen Search Overlay -->
+  <div class="search-overlay" id="search-overlay">
+    <button class="search-close" id="search-close" aria-label="Close search">
+      <i class="fa fa-times"></i>
+    </button>
+    <div class="search-container">
+      <form id="search-form">
+        <div class="search-input-wrapper">
+          <input type="text" id="search-input" class="search-input" placeholder="Search PlastoKast products...">
+        </div>
+        <p style="color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 0.9rem;">Press Enter to search the catalog</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Slide-out Quote Drawer -->
+    
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <span class="hero-badge hero-reveal-animate hero-delay-1">Premium Orthopedic Solutions</span>
+          <h1 class="hero-reveal-animate hero-delay-2">Advanced Fracture Care & <span class="text-gradient">Orthopedic Immobilization</span></h1>
+          <p class="hero-reveal-animate hero-delay-3">PlastoKast™ manufactures high-performance synthetic casting tapes, emergency splints, and plaster bandages engineered for clinical excellence and maximum patient comfort.</p>
+          <div class="hero-actions hero-reveal-animate hero-delay-4">
+            <a href="products.html" class="btn btn-primary">Explore Catalog <i class="fa fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="hero-image-wrapper hero-reveal-animate hero-delay-2">
+          <div class="hero-image-bg"></div>
+          <div class="hero-slideshow">
+            <!-- Slide 1: PK Cast (Fiberglass Bandage) -->
+            <div class="hero-slide active">
+              <a href="product-detail.html?id=plastokast-fiberglass-tape">
+                <img src="media/pk_cast_colored_v73.jpg?v=135" alt="PK Cast (Fiberglass Bandage)">
+                <div class="hero-slide-caption">PK Cast™ (Fiberglass Bandage)</div>
+              </a>
+            </div>
+            <!-- Slide 2: PK Cast Fibreglass Bandage Kit -->
+            <div class="hero-slide">
+              <a href="product-detail.html?id=pk-cast-kit">
+                <img src="media/pk_cast_kit_main_v89.jpg?v=135" alt="PK Cast Fibreglass Bandage Kit">
+                <div class="hero-slide-caption">PK Cast™ Fibreglass Bandage Kit</div>
+              </a>
+            </div>
+            <!-- Slide 3: Electric Plaster Cutter -->
+            <div class="hero-slide">
+              <a href="product-detail.html?id=pk-electric-cutter">
+                <img src="media/pk_electric_cutter_main_v94.jpg?v=135" alt="Electric Plaster Cutter">
+                <div class="hero-slide-caption">Electric Plaster Cutter</div>
+              </a>
+            </div>
+            <!-- Slide 4: PK Reinforce Gowns -->
+            <div class="hero-slide">
+              <a href="product-detail.html?id=pk-reinforce-gowns">
+                <img src="media/pk_reinforce_gowns_main_v123.jpg?v=135" alt="PK Reinforce Gowns">
+                <div class="hero-slide-caption">PK Reinforce Gowns</div>
+              </a>
+            </div>
+            <!-- Slide 5: PK Shoulder Arthroscopy Drape -->
+            <div class="hero-slide">
+              <a href="product-detail.html?id=pk-shoulder-arthroscopy-drape">
+                <img src="media/pk_shoulder_arthroscopy_drape_main_v117.jpg?v=135" alt="PK Shoulder Arthroscopy Drape">
+                <div class="hero-slide-caption">PK Shoulder Arthroscopy Drape</div>
+              </a>
+            </div>
+
+            <!-- Indicators -->
+            <div class="hero-slide-dots">
+              <span class="hero-slide-dot active" data-slide="0"></span>
+              <span class="hero-slide-dot" data-slide="1"></span>
+              <span class="hero-slide-dot" data-slide="2"></span>
+              <span class="hero-slide-dot" data-slide="3"></span>
+              <span class="hero-slide-dot" data-slide="4"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Standards & Compliance Banner -->
+  <section class="compliance-banner reveal">
+    <div class="container">
+      <div class="compliance-grid">
+        <div class="compliance-item">
+          <i class="fa fa-shield"></i>
+          <span>ISO 13485:2016 CERTIFIED</span>
+        </div>
+        <div class="compliance-item">
+          <i class="fa fa-university"></i>
+          <span>CDSCO REGISTERED</span>
+        </div>
+        <div class="compliance-item">
+          <i class="fa fa-check-circle"></i>
+          <span>WHO-GMP STANDARD</span>
+        </div>
+        <div class="compliance-item">
+          <i class="fa fa-certificate"></i>
+          <span>NABCB ACCREDITED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Highlights -->
+  <section class="section-padding">
+    <div class="container">
+      <div class="text-center reveal" style="max-width: 700px; margin: 0 auto 50px auto;">
+        <span class="hero-badge">OUR KEY CAPABILITIES</span>
+        <h2 style="font-size: 2.2rem; margin-top: 10px;">Why Healthcare Facilities Choose PlastoKast</h2>
+        <p style="color: var(--text-muted); margin-top: 12px;">Engineered for clinical precision, patient comfort, and reliable orthopedic fracture management.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card scale-reveal reveal-delay-1">
+          <div class="feature-icon">
+            <i class="fa fa-medkit"></i>
+          </div>
+          <h3>Precision Casting & Splinting</h3>
+          <p>High-strength fiberglass and polyester casting tapes engineered for smooth anatomical moulding, rapid 3-minute curing, and radiolucent X-ray transparency.</p>
+        </div>
+
+        <div class="feature-card scale-reveal reveal-delay-2">
+          <div class="feature-icon">
+            <i class="fa fa-heartbeat"></i>
+          </div>
+          <h3>Skin Comfort & Protection</h3>
+          <p>Hydrophobic padding rolls, soft cotton stockinettes, and waterproof liners designed to prevent skin irritation, itching, and moisture retention under rigid casts.</p>
+        </div>
+
+        <div class="feature-card scale-reveal reveal-delay-3">
+          <div class="feature-icon">
+            <i class="fa fa-user-md"></i>
+          </div>
+          <h3>Surgical Drapes & Custom Kits</h3>
+          <p>Sterile fluid-resistant surgical drapes, Knee-O drapes, skin staplers, and customized procedure kits designed specifically for orthopedic operating theaters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Featured Products Highlight -->
+  <section class="section-padding" style="background-color: var(--primary-light); transition: background var(--transition-normal);">
+    <div class="container">
+      <div class="text-center reveal" style="max-width: 700px; margin: 0 auto 50px auto;">
+        <span class="hero-badge" style="background: rgba(10,92,54,0.1); color: var(--primary);">Featured Selection</span>
+        <h2 style="font-size: 2.2rem; margin-top: 10px; color: var(--primary-dark);">Our Flagship Products</h2>
+        <p style="color: var(--text-muted); margin-top: 12px;">Explore our highly-acclaimed orthopedic solutions trusted by surgical wards globally.</p>
+      </div>
+
+      <div class="product-grid" id="featured-products-grid">
+        <a href="product-detail.html?id=plastokast-fiberglass-tape" class="product-card scale-reveal reveal-delay-1" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; cursor: pointer;">
+          <div class="product-card-img-wrapper">
+            <img src="media/pk_cast_colored_v44.jpg?v=44" alt="PK Cast Fiberglass Casting Tape" class="product-card-img" loading="lazy">
+          </div>
+          <div class="product-card-body" style="padding-bottom: 24px;">
+            <div class="product-meta-row">
+              <span class="product-code">PK-CT-001</span>
+              </div>
+            <span class="product-card-category" style="margin-top: 4px;">Casting Tapes</span>
+            <h3 class="product-card-title">PK Cast (Fiberglass Bandage)</h3>
+            <p class="product-card-desc" style="margin-bottom: 0;">Synthetic casting tape impregnated with water-activated polyurethane resin. Offers incredible weight-bearing strength and multi-directional molding.</p>
+          </div>
+        </a>
+
+        <a href="product-detail.html?id=plastokast-ortho-splint" class="product-card scale-reveal reveal-delay-2" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; cursor: pointer;">
+          <div class="product-card-img-wrapper">
+            <img src="media/orthopedic_splint_roll.jpg" alt="PK Cast Orthopedic Splint" class="product-card-img" loading="lazy">
+          </div>
+          <div class="product-card-body" style="padding-bottom: 24px;">
+            <div class="product-meta-row">
+              <span class="product-code">PK-SP-001</span>
+              </div>
+            <span class="product-card-category" style="margin-top: 4px;">Splints</span>
+            <h3 class="product-card-title">PK Cast™ Orthopedic Splint</h3>
+            <p class="product-card-desc" style="margin-bottom: 0;">Designed for rapid trauma splinting. Features multi-layered fiberglass tape encased in breathable, moisture-wicking non-woven felt lining.</p>
+          </div>
+        </a>
+
+        <a href="product-detail.html?id=plastopop-plaster-bandage" class="product-card scale-reveal reveal-delay-3" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; cursor: pointer;">
+          <div class="product-card-img-wrapper">
+            <img src="media/pop_bandage_white.jpg" alt="PK Plaster of Paris Bandage" class="product-card-img" loading="lazy">
+          </div>
+          <div class="product-card-body" style="padding-bottom: 24px;">
+            <div class="product-meta-row">
+              <span class="product-code">PK-BD-001</span>
+              </div>
+            <span class="product-card-category" style="margin-top: 4px;">Orthopedic Bandages</span>
+            <h3 class="product-card-title">PK Plaster of Paris Bandage (Classic)</h3>
+            <p class="product-card-desc" style="margin-bottom: 0;">Traditional POP bandage utilizing high-purity alpha-gypsum crystal matrix. Rich, creamy texture allows a smooth, polished cast finish.</p>
+          </div>
+        </a>
+      </div>
+      
+      <div class="text-center" style="margin-top: 40px;">
+        <a href="products.html" class="btn btn-primary" id="home-catalog-btn">View Entire Catalog (26 Products) <i class="fa fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Manufacturing & Quality Excellence Highlights -->
+  <section class="section-padding reveal quality-mfg-section" style="background: linear-gradient(180deg, #f8fafc 0%, #f0f7ff 100%);">
+    <div class="container">
+      <div class="hero-grid" style="align-items: center;">
+        <div>
+          <span class="hero-badge">Quality Manufacturing</span>
+          <h2 style="font-size: 2.2rem; margin-top: 10px; line-height: 1.2; color: #0f172a;">Trusted Manufacturing Excellence & Clinical Quality</h2>
+          <p style="color: #334155; margin-top: 16px; font-size: 1.02rem; line-height: 1.65;">From our state-of-the-art ISO certified manufacturing facility, PlastoKast produces high-performance synthetic casting tapes, orthopedic splints, bandages, and surgical drapes trusted by healthcare professionals, hospitals, and medical clinics.</p>
+          <div class="quality-mfg-cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+            <div class="quality-mfg-card" style="display: flex; align-items: center; gap: 12px; background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(1, 78, 158, 0.04);">
+              <i class="fa fa-shield" style="color: var(--primary); font-size: 1.6rem; flex-shrink: 0;"></i>
+              <div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">Quality Assurance</h4>
+                <p style="font-size: 0.82rem; color: #475569; margin: 0; line-height: 1.4;">ISO 13485:2016 & CDSCO certified medical grade standards</p>
+              </div>
+            </div>
+            <div class="quality-mfg-card" style="display: flex; align-items: center; gap: 12px; background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(1, 78, 158, 0.04);">
+              <i class="fa fa-certificate" style="color: var(--primary); font-size: 1.6rem; flex-shrink: 0;"></i>
+              <div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">Clinical Support</h4>
+                <p style="font-size: 0.82rem; color: #475569; margin: 0; line-height: 1.4;">Complete product datasheets, catalog specs, and technical support</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="quality-distributor-card scale-reveal reveal-delay-1" style="background: #ffffff; padding: 36px; border-radius: 24px; text-align: center; border: 1.5px solid rgba(1, 78, 158, 0.15); box-shadow: 0 10px 30px rgba(1, 78, 158, 0.08); position: relative; overflow: hidden;">
+          <h3 style="color: var(--primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 8px;">Inquire for Distributorship</h3>
+          <p style="font-size: 0.92rem; color: #475569; margin-bottom: 24px; line-height: 1.55;">Become our regional partner and expand orthopedic catalog access in your local market.</p>
+          <a href="contact.html?type=distributor" class="btn btn-primary" style="box-shadow: 0 4px 15px rgba(1, 78, 158, 0.25);">Apply Now <i class="fa fa-handshake-o"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating widgets (WhatsApp, Scroll Top) -->
+  <div class="floating-widgets">
+    <a href="https://api.whatsapp.com/send?phone=+91 99094 12068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products." class="widget-btn whatsapp-widget" target="_blank" aria-label="Chat on WhatsApp">
+      <i class="fa fa-whatsapp"></i>
+    </a>
+    <button class="widget-btn scroll-top-widget" id="scroll-top-btn" aria-label="Scroll to top" onclick="window.scrollTo(0,0)">
+      <i class="fa fa-chevron-up"></i>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <!-- Column 1: Brand & Profile -->
+        <div class="footer-widget">
+          <a href="index.html" class="footer-logo-link" title="PlastoKast - Connect Bones">
+            <img src="assets/images/Logo.png?v=300" alt="PlastoKast - Connect Bones" class="footer-logo-img">
+          </a>
+          <p>A trusted global manufacturer of premium synthetic orthopedic casting tapes, pre-padded splints, plaster bandages, and specialized surgical consumables.</p>
+          <div class="footer-trust-badges">
+            <span class="footer-trust-badge"><i class="fa fa-shield"></i> ISO 13485:2016</span>
+            <span class="footer-trust-badge"><i class="fa fa-university"></i> CDSCO Reg.</span>
+            <span class="footer-trust-badge"><i class="fa fa-check-circle"></i> WHO-GMP</span>
+          </div>
+          <div class="footer-socials">
+            <a href="https://facebook.com" class="social-icon" target="_blank" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
+            <a href="https://linkedin.com" class="social-icon" target="_blank" aria-label="LinkedIn"><i class="fa fa-linkedin"></i></a>
+            <a href="https://twitter.com" class="social-icon" target="_blank" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+            <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products." class="social-icon" target="_blank" aria-label="WhatsApp"><i class="fa fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <!-- Column 2: Quick Navigation -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="fa fa-angle-right"></i> Home</a></li>
+            <li><a href="about.html"><i class="fa fa-angle-right"></i> Company Profile</a></li>
+            <li><a href="about.html#certificates"><i class="fa fa-angle-right"></i> Quality Standards</a></li>
+            <li><a href="products.html"><i class="fa fa-angle-right"></i> Products Catalog</a></li>
+            <li><a href="contact.html"><i class="fa fa-angle-right"></i> Contact & Inquiries</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Orthopedic Solutions -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Product Solutions</h4>
+          <ul class="footer-links">
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast™ Fiberglass Tape</a></li>
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast Graphics™</a></li>
+            <li><a href="products.html?category=splints"><i class="fa fa-angle-right"></i> PK Splint™ Orthopedic Splint</a></li>
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast™ Procedure Kits</a></li>
+            <li><a href="products.html?category=surgical-consumables"><i class="fa fa-angle-right"></i> TKR / THR Disposable Kits</a></li>
+            <li><a href="products.html?category=bandages"><i class="fa fa-angle-right"></i> POP Bandages & Paddings</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Registered Office & Factory -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Office & Plant</h4>
+          <div class="footer-contact-list">
+            <div class="footer-contact-item">
+              <i class="fa fa-map-marker"></i>
+              <span><strong>PlastoKast House</strong><br>Surat, Gujarat, India – 395004.</span>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-phone"></i>
+              <span><a href="tel:+919909412068">+91 99094 12068</a><br><a href="tel:+918905332576">+91 89053 32576</a></span>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-envelope-o"></i>
+              <a href="mailto:plastokast.sales@gmail.com">plastokast.sales@gmail.com</a>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-globe"></i>
+              <a href="index.html">www.plastokast.com</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 PlastoKast™ Inc. All rights reserved. | Connect Bones™</p>
+        <ul class="footer-policy-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Support</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/products-data.js?v=800"></script>
+  <script src="assets/js/i18n.js?v=800"></script>
+  <script src="assets/js/compare.js?v=800"></script>
+  <script src="assets/js/main.js?v=823"></script>
+  <script src="assets/js/inquiry-modal.js?v=800"></script>
+  <script>
+    // Show scroll to top button
+    const scrollTopBtn = document.getElementById("scroll-top-btn");
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.classList.add("active");
+      } else {
+        scrollTopBtn.classList.remove("active");
+      }
+    });
+
+    // Inline Hero Slideshow to bypass any service worker assets caching of main.js
+    (function() {
+      const heroSlideshow = document.querySelector(".hero-slideshow");
+      if (heroSlideshow) {
+        const slides = heroSlideshow.querySelectorAll(".hero-slide");
+        const dots = heroSlideshow.querySelectorAll(".hero-slide-dot");
+        
+        let currentSlide = 0;
+        let slideInterval = null;
+
+        function showSlide(index) {
+          if (index >= slides.length) currentSlide = 0;
+          else if (index < 0) currentSlide = slides.length - 1;
+          else currentSlide = index;
+
+          slides.forEach((slide, i) => {
+            if (i === currentSlide) {
+              slide.classList.add("active");
+            } else {
+              slide.classList.remove("active");
+            }
+          });
+
+          dots.forEach((dot, i) => {
+            if (i === currentSlide) {
+              dot.classList.add("active");
+            } else {
+              dot.classList.remove("active");
+            }
+          });
+        }
+
+        function nextSlide() {
+          showSlide(currentSlide + 1);
+        }
+
+        function startAutoSlide() {
+          stopAutoSlide();
+          slideInterval = setInterval(nextSlide, 3500); // 3.5 seconds
+        }
+
+        function stopAutoSlide() {
+          if (slideInterval) {
+            clearInterval(slideInterval);
+          }
+        }
+
+        dots.forEach((dot, i) => {
+          dot.addEventListener("click", () => {
+            showSlide(i);
+            startAutoSlide(); // restarts interval automatically
+          });
+        });
+
+        heroSlideshow.addEventListener("mouseenter", stopAutoSlide);
+        heroSlideshow.addEventListener("mouseleave", startAutoSlide);
+
+        // Start auto cycle
+        startAutoSlide();
+      }
+    })();
+
+    // Intersection Observer for scroll-reveal animations
+    (function() {
+      const reveals = document.querySelectorAll(".reveal, .scale-reveal");
+      if (reveals.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+              observer.unobserve(entry.target); // trigger animation only once
+            }
+          });
+        }, {
+          threshold: 0.08, // trigger when 8% of the element is visible
+          rootMargin: "0px 0px -40px 0px"
+        });
+        reveals.forEach((el) => observer.observe(el));
+      }
+    })();
+  </script>
+</body>
+</html>

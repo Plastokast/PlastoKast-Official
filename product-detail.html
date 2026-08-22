@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png?v=300">
+  <script>
+    // Force unregister stale service worker, clear caches, and reset old product DB to version 2
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) {
+          caches.delete(name);
+        }
+      });
+    }
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | PlastoKast™ Orthopedic Solutions</title>
+  <meta name="description" content="View detailed technical specifications, dimensions, features, and compliance metrics of PlastoKast orthopedic products.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=823">
+</head>
+<body>
+  <!-- Visible Dynamic Blue Background & Glass Nodes Layer -->
+  <div class="bg-ambient-layer" aria-hidden="true">
+    <div class="bg-mesh-pattern"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="bg-orb orb-4"></div>
+    <div class="bg-node-1"></div>
+    <div class="bg-node-2"></div>
+    <div class="bg-node-3"></div>
+  </div>
+
+  <!-- Glassmorphic Header -->
+  <header>
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">
+          <img src="assets/images/Logo.png?v=200" alt="PlastoKast - Connect Bones" class="logo-img">
+        </a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html" class="active">Products</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="hamburger" aria-label="Toggle mobile menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sliding Fullscreen Search Overlay -->
+  <div class="search-overlay" id="search-overlay">
+    <button class="search-close" id="search-close" aria-label="Close search">
+      <i class="fa fa-times"></i>
+    </button>
+    <div class="search-container">
+      <form id="search-form">
+        <div class="search-input-wrapper">
+          <input type="text" id="search-input" class="search-input" placeholder="Search PlastoKast products...">
+        </div>
+        <p style="color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 0.9rem;">Press Enter to search the catalog</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Slide-out Quote Drawer -->
+    
+
+  <section class="page-banner" style="padding-bottom: 30px;">
+    <div class="container">
+      <ul class="breadcrumbs" id="detail-breadcrumbs">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li id="breadcrumb-active-item">Loading Product...</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Error View (Hidden by default) -->
+  <section class="section-padding" id="product-error-section" style="display: none; text-align: center;">
+    <div class="container">
+      <i class="fa fa-exclamation-triangle" style="font-size: 3.5rem; color: #ef4444; margin-bottom: 20px;"></i>
+      <h2>Product Not Found</h2>
+      <p style="color: var(--text-muted); margin-top: 12px;">The product identifier you requested is invalid or has been moved.</p>
+      <a href="products.html" class="btn btn-primary" style="margin-top: 24px;">Return to Catalog</a>
+    </div>
+  </section>
+
+  <!-- Main Detail View (Visible when product matches) -->
+  <section class="section-padding" id="product-detail-section" style="padding-top: 40px;">
+    <div class="container">
+      <div class="detail-grid">
+        
+        <!-- Gallery Columns -->
+        <div class="product-gallery">
+          <div class="main-image-wrapper">
+            <img src="" id="detail-main-img" alt="Product main visual" class="main-image">
+          </div>
+          <div class="gallery-thumbs" id="detail-gallery-thumbs">
+            <!-- Thumbs generated here -->
+          </div>
+        </div>
+
+        <!-- Info Columns -->
+        <div class="detail-info">
+          <div class="detail-info-header">
+            <span class="detail-category" id="detail-category-badge">Category</span>
+            <h1 class="detail-title" id="detail-title">Product Title</h1>
+          </div>
+          
+          <p class="detail-desc" id="detail-desc">Product detailed text goes here...</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <h4 style="font-size: 1.1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">Key Performance Features</h4>
+            <ul class="features-list" id="detail-features-list">
+              <!-- Features dynamically added -->
+            </ul>
+          </div>
+
+          <div class="detail-actions" style="display: flex; gap: 12px; align-items: center;">
+            <button class="btn btn-primary" id="detail-add-btn"><i class="fa fa-paper-plane"></i> Send Inquiry</button>
+            <a href="" id="detail-whatsapp-btn" target="_blank" class="btn btn-secondary"><i class="fa fa-whatsapp"></i> WhatsApp Chat</a>
+            <button class="btn btn-secondary" id="detail-wishlist-btn" style="width: 50px; height: 48px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border-radius: 8px;" title="Add to Wishlist"><i class="fa fa-heart-o"></i></button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Specs and Sizing Lists -->
+      <div class="specs-section">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 40px;">
+          <div>
+            <h3 class="specs-title">Technical Specifications</h3>
+            <div class="specs-table-wrapper" style="margin-top: 16px;">
+              <table class="specs-table">
+                <tbody id="detail-specs-body">
+                  <!-- Specs row rendering -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div style="margin-top: 20px;">
+            <h3 class="specs-title">Standard Product Sizes</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 16px; margin-bottom: 16px;">PlastoKast products are packaged in standard widths and roll lengths, color-coded for quick identification in surgery theater drawers.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;" id="detail-sizes-grid">
+              <!-- Sizes grids -->
+            </div>
+          </div>
+
+          <!-- Direct Product Inquiry & Quick Contact Card -->
+          <div class="product-inquiry-row">
+            <!-- Inquiry Card -->
+            <div class="product-inquiry-card">
+              <h4>
+                <i class="fa fa-envelope-o"></i> Product Technical Inquiry & Ordering
+              </h4>
+              <p>Need detailed technical specifications, custom size configurations, or hospital ward procurement details? Contact our product team directly.</p>
+              
+              <div class="product-inquiry-contact-list">
+                <div class="product-inquiry-contact-item">
+                  <i class="fa fa-phone"></i>
+                  <span>Inquiry Phone: <a href="tel:+919909412068">+91 99094 12068</a> / <a href="tel:+918905332576">+91 89053 32576</a></span>
+                </div>
+                <div class="product-inquiry-contact-item">
+                  <i class="fa fa-envelope"></i>
+                  <span>Sales Email: <a href="mailto:plastokast.sales@gmail.com">plastokast.sales@gmail.com</a></span>
+                </div>
+                <div class="product-inquiry-contact-item">
+                  <i class="fa fa-building"></i>
+                  <span>Plant: PlastoKast House, Surat, Gujarat, India - 395004</span>
+                </div>
+              </div>
+
+              <div class="product-inquiry-btns">
+                <button class="btn btn-primary" onclick="document.getElementById('detail-add-btn').click();">
+                  <i class="fa fa-paper-plane"></i> Send Inquiry
+                </button>
+                <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20product%20inquiry." target="_blank" class="btn btn-secondary btn-whatsapp-inquiry">
+                  <i class="fa fa-whatsapp"></i> Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+          
+
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Floating widgets (WhatsApp, Scroll Top) -->
+  <div class="floating-widgets">
+    <a href="https://api.whatsapp.com/send?phone=+91 99094 12068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products." class="widget-btn whatsapp-widget" target="_blank" aria-label="Chat on WhatsApp">
+      <i class="fa fa-whatsapp"></i>
+    </a>
+    <button class="widget-btn scroll-top-widget" id="scroll-top-btn" aria-label="Scroll to top" onclick="window.scrollTo(0,0)">
+      <i class="fa fa-chevron-up"></i>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <!-- Column 1: Brand & Profile -->
+        <div class="footer-widget">
+          <a href="index.html" class="footer-logo-link" title="PlastoKast - Connect Bones">
+            <img src="assets/images/Logo.png?v=300" alt="PlastoKast - Connect Bones" class="footer-logo-img">
+          </a>
+          <p>A trusted global manufacturer of premium synthetic orthopedic casting tapes, pre-padded splints, plaster bandages, and specialized surgical consumables.</p>
+          <div class="footer-trust-badges">
+            <span class="footer-trust-badge"><i class="fa fa-shield"></i> ISO 13485:2016</span>
+            <span class="footer-trust-badge"><i class="fa fa-university"></i> CDSCO Reg.</span>
+            <span class="footer-trust-badge"><i class="fa fa-check-circle"></i> WHO-GMP</span>
+          </div>
+          <div class="footer-socials">
+            <a href="https://facebook.com" class="social-icon" target="_blank" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
+            <a href="https://linkedin.com" class="social-icon" target="_blank" aria-label="LinkedIn"><i class="fa fa-linkedin"></i></a>
+            <a href="https://twitter.com" class="social-icon" target="_blank" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+            <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products." class="social-icon" target="_blank" aria-label="WhatsApp"><i class="fa fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <!-- Column 2: Quick Navigation -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="fa fa-angle-right"></i> Home</a></li>
+            <li><a href="about.html"><i class="fa fa-angle-right"></i> Company Profile</a></li>
+            <li><a href="about.html#certificates"><i class="fa fa-angle-right"></i> Quality Standards</a></li>
+            <li><a href="products.html"><i class="fa fa-angle-right"></i> Products Catalog</a></li>
+            <li><a href="contact.html"><i class="fa fa-angle-right"></i> Contact & Inquiries</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Orthopedic Solutions -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Product Solutions</h4>
+          <ul class="footer-links">
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast™ Fiberglass Tape</a></li>
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast Graphics™</a></li>
+            <li><a href="products.html?category=splints"><i class="fa fa-angle-right"></i> PK Splint™ Orthopedic Splint</a></li>
+            <li><a href="products.html?category=casting-tapes"><i class="fa fa-angle-right"></i> PK Cast™ Procedure Kits</a></li>
+            <li><a href="products.html?category=surgical-consumables"><i class="fa fa-angle-right"></i> TKR / THR Disposable Kits</a></li>
+            <li><a href="products.html?category=bandages"><i class="fa fa-angle-right"></i> POP Bandages & Paddings</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Registered Office & Factory -->
+        <div class="footer-widget">
+          <h4 class="footer-title">Office & Plant</h4>
+          <div class="footer-contact-list">
+            <div class="footer-contact-item">
+              <i class="fa fa-map-marker"></i>
+              <span><strong>PlastoKast House</strong><br>Surat, Gujarat, India – 395004.</span>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-phone"></i>
+              <span><a href="tel:+919909412068">+91 99094 12068</a><br><a href="tel:+918905332576">+91 89053 32576</a></span>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-envelope-o"></i>
+              <a href="mailto:plastokast.sales@gmail.com">plastokast.sales@gmail.com</a>
+            </div>
+            <div class="footer-contact-item">
+              <i class="fa fa-globe"></i>
+              <a href="index.html">www.plastokast.com</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 PlastoKast™ Inc. All rights reserved. | Connect Bones™</p>
+        <ul class="footer-policy-links">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Support</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/products-data.js?v=800"></script>
+  <script src="assets/js/i18n.js?v=800"></script>
+  <script src="assets/js/main.js?v=823"></script>
+  <script src="assets/js/inquiry-modal.js?v=800"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const detailSection = document.getElementById("product-detail-section");
+      const errorSection = document.getElementById("product-error-section");
+      const scrollTopBtn = document.getElementById("scroll-top-btn");
+
+      // Parse product ID from url query
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get("id");
+
+      if (!productId || typeof PRODUCTS_DATA === "undefined") {
+        showError();
+        return;
+      }
+
+      const product = PRODUCTS_DATA.find(p => p.id === productId);
+
+      if (!product) {
+        showError();
+        return;
+      }
+
+      // Populate details
+      document.title = `${product.title} | PlastoKast™`;
+      document.getElementById("breadcrumb-active-item").textContent = product.title;
+      
+      // Update breadcrumbs link to category
+      const breadcrumbLinks = document.getElementById("detail-breadcrumbs");
+      const activeLi = document.getElementById("breadcrumb-active-item");
+      const catLi = document.createElement("li");
+      catLi.innerHTML = `<a href="products.html?category=${product.category}">${product.categoryLabel}</a>`;
+      breadcrumbLinks.insertBefore(catLi, activeLi);
+
+      // Gallery Images
+      const mainImg = document.getElementById("detail-main-img");
+      const thumbsContainer = document.getElementById("detail-gallery-thumbs");
+      
+      mainImg.src = product.images[0];
+      mainImg.alt = product.title;
+
+      // Render exact product images array (2 images: Main + Packet Sizes)
+      if (product.images && product.images.length > 0) {
+        thumbsContainer.style.display = "flex";
+        thumbsContainer.style.flexDirection = "row";
+        thumbsContainer.style.flexWrap = "nowrap";
+        thumbsContainer.style.gap = "14px";
+
+        thumbsContainer.innerHTML = product.images.map((imgUrl, index) => `
+          <div class="thumb-item ${index === 0 ? 'active' : ''}" data-src="${imgUrl}" title="View visual ${index + 1}">
+            <img src="${imgUrl}" alt="${product.title} view ${index + 1}" loading="lazy">
+          </div>
+        `).join("");
+
+        // Thumbnail click handlers to switch main image
+        const thumbs = thumbsContainer.querySelectorAll(".thumb-item");
+        thumbs.forEach(thumb => {
+          thumb.addEventListener("click", () => {
+            thumbs.forEach(t => t.classList.remove("active"));
+            thumb.classList.add("active");
+            const newSrc = thumb.getAttribute("data-src");
+            mainImg.style.opacity = "0.3";
+            setTimeout(() => {
+              mainImg.src = newSrc;
+              mainImg.style.opacity = "1";
+            }, 120);
+          });
+        });
+      } else {
+        thumbsContainer.style.display = "none";
+      }
+
+      // Information text
+      document.getElementById("detail-category-badge").textContent = product.categoryLabel;
+      document.getElementById("detail-title").textContent = product.title;
+      document.getElementById("detail-desc").textContent = product.desc;
+
+      // Bullet Features
+      const featuresList = document.getElementById("detail-features-list");
+      featuresList.innerHTML = product.features.map(feat => `
+        <li>
+          <i class="fa fa-check-circle"></i>
+          <span>${feat}</span>
+        </li>
+      `).join("");
+
+      // Specs Table
+      const specsBody = document.getElementById("detail-specs-body");
+      specsBody.innerHTML = Object.entries(product.specs).filter(([k]) => k.toUpperCase() !== "MOQ" && !k.toLowerCase().includes("minimum order")).map(([key, val]) => `
+        <tr>
+          <td style="width: 35%;"><strong>${key}</strong></td>
+          <td>${val}</td>
+        </tr>
+      `).join("");
+
+      // Sizing Grid
+      const sizesGrid = document.getElementById("detail-sizes-grid");
+      sizesGrid.innerHTML = product.sizes.map(size => `
+        <div style="background-color: var(--bg-card); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border-light); font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-sm);">
+          <i class="fa fa-arrows-h" style="color: var(--primary); font-size: 1.1rem;"></i>
+          <span>${size}</span>
+        </div>
+      `).join("");
+
+      // High-Resolution Magnifying Hover Zoom Effect
+      const mainImgElement = document.getElementById("detail-main-img");
+      if (mainImgElement) {
+        mainImgElement.style.transition = "transform 0.1s ease, transform-origin 0.1s ease";
+        const wrapper = mainImgElement.closest(".detail-image-wrapper") || mainImgElement.parentElement;
+        wrapper.style.overflow = "hidden";
+        wrapper.style.position = "relative";
+        
+        mainImgElement.addEventListener("mousemove", (e) => {
+          const rect = e.target.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) * 100;
+          const y = ((e.clientY - rect.top) / rect.height) * 100;
+          mainImgElement.style.transformOrigin = `${x}% ${y}%`;
+          mainImgElement.style.transform = "scale(1.8)";
+        });
+        
+        mainImgElement.addEventListener("mouseleave", () => {
+          mainImgElement.style.transform = "scale(1)";
+          mainImgElement.style.transformOrigin = "center center";
+        });
+      }
+
+      // B2B Wishlist Toggle Logic
+      const wishlistBtn = document.getElementById("detail-wishlist-btn");
+      if (wishlistBtn) {
+        let wishlist = JSON.parse(localStorage.getItem("plastokast_wishlist")) || [];
+        const isFav = wishlist.includes(product.id);
+        
+        const updateWishlistUI = (active) => {
+          const icon = wishlistBtn.querySelector("i");
+          if (active) {
+            wishlistBtn.classList.add("active");
+            icon.className = "fa fa-heart";
+          } else {
+            wishlistBtn.classList.remove("active");
+            icon.className = "fa fa-heart-o";
+          }
+        };
+
+        updateWishlistUI(isFav);
+
+        wishlistBtn.addEventListener("click", () => {
+          let currentList = JSON.parse(localStorage.getItem("plastokast_wishlist")) || [];
+          if (currentList.includes(product.id)) {
+            currentList = currentList.filter(id => id !== product.id);
+            updateWishlistUI(false);
+          } else {
+            currentList.push(product.id);
+            updateWishlistUI(true);
+          }
+          localStorage.setItem("plastokast_wishlist", JSON.stringify(currentList));
+        });
+      }
+
+      // Action Buttons
+      const addBtn = document.getElementById("detail-add-btn");
+      addBtn.addEventListener("click", () => {
+        addToQuoteCart(product.id);
+      });
+
+      const whatsappBtn = document.getElementById("detail-whatsapp-btn");
+      whatsappBtn.href = `https://api.whatsapp.com/send?phone=+91 99094 12068&text=Hi%20PlastoKast%20team,%20I%20would%20like%20to%20get%20pricing%20details%20for:%20${encodeURIComponent(product.title)}`;
+
+      function showError() {
+        detailSection.style.display = "none";
+        errorSection.style.display = "block";
+      }
+
+      // Scroll top behavior
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 400) {
+          scrollTopBtn.classList.add("active");
+        } else {
+          scrollTopBtn.classList.remove("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
