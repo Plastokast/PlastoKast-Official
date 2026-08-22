@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedProductsListEl.innerHTML = activeSelectedProducts.map(p => `
       <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <div style="width: 40px; height: 40px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-          <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/Logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+          <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
         <div style="flex: 1; overflow: hidden;">
           <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>
@@ -475,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="sub-product-item ${isCheckedInPending ? 'selected' : ''}" onclick="toggleSubAddProductSelection('${p.id}')">
           <input type="checkbox" id="chk_add_${p.id}" ${isCheckedInPending ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px; accent-color: #2563eb;">
           <div style="width: 36px; height: 36px; background: white; border-radius: 6px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-            <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/Logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
           </div>
           <div style="flex: 1; overflow: hidden;">
             <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>
@@ -539,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="sub-product-item ${isMarkedForRemoval ? 'selected' : ''}" style="${isMarkedForRemoval ? 'border-color: #ef4444; background: #fef2f2;' : ''}" onclick="toggleSubRemoveProductSelection('${p.id}')">
           <input type="checkbox" id="chk_rem_${p.id}" ${isMarkedForRemoval ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px; accent-color: #dc2626;">
           <div style="width: 36px; height: 36px; background: white; border-radius: 6px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-            <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/Logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
           </div>
           <div style="flex: 1; overflow: hidden;">
             <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>

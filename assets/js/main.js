@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     drawerContent.innerHTML = `
       <div class="drawer-header">
         <a href="index.html" class="drawer-logo">
-          <img src="assets/images/Logo.png?v=300" alt="PlastoKast" class="drawer-logo-img">
+          <img src="assets/images/logo.png?v=300" alt="PlastoKast" class="drawer-logo-img">
         </a>
         <button type="button" class="drawer-close-btn" aria-label="Close Menu">
           <i class="fa fa-times"></i>
