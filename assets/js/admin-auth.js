@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function enforceSecurityCheck() {
     const loggedIn = sessionStorage.getItem('plastokast_admin_logged_in') === 'true';
-    const isLoginPage = window.location.pathname.includes('admin-login.html');
+    const path = (window.location.pathname || '').toLowerCase();
+    const isLoginPage = path.includes('admin-login');
+    const isAdminDashboard = path.includes('admin') && !isLoginPage;
 
     if (isLoginPage) {
       if (loggedIn) {
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         clearCredentials();
       }
-    } else {
+    } else if (isAdminDashboard) {
       if (!loggedIn) {
         window.location.replace('admin-login.html');
       }
