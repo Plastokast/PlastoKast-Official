@@ -34,19 +34,40 @@
   <link rel="icon" type="image/png" href="assets/images/favicon.png?v=300">
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="assets/css/admin.css?v=8500">
+  <link rel="stylesheet" href="assets/css/admin.css?v=14000">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+  <!-- Mobile Sticky Top Bar (Visible only on screens <= 992px) -->
+  <header class="admin-mobile-topbar" id="adminMobileTopBar">
+    <div class="admin-mobile-brand">
+      <a href="admin.html" style="display: flex; align-items: center;">
+        <img src="assets/images/logo.png?v=200" alt="PlastoKast" style="height: 34px; width: auto; max-width: 140px; object-fit: contain;">
+      </a>
+      <span class="admin-mobile-view-badge" id="adminActiveViewTitle">Dashboard</span>
+    </div>
+    <button type="button" class="admin-mobile-nav-toggle" id="adminMobileNavToggle" aria-label="Toggle navigation menu">
+      <i class="fa fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div class="admin-sidebar-backdrop" id="adminSidebarBackdrop"></div>
+
   <div class="admin-layout">
     
     <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="sidebar-logo" style="margin-bottom: 30px; padding: 5px 10px;">
-        <a href="admin.html" title="PlastoKast Admin Portal">
-          <img src="assets/images/logo.png?v=200" alt="PlastoKast - Connect Bones" style="max-width: 170px; width: 100%; height: auto; display: block;">
-        </a>
+    <div class="sidebar" id="adminSidebar">
+      <div class="sidebar-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 4px 6px;">
+        <div class="sidebar-logo" style="margin-bottom: 0; padding: 0;">
+          <a href="admin.html" title="PlastoKast Admin Portal">
+            <img src="assets/images/logo.png?v=200" alt="PlastoKast - Connect Bones" style="max-width: 160px; width: 100%; height: auto; display: block;">
+          </a>
+        </div>
+        <button type="button" class="admin-sidebar-close-btn" id="adminCloseSidebarBtn" aria-label="Close menu">
+          <i class="fa fa-times"></i>
+        </button>
       </div>
       
       <div class="nav-item active" data-target="view-dashboard">
@@ -62,6 +83,14 @@
 
       <div class="nav-item" data-target="view-certificates">
         <i class="fa fa-certificate nav-icon"></i> Certificates
+      </div>
+
+      <div class="nav-item" data-target="view-faq">
+        <i class="fa fa-question-circle nav-icon"></i> FAQs
+      </div>
+
+      <div class="nav-item" data-target="view-contact-settings">
+        <i class="fa fa-phone-square nav-icon"></i> Contact Info
       </div>
 
       <div style="margin-top: auto;">
@@ -86,7 +115,7 @@
             <div style="position: absolute; bottom: -40px; left: 30%; width: 220px; height: 220px; background: radial-gradient(circle, rgba(34, 197, 94, 0.18) 0%, transparent 70%); pointer-events: none; border-radius: 50%;"></div>
 
             <!-- Left Content: Logo Emblem + Greeting -->
-            <div style="display: flex; align-items: center; gap: 24px; z-index: 2;">
+            <div class="card-profile-left" style="display: flex; align-items: center; gap: 24px; z-index: 2;">
               
               <!-- Live Animated Executive Emblem Box (76px x 76px) -->
               <div style="position: relative; width: 76px; height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
@@ -118,12 +147,12 @@
               </div>
 
               <!-- Executive Typography -->
-              <div>
+              <div class="card-profile-text">
                 <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #7dd3fc; padding: 4px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; border: 1px solid rgba(56, 189, 248, 0.3); margin-bottom: 6px;">
                   <i class="fa fa-stethoscope"></i> Executive Command Center
                 </div>
-                <h1 style="font-size: 2.2rem; font-weight: 800; color: #ffffff; margin: 0; line-height: 1.1; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Welcome Back, Admin</h1>
-                <p style="color: #94a3b8; font-size: 0.83rem; margin: 4px 0 0 0; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: #ffffff; margin: 0; line-height: 1.1; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);" class="card-profile-title">Welcome Back, Admin</h1>
+                <p style="color: #94a3b8; font-size: 0.83rem; margin: 4px 0 0 0; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   <span>PlastoKast™ Orthopedic Management Hub</span>
                   <span style="color: #38bdf8;">&bull;</span>
                   <span id="bannerLiveDate" style="color: #cbd5e1; font-weight: 600;">System Active</span>
@@ -133,7 +162,7 @@
             </div>
 
             <!-- Right Content: Quick Executive Shortcut Pills -->
-            <div style="display: flex; flex-direction: column; gap: 8px; z-index: 2; flex-shrink: 0;">
+            <div class="card-profile-shortcuts" style="display: flex; flex-direction: column; gap: 8px; z-index: 2; flex-shrink: 0;">
               <a href="index.html" target="_blank" style="background: rgba(255, 255, 255, 0.15); color: #ffffff; text-decoration: none; padding: 8px 16px; border-radius: 14px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px); transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onmouseover="this.style.background='#ffffff'; this.style.color='#014E9E';" onmouseout="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.color='#ffffff';">
                 <i class="fa fa-globe"></i> Visit Website <i class="fa fa-external-link" style="font-size: 0.7rem; opacity: 0.8;"></i>
               </a>
@@ -153,16 +182,16 @@
           <!-- Card 3: Pending Inquiries (Right Column) -->
           <div class="admin-card card-info">
             <div class="info-graphic">
-              <div class="info-orb" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:100px;">
-                 <i id="dashboard-bell-icon" class="fa fa-bell live-bell-active" style="font-size: 5rem; color: white; opacity: 0.95; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.15);"></i>
-                 <div class="orb-label live-pulse-badge" id="dashboard-unread-badge" style="color: #ef4444;">3 Unread</div>
+              <div class="info-orb">
+                 <i id="dashboard-bell-icon" class="fa fa-bell live-bell-active"></i>
+                 <div class="orb-label live-pulse-badge" id="dashboard-unread-badge">3 Unread</div>
               </div>
             </div>
             
             <p class="info-sub">Action Required</p>
-            <h2 class="info-title" style="font-size: 1.8rem;">Pending Inquiries</h2>
+            <h2 class="info-title">Pending Inquiries</h2>
             
-            <div class="info-stats" id="dashboard-inquiry-list" style="flex-direction: column; gap: 12px; margin-bottom: 30px;">
+            <div class="info-stats" id="dashboard-inquiry-list">
               <!-- Dynamically populated by admin-crm.js -->
             </div>
             
@@ -174,7 +203,7 @@
 
           <!-- Product Demand Analytics & Export Markets (Bottom Left spanning 2 columns) -->
           <div class="admin-card card-demand" style="background: white; display: flex; flex-direction: column; justify-content: space-between; padding: 28px; border-radius: var(--card-radius); box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="card-demand-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <div>
                 <h2 style="font-size: 1.25rem; font-weight: 800; color: #1e1b2e; margin-bottom: 2px;">Product Demand Analytics</h2>
                 <p style="font-size: 0.82rem; color: #8A86A1; margin: 0;">Top 4 Products Ranked by Buyer Leads • Click to view full analytics</p>
@@ -184,7 +213,7 @@
               </button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center;">
+            <div class="card-demand-content" style="display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: center;">
               
               <!-- Donut Ring Chart Column Container -->
               <div style="display: flex; flex-direction: column; align-items: center;">
@@ -207,11 +236,6 @@
                     <!-- Segment 4: PK Consumables -->
                     <circle id="donutSeg3" class="donut-segment" data-rank="Rank #4" data-title="PK Consumables" data-leads="171 Leads" data-percent="12%" data-color="#10b981" cx="100" cy="100" r="70" fill="transparent" stroke="#10b981" stroke-width="32" stroke-dasharray="52.8 439.8" stroke-dashoffset="-387" style="transition: all 0.25s ease; cursor: pointer; pointer-events: stroke;" />
                   </svg>
-
-                  <!-- Ultra-Clean Center Ring Display (Minimal Pie Icon inside hole) -->
-                  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
-                    <i id="donutCenterIcon" class="fa fa-chart-pie" style="font-size: 1.6rem; color: #3b82f6; transition: all 0.25s ease;"></i>
-                  </div>
                 </div>
 
                 <!-- Sleek Bottom Readout Card (Positioned Cleanly BELOW the Donut Round) -->
@@ -224,40 +248,108 @@
 
               <!-- Top 4 Ranked Product Items with Micro-Hovers -->
               <div id="demandRankList" style="display: flex; flex-direction: column; gap: 8px;">
-                <div class="legend-hover-item" data-segment="0" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.25s ease; cursor: pointer;">
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-right: 12px;">
-                    <span style="background: #dbeafe; color: #2563eb; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0;">#1</span>
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; display: inline-block; flex-shrink: 0;"></span>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">PK Cast™ (Fiberglass Casting Tapes)</span>
-                  </span>
-                  <span style="font-size: 0.85rem; font-weight: 800; color: #3b82f6; flex-shrink: 0; white-space: nowrap;">568 Leads (40%)</span>
+                <div class="legend-hover-item" data-segment="0">
+                  <div class="legend-desktop-row">
+                    <div class="legend-item-left">
+                      <span class="legend-rank-badge" style="background: #dbeafe; color: #2563eb;">#1</span>
+                      <span class="legend-dot" style="background: #3b82f6;"></span>
+                      <span class="legend-prod-name">PK Cast™ (Fiberglass Casting Tapes)</span>
+                    </div>
+                    <span class="legend-leads-pill" style="color: #3b82f6;">568 Leads (40%)</span>
+                  </div>
+                  <div class="legend-mobile-row">
+                    <div class="legend-mobile-header">
+                      <div class="legend-mobile-info">
+                        <span class="legend-rank-badge" style="background: #dbeafe; color: #2563eb;">#1</span>
+                        <div class="legend-mobile-titles">
+                          <span class="legend-brand-name">PK Cast™</span>
+                          <span class="legend-mobile-sub">Fiberglass Casting Tapes</span>
+                        </div>
+                      </div>
+                      <span class="legend-mobile-leads" style="background: #dbeafe; color: #2563eb;">568 Leads (40%)</span>
+                    </div>
+                    <div class="legend-mobile-progress">
+                      <div class="legend-mobile-bar" style="width: 40%; background: #3b82f6;"></div>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="legend-hover-item" data-segment="1" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.25s ease; cursor: pointer;">
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-right: 12px;">
-                    <span style="background: #f3e8ff; color: #9333ea; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0;">#2</span>
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #8b5cf6; display: inline-block; flex-shrink: 0;"></span>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">PK Splint™ (Pre-padded Splints)</span>
-                  </span>
-                  <span style="font-size: 0.85rem; font-weight: 800; color: #8b5cf6; flex-shrink: 0; white-space: nowrap;">426 Leads (30%)</span>
+                <div class="legend-hover-item" data-segment="1">
+                  <div class="legend-desktop-row">
+                    <div class="legend-item-left">
+                      <span class="legend-rank-badge" style="background: #f3e8ff; color: #9333ea;">#2</span>
+                      <span class="legend-dot" style="background: #8b5cf6;"></span>
+                      <span class="legend-prod-name">PK Splint™ (Pre-padded Splints)</span>
+                    </div>
+                    <span class="legend-leads-pill" style="color: #8b5cf6;">426 Leads (30%)</span>
+                  </div>
+                  <div class="legend-mobile-row">
+                    <div class="legend-mobile-header">
+                      <div class="legend-mobile-info">
+                        <span class="legend-rank-badge" style="background: #f3e8ff; color: #9333ea;">#2</span>
+                        <div class="legend-mobile-titles">
+                          <span class="legend-brand-name">PK Splint™</span>
+                          <span class="legend-mobile-sub">Pre-padded Splints</span>
+                        </div>
+                      </div>
+                      <span class="legend-mobile-leads" style="background: #f3e8ff; color: #8b5cf6;">426 Leads (30%)</span>
+                    </div>
+                    <div class="legend-mobile-progress">
+                      <div class="legend-mobile-bar" style="width: 30%; background: #8b5cf6;"></div>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="legend-hover-item" data-segment="2" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.25s ease; cursor: pointer;">
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-right: 12px;">
-                    <span style="background: #fce7f3; color: #db2777; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0;">#3</span>
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #ec4899; display: inline-block; flex-shrink: 0;"></span>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">PK Plaster™ (POP Bandages)</span>
-                  </span>
-                  <span style="font-size: 0.85rem; font-weight: 800; color: #ec4899; flex-shrink: 0; white-space: nowrap;">255 Leads (18%)</span>
+                <div class="legend-hover-item" data-segment="2">
+                  <div class="legend-desktop-row">
+                    <div class="legend-item-left">
+                      <span class="legend-rank-badge" style="background: #fce7f3; color: #db2777;">#3</span>
+                      <span class="legend-dot" style="background: #ec4899;"></span>
+                      <span class="legend-prod-name">PK Plaster™ (POP Bandages)</span>
+                    </div>
+                    <span class="legend-leads-pill" style="color: #ec4899;">255 Leads (18%)</span>
+                  </div>
+                  <div class="legend-mobile-row">
+                    <div class="legend-mobile-header">
+                      <div class="legend-mobile-info">
+                        <span class="legend-rank-badge" style="background: #fce7f3; color: #db2777;">#3</span>
+                        <div class="legend-mobile-titles">
+                          <span class="legend-brand-name">PK Plaster™</span>
+                          <span class="legend-mobile-sub">POP Bandages</span>
+                        </div>
+                      </div>
+                      <span class="legend-mobile-leads" style="background: #fce7f3; color: #ec4899;">255 Leads (18%)</span>
+                    </div>
+                    <div class="legend-mobile-progress">
+                      <div class="legend-mobile-bar" style="width: 18%; background: #ec4899;"></div>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="legend-hover-item" data-segment="3" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; transition: all 0.25s ease; cursor: pointer;">
-                  <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-right: 12px;">
-                    <span style="background: #d1fae5; color: #059669; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0;">#4</span>
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; flex-shrink: 0;"></span>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">PK Padding & Consumables</span>
-                  </span>
-                  <span style="font-size: 0.85rem; font-weight: 800; color: #10b981; flex-shrink: 0; white-space: nowrap;">171 Leads (12%)</span>
+                <div class="legend-hover-item" data-segment="3">
+                  <div class="legend-desktop-row">
+                    <div class="legend-item-left">
+                      <span class="legend-rank-badge" style="background: #d1fae5; color: #059669;">#4</span>
+                      <span class="legend-dot" style="background: #10b981;"></span>
+                      <span class="legend-prod-name">PK Padding & Consumables</span>
+                    </div>
+                    <span class="legend-leads-pill" style="color: #10b981;">171 Leads (12%)</span>
+                  </div>
+                  <div class="legend-mobile-row">
+                    <div class="legend-mobile-header">
+                      <div class="legend-mobile-info">
+                        <span class="legend-rank-badge" style="background: #d1fae5; color: #059669;">#4</span>
+                        <div class="legend-mobile-titles">
+                          <span class="legend-brand-name">PK Padding</span>
+                          <span class="legend-mobile-sub">Padding & Consumables</span>
+                        </div>
+                      </div>
+                      <span class="legend-mobile-leads" style="background: #d1fae5; color: #059669;">171 Leads (12%)</span>
+                    </div>
+                    <div class="legend-mobile-progress">
+                      <div class="legend-mobile-bar" style="width: 12%; background: #10b981;"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -274,56 +366,77 @@
             <p style="color: #64748b; font-size: 0.88rem; margin-top: 4px; margin-bottom: 0;">Manage inbound buyer RFQs, conversion pipeline, and client dossiers.</p>
           </div>
 
-          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <!-- Normal Mode Delete Trigger Button -->
-            <button id="btnToggleCrmDeleteMode" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
-              <i class="fa fa-trash"></i> Delete Leads
-            </button>
-
-            <!-- Delete Mode Active Controls (Hidden by default) -->
-            <div id="crmDeleteModeControls" style="display: none; gap: 10px; align-items: center;">
-              <button id="btnConfirmCrmDelete" style="background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 0.88rem; cursor: not-allowed; display: flex; align-items: center; gap: 8px; transition: all 0.2s;" disabled>
-                <i class="fa fa-trash-alt"></i> Confirm Delete (<span id="selectedCrmCount">0</span>)
-              </button>
-
-              <button id="btnCancelCrmDeleteMode" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 14px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
-                Cancel
-              </button>
-            </div>
-
-            <div class="admin-search-container">
+          <div class="admin-toolbar crm-toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div class="admin-search-container crm-search-box">
               <i class="fa fa-search"></i>
               <input type="text" id="crmSearch" class="admin-search-input" placeholder="Search buyer or facility...">
             </div>
 
-            <select id="crmFilterStatus" style="padding: 12px 16px; border-radius: 16px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600; cursor: pointer; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
-              <option value="All">All Status</option>
-              <option value="Pending">Pending</option>
-              <option value="Negotiating">Negotiating</option>
-              <option value="Won">Won</option>
-              <option value="Lost">Lost</option>
-            </select>
+            <div class="crm-toolbar-actions" style="display: flex; gap: 10px; align-items: center;">
+              <select id="crmFilterStatus" class="crm-filter-status-select" style="padding: 12px 16px; border-radius: 16px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600; cursor: pointer; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <option value="All">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Negotiating">Negotiating</option>
+                <option value="Won">Won</option>
+                <option value="Lost">Lost</option>
+              </select>
+
+              <!-- Normal Mode Delete Trigger Button -->
+              <button id="btnToggleCrmDeleteMode" class="btn-crm-delete-trigger" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px 18px; border-radius: 14px; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                <i class="fa fa-trash"></i> <span>Delete Leads</span>
+              </button>
+
+              <!-- Delete Mode Active Controls (Hidden by default) -->
+              <div id="crmDeleteModeControls" class="crm-delete-active-group" style="display: none; gap: 8px; align-items: center;">
+                <button id="btnConfirmCrmDelete" style="background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; padding: 10px 16px; border-radius: 14px; font-weight: 700; font-size: 0.86rem; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;" disabled>
+                  <i class="fa fa-trash-alt"></i> Confirm (<span id="selectedCrmCount">0</span>)
+                </button>
+
+                <button id="btnCancelCrmDeleteMode" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 14px; font-weight: 700; font-size: 0.86rem; cursor: pointer;">
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="admin-card" style="padding: 0; overflow: hidden; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-              <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-                <th class="crm-checkbox-col" style="padding: 16px 14px; width: 44px; text-align: center; display: none;">
-                  <input type="checkbox" id="selectAllLeadsCheckbox" style="width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444;" title="Select All Leads">
-                </th>
-                <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">ID</th>
-                <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Client</th>
-                <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Subject</th>
-                <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Date</th>
-                <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Status</th>
-              </tr>
-            </thead>
-            <tbody id="crmTableBody">
-              <!-- Data injected by admin-crm.js -->
-            </tbody>
-          </table>
+        <!-- Desktop Table View (Visible > 992px) -->
+        <div class="admin-card crm-desktop-table-card" style="padding: 0; overflow: hidden; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px;">
+          <div class="table-responsive" style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
+            <table style="width: 100%; min-width: 680px; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <th class="crm-checkbox-col" style="padding: 16px 14px; width: 44px; text-align: center; display: none;">
+                    <input type="checkbox" id="selectAllLeadsCheckbox" style="width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444;" title="Select All Leads">
+                  </th>
+                  <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">ID</th>
+                  <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Client</th>
+                  <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Subject</th>
+                  <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Date</th>
+                  <th style="padding: 16px 20px; font-weight: 700; color: #1e293b;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="crmTableBody">
+                <!-- Data injected by admin-crm.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mobile View Lead Cards List (Visible <= 992px) -->
+        <div id="crmMobileCardsContainer" class="crm-mobile-cards-container" style="display: none; flex-direction: column; gap: 10px; width: 100%;">
+          <!-- Mobile Select All Bar in Delete Mode -->
+          <div id="crmMobileSelectAllBar" style="display: none; align-items: center; justify-content: space-between; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 14px; padding: 10px 14px; margin-bottom: 4px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; color: #e11d48; cursor: pointer; margin: 0;">
+              <input type="checkbox" id="selectAllLeadsCheckboxMobile" style="width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444;">
+              Select All Leads
+            </label>
+            <span style="font-size: 0.78rem; font-weight: 700; color: #e11d48;">Delete Mode</span>
+          </div>
+
+          <div id="crmMobileCardsList" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+            <!-- Rectangular cards injected by admin-crm.js -->
+          </div>
         </div>
       </div>
 
@@ -357,76 +470,78 @@
       <div id="view-catalog" class="view-section">
         <!-- Section Header & Metrics Bar -->
         <div style="margin-bottom: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+          <div class="catalog-view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
             <div>
               <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin: 0;">Catalog Management</h2>
-              <p style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Manage product listings, categories, inventory, and specifications.</p>
+              <p style="color: #64748b; font-size: 0.9rem; margin-top: 4px; margin-bottom: 0;">Manage product listings, categories, inventory, and specifications.</p>
             </div>
             
-            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div class="catalog-top-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
               <!-- Normal Mode Delete Trigger -->
-              <button id="btnToggleDeleteMode" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 20px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                <i class="fa fa-trash"></i> Delete Products
+              <button id="btnToggleDeleteMode" class="btn-catalog-delete" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 20px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                <i class="fa fa-trash"></i> <span>Delete Products</span>
               </button>
 
               <!-- Delete Mode Active Controls (Hidden by default) -->
-              <div id="deleteModeControls" style="display: none; gap: 10px; align-items: center;">
-                <button id="btnConfirmDelete" style="background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; padding: 12px 20px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: not-allowed; display: flex; align-items: center; gap: 8px; transition: all 0.2s;" disabled>
-                  <i class="fa fa-trash"></i> Confirm Delete (<span id="selectedCount">0</span>)
+              <div id="deleteModeControls" class="catalog-delete-active-group" style="display: none; gap: 8px; align-items: center;">
+                <button id="btnConfirmDelete" style="background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; padding: 12px 18px; border-radius: 16px; font-weight: 700; font-size: 0.9rem; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;" disabled>
+                  <i class="fa fa-trash"></i> Confirm (<span id="selectedCount">0</span>)
                 </button>
 
-                <button id="btnCancelDeleteMode" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: pointer;">
+                <button id="btnCancelDeleteMode" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 16px; font-weight: 700; font-size: 0.9rem; cursor: pointer;">
                   Cancel
                 </button>
               </div>
 
-              <button id="btnAddNewProduct" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; padding: 12px 24px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35); transition: transform 0.2s;">
-                <i class="fa fa-plus"></i> Add New Product
+              <button id="btnAddNewProduct" class="btn-catalog-add" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; padding: 12px 24px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35); transition: transform 0.2s;">
+                <i class="fa fa-plus"></i> <span>Add New Product</span>
               </button>
             </div>
           </div>
 
-          <!-- Quick Metrics Bar -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-            <div style="background: #ffffff; padding: 16px 20px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+          <!-- Quick Metrics Bar (2 Columns on Mobile) -->
+          <div class="admin-metric-grid catalog-metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px;">
+            <div class="catalog-metric-card" style="background: #ffffff; padding: 14px 16px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
                 <i class="fa fa-cubes"></i>
               </div>
-              <div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Total Products</div>
-                <div id="statTotalProducts" style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">-</div>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Total Products</div>
+                <div id="statTotalProducts" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; line-height: 1.2;">-</div>
               </div>
             </div>
 
-            <div style="background: #ffffff; padding: 16px 20px; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+            <div class="catalog-metric-card" style="background: #ffffff; padding: 14px 16px; border-radius: 18px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
                 <i class="fa fa-tags"></i>
               </div>
-              <div>
-                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Categories</div>
-                <div id="statCategories" style="font-size: 1.4rem; font-weight: 800; color: #8b5cf6;">-</div>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Categories</div>
+                <div id="statCategories" style="font-size: 1.35rem; font-weight: 800; color: #8b5cf6; line-height: 1.2;">-</div>
               </div>
             </div>
           </div>
 
           <!-- Controls Toolbar: Search & Category Filter & Manage Categories Button -->
-          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <div class="admin-search-container" style="flex: 1; min-width: 260px;">
+          <div class="admin-toolbar catalog-toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div class="admin-search-container catalog-search-box" style="flex: 1;">
               <i class="fa fa-search"></i>
               <input type="text" id="catalogSearch" class="admin-search-input" placeholder="Search by name, SKU, or category...">
             </div>
 
-            <select id="catalogFilterCategory" style="padding: 12px 16px; border-radius: 16px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600; cursor: pointer; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
-              <!-- Populated dynamically via JS -->
-            </select>
+            <div class="catalog-filter-actions" style="display: flex; gap: 10px; align-items: center;">
+              <select id="catalogFilterCategory" class="catalog-category-select" style="padding: 12px 16px; border-radius: 16px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 600; cursor: pointer; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                <!-- Populated dynamically via JS -->
+              </select>
 
-            <button type="button" id="btnManageCategories" onclick="window.openCategoryManagerModal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #ffffff; border: none; padding: 12px 20px; border-radius: 16px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(139,92,246,0.3); transition: all 0.2s; white-space: nowrap;">
-              <i class="fa fa-tags"></i> Manage Categories
-            </button>
+              <button type="button" id="btnManageCategories" class="btn-manage-categories" onclick="window.openCategoryManagerModal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #ffffff; border: none; padding: 12px 20px; border-radius: 16px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(139,92,246,0.3); transition: all 0.2s; white-space: nowrap;">
+                <i class="fa fa-tags"></i> <span>Categories</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div id="catalogGrid" style="display: grid; grid-template-columns: repeat(4, 220px); justify-content: space-between; row-gap: 24px;">
+        <div id="catalogGrid" class="admin-catalog-grid">
           <!-- Products injected via JS -->
         </div>
       </div>
@@ -451,7 +566,7 @@
         </div>
 
         <!-- 2 Clean Metric Summary Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 28px;">
+        <div class="admin-metric-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 28px;">
           
           <!-- Stat 1: Total Certificates -->
           <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 22px; box-shadow: 0 4px 16px rgba(15,23,42,0.03); display: flex; align-items: center; gap: 18px;">
@@ -480,8 +595,8 @@
         </div>
 
         <!-- Filter & Search Toolbar -->
-        <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 26px; flex-wrap: wrap;">
-          <div class="admin-search-container" style="flex: 1; min-width: 280px; position: relative;">
+        <div class="admin-toolbar" style="display: flex; gap: 14px; align-items: center; margin-bottom: 26px; flex-wrap: wrap;">
+          <div class="admin-search-container" style="flex: 1; position: relative;">
             <i class="fa fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
             <input type="text" id="certSearchInput" class="admin-search-input" placeholder="Search certificates by title, governing standard, or issuing body..." style="width: 100%; padding-left: 44px;">
           </div>
@@ -494,8 +609,240 @@
         </div>
 
         <!-- Certificates Dynamic Grid Container -->
-        <div id="adminCertificatesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
+        <div id="adminCertificatesContainer" class="admin-certificates-grid">
           <!-- Rendered dynamically by admin-certificates.js -->
+        </div>
+
+      </div>
+
+      <!-- FAQ & Knowledge Base View -->
+      <div id="view-faq" class="view-section">
+        <div class="admin-card" style="padding: 28px 32px; margin-bottom: 24px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #e2e8f0; border-radius: 24px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div>
+              <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 50px; color: #014E9E; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                <i class="fa fa-question-circle"></i> FAQ Desk Management
+              </div>
+              <h2 style="font-size: 1.75rem; color: #0f172a; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                <i class="fa fa-question-circle" style="color: #014E9E;"></i> FAQ & Knowledge Base Manager
+              </h2>
+              <p style="color: #64748b; margin: 6px 0 0 0; font-size: 0.9rem;">Add, edit, reorder, or toggle frequently asked questions displayed on the live About Us page.</p>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <button type="button" onclick="window.openFaqModal()" style="background: linear-gradient(135deg, #014E9E 0%, #0284c7 100%); color: #ffffff; border: none; padding: 12px 24px; border-radius: 14px; font-weight: 800; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(1, 78, 158, 0.35); transition: all 0.2s;">
+                <i class="fa fa-plus"></i> Add New Question
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Bar -->
+          <div class="admin-metric-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 14px;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: #eff6ff; color: #014E9E; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fa fa-list"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Total Questions</div>
+                <div id="statTotalFaqs" style="font-size: 1.5rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin-top: 2px;">5</div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; padding: 16px 20px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 14px;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fa fa-check-circle"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Active on Website</div>
+                <div id="statActiveFaqs" style="font-size: 1.5rem; font-weight: 800; color: #059669; line-height: 1.1; margin-top: 2px;">5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="admin-toolbar" style="display: flex; gap: 14px; align-items: center; margin-bottom: 26px; flex-wrap: wrap;">
+          <div class="admin-search-container" style="flex: 1; position: relative;">
+            <i class="fa fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+            <input type="text" id="faqSearchInput" class="admin-search-input" placeholder="Search questions or keywords..." style="width: 100%; padding-left: 44px;">
+          </div>
+
+          <select id="faqStatusFilter" style="padding: 12px 18px; border-radius: 16px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #0f172a; font-weight: 700; font-size: 0.88rem; cursor: pointer; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            <option value="all">📁 All Questions (Active & Hidden)</option>
+            <option value="active">🟢 Active On Website Only</option>
+            <option value="inactive">⚪ Hidden Only</option>
+          </select>
+        </div>
+
+        <!-- FAQs Dynamic Grid Container -->
+        <div id="adminFaqContainer" class="admin-faqs-grid">
+          <!-- Rendered dynamically by admin-faq.js -->
+        </div>
+      </div>
+
+      <!-- Contact & Phone Numbers Settings View -->
+      <div id="view-contact-settings" class="view-section">
+        <div class="admin-card" style="padding: 28px 32px; margin-bottom: 24px; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1.5px solid #e2e8f0; border-radius: 24px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);">
+          <div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 50px; color: #014E9E; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+              <i class="fa fa-phone"></i> Global Website Contact Settings
+            </div>
+            <h2 style="font-size: 1.75rem; color: #0f172a; margin: 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+              <i class="fa fa-phone-square" style="color: #014E9E;"></i> Company Phone & Contact Numbers
+            </h2>
+            <p style="color: #64748b; margin: 6px 0 0 0; font-size: 0.9rem;">Change primary phone numbers, WhatsApp lines, email, and plant address once — instantly updates every page on the live website.</p>
+          </div>
+        </div>
+
+        <!-- 2-Column Layout: Form on Left, Live Preview on Right -->
+        <div class="contact-settings-layout" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; align-items: start;">
+          
+          <!-- Left: Settings Form -->
+          <div style="background: #ffffff; border-radius: 24px; border: 1.5px solid #e2e8f0; padding: 30px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);">
+            <form id="adminContactSettingsForm">
+              
+              <!-- Section 1: Phone Numbers -->
+              <div style="margin-bottom: 26px;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #014E9E; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa fa-phone"></i> 1. Direct Helpline & Sales Mobile Numbers
+                </h4>
+                
+                <div class="contact-form-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Primary Sales Phone</label>
+                    <div style="position: relative;">
+                      <i class="fa fa-phone" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                      <input type="text" id="settingPhone1" placeholder="+91 99094 12068" style="width: 100%; padding: 12px 14px 12px 40px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff;">
+                    </div>
+                    <span style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: block;">Used in header, product inquiry & drawer.</span>
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Secondary / Support Phone</label>
+                    <div style="position: relative;">
+                      <i class="fa fa-phone" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                      <input type="text" id="settingPhone2" placeholder="+91 89053 32576" style="width: 100%; padding: 12px 14px 12px 40px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff;">
+                    </div>
+                    <span style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: block;">Used in footer and secondary contact cards.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 2: WhatsApp Direct Line -->
+              <div style="margin-bottom: 26px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #059669; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa fa-whatsapp"></i> 2. Official WhatsApp Business Line
+                </h4>
+                
+                <div>
+                  <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">WhatsApp Direct Number (with country code)</label>
+                  <div style="position: relative;">
+                    <i class="fa fa-whatsapp" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #10b981; font-size: 1.1rem;"></i>
+                    <input type="text" id="settingWhatsapp" placeholder="+91 99094 12068" style="width: 100%; padding: 12px 14px 12px 42px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff;">
+                  </div>
+                  <span style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: block;">Powers the floating WhatsApp button and 1-click product inquiry links.</span>
+                </div>
+              </div>
+
+              <!-- Section 3: Official Email & Operating Hours -->
+              <div style="margin-bottom: 26px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #014E9E; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa fa-envelope-o"></i> 3. Official Email & Operating Hours
+                </h4>
+                
+                <div class="contact-form-grid-2col" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px;">
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Sales & Inquiry Email</label>
+                    <div style="position: relative;">
+                      <i class="fa fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                      <input type="email" id="settingEmail" placeholder="plastokast.sales@gmail.com" style="width: 100%; padding: 12px 14px 12px 40px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.92rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff;">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Plant / Office Hours</label>
+                    <div style="position: relative;">
+                      <i class="fa fa-clock-o" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                      <input type="text" id="settingHours" placeholder="Mon – Sat: 9:00 AM – 7:00 PM" style="width: 100%; padding: 12px 14px 12px 40px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.92rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 4: Physical Address -->
+              <div style="margin-bottom: 26px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #014E9E; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa fa-map-marker"></i> 4. Factory & Registered Office Address
+                </h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Short Display Address (Footer & Compact Cards)</label>
+                    <input type="text" id="settingShortAddress" placeholder="PlastoKast House, Surat, Gujarat, India – 395004" style="width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.92rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff;">
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Full Official Registered Facility Address</label>
+                    <textarea id="settingAddress" rows="2" placeholder="Ground Floor, Common Plot, Om Shree Sadguru Nityanand Co-op Housing Society..." style="width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.88rem; line-height: 1.5; color: #0f172a; outline: none; background: #ffffff; resize: vertical;"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div style="padding-top: 16px; border-top: 1.5px solid #f1f5f9; margin-top: 10px;">
+                <button type="submit" style="width: 100%; background: linear-gradient(135deg, #014E9E 0%, #0284c7 100%); color: #ffffff; border: none; padding: 15px 32px; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 8px 24px rgba(1, 78, 158, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 28px rgba(1, 78, 158, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(1, 78, 158, 0.3)';">
+                  <i class="fa fa-check-circle" style="font-size: 1.15rem;"></i> Save & Apply Changes To Website
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- Right: Live Website Preview Widget -->
+          <div style="background: #ffffff; border-radius: 24px; border: 1.5px solid #e2e8f0; padding: 28px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04); position: sticky; top: 90px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a;">Live Site Appearance Preview</h4>
+            </div>
+
+            <!-- Preview Card 1: Footer Contact Box -->
+            <div style="background: #0f172a; color: #ffffff; border-radius: 18px; padding: 20px; margin-bottom: 18px;">
+              <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: #38bdf8; font-weight: 800; margin-bottom: 10px;">Footer Contact Box</div>
+              <div style="font-size: 0.85rem; line-height: 1.6; color: #cbd5e1;">
+                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                  <i class="fa fa-phone" style="color: #38bdf8; margin-top: 4px;"></i>
+                  <span>
+                    <strong id="previewPhone1" style="color: #ffffff;">+91 99094 12068</strong><br>
+                    <span id="previewPhone2" style="color: #94a3b8;">+91 89053 32576</span>
+                  </span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                  <i class="fa fa-envelope" style="color: #38bdf8; margin-top: 4px;"></i>
+                  <span id="previewEmail" style="color: #ffffff;">plastokast.sales@gmail.com</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                  <i class="fa fa-map-marker" style="color: #38bdf8; margin-top: 4px;"></i>
+                  <span id="previewAddress" style="font-size: 0.8rem; color: #94a3b8;">PlastoKast House, Surat, Gujarat, India – 395004</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preview Card 2: Floating WhatsApp Preview -->
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #25d366; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);">
+                  <i class="fa fa-whatsapp"></i>
+                </div>
+                <div>
+                  <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a;">WhatsApp Chat</div>
+                  <div id="previewWhatsapp" style="font-size: 0.78rem; font-weight: 700; color: #059669;">+91 99094 12068</div>
+                </div>
+              </div>
+              <span style="font-size: 0.72rem; font-weight: 800; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 50px;">Live Linked</span>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
@@ -510,7 +857,7 @@
             <p style="color: #64748B; font-size: 0.9rem; margin-top: 5px;">Update product details, images, and specifications.</p>
           </div>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="product-modal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
             
             <!-- General Info -->
             <div style="grid-column: 1 / -1;">
@@ -546,19 +893,19 @@
               <h3 style="font-size: 1.1rem; color: var(--card-navy); margin-top: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent-orange); padding-left: 10px;">📸 1. Product Photos & Gallery</h3>
             </div>
 
-            <div style="grid-column: 1 / -1; background: #f8fafc; padding: 22px; border-radius: 18px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                <div>
-                  <label style="display: block; font-weight: 800; color: #0f172a; font-size: 0.98rem; margin-bottom: 2px;">Product Photos & Gallery</label>
-                  <span style="font-size: 0.8rem; color: #64748b;">Select any photo card below to edit its URL path or browse a new image file.</span>
+            <div style="grid-column: 1 / -1; background: #f8fafc; padding: 20px; border-radius: 18px; border: 1px solid #e2e8f0; margin-bottom: 10px;">
+              <div class="modal-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                <div class="modal-section-header-text">
+                  <label class="modal-section-title" style="display: block; font-weight: 800; color: #0f172a; font-size: 0.98rem; margin-bottom: 2px;">Product Photos & Gallery</label>
+                  <span class="modal-section-desc" style="font-size: 0.8rem; color: #64748b;">Select any photo card below to edit its URL path or browse a new image file.</span>
                 </div>
 
-                <div style="display: flex; gap: 8px;">
+                <div class="modal-section-btn-wrap" style="display: flex; gap: 8px;">
                   <input type="file" id="replaceSelectedFileInput" accept="image/*" style="display: none;">
                   <input type="file" id="addNewPhotoFileInput" accept="image/*" multiple style="display: none;">
                   
-                  <button type="button" id="btnAddNewPhoto" style="background: #2563eb; color: #ffffff; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,99,235,0.22);">
-                    <i class="fa fa-plus-circle"></i> Add New Photo
+                  <button type="button" id="btnAddNewPhoto" class="modal-section-btn" style="background: #2563eb; color: #ffffff; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,99,235,0.22); white-space: nowrap;">
+                    <i class="fa fa-plus-circle"></i> <span>Add New Photo</span>
                   </button>
                 </div>
               </div>
@@ -581,7 +928,7 @@
                 </div>
 
                 <div>
-                  <input type="text" id="selectedPhotoUrlInput" placeholder="Enter image URL / path (e.g. media/pk_splint.jpg)..." style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-family: monospace; color: #0f172a; outline: none; background: #fafafa;">
+                  <input type="text" id="selectedPhotoUrlInput" placeholder="Enter image URL / path (e.g. media/pk_splint.jpg)..." style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-family: monospace; color: #0f172a; outline: none; background: #fafafa; box-sizing: border-box;">
                 </div>
               </div>
             </div>
@@ -592,11 +939,11 @@
             </div>
 
             <div style="grid-column: 1 / -1; background: linear-gradient(135deg, #eff6ff, #f8fafc); border: 2px solid #3b82f6; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(59,130,246,0.06);">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #bfdbfe; padding-bottom: 8px;">
-                <label style="font-weight: 800; color: #1e40af; font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #bfdbfe; padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <label style="font-weight: 800; color: #1e40af; font-size: 0.98rem; display: flex; align-items: center; gap: 8px; margin: 0;">
                   <i class="fa fa-window-maximize" style="color: #2563eb;"></i> Quick View Popup Overview Description
                 </label>
-                <span style="font-size: 0.75rem; background: #2563eb; color: #ffffff; font-weight: 700; padding: 3px 10px; border-radius: 12px;">Catalog Popup Text</span>
+                <span style="font-size: 0.75rem; background: #2563eb; color: #ffffff; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap;">Catalog Popup Text</span>
               </div>
               <p style="font-size: 0.8rem; color: #475569; margin-top: 0; margin-bottom: 12px;">Edit the short overview paragraph displayed when a visitor clicks on this product on the main catalog page (`products.html`).</p>
 
@@ -611,19 +958,19 @@
             </div>
 
             <!-- Structured Product Text & Attributes Editor -->
-            <div id="modalFormEditPane" style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div id="modalFormEditPane" class="product-modal-specs-grid" style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
               <!-- 1. Key Performance Features List Manager -->
               <div style="grid-column: 1 / -1; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <div>
-                    <label style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+                <div class="modal-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                  <div class="modal-section-header-text">
+                    <label class="modal-section-title" style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; margin: 0 0 2px 0;">
                       <i class="fa fa-check-circle" style="color: #2563eb;"></i> Key Performance Features (Bullet Points)
                     </label>
-                    <span style="font-size: 0.78rem; color: #64748b;">Add or edit individual feature bullets shown on product page</span>
+                    <span class="modal-section-desc" style="font-size: 0.78rem; color: #64748b;">Add or edit individual feature bullets shown on product page</span>
                   </div>
-                  <button type="button" id="btnAddFeatureRow" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i class="fa fa-plus"></i> Add Feature Bullet
+                  <button type="button" id="btnAddFeatureRow" class="modal-section-btn" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;">
+                    <i class="fa fa-plus"></i> <span>Add Feature Bullet</span>
                   </button>
                 </div>
                 
@@ -635,7 +982,7 @@
               <!-- 2. Available Sizes Manager -->
               <div style="grid-column: 1 / -1; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                 <div style="margin-bottom: 12px;">
-                  <label style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+                  <label style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; margin: 0 0 2px 0;">
                     <i class="fa fa-tags" style="color: #8b5cf6;"></i> Available Product Sizes & Configurations
                   </label>
                   <span style="font-size: 0.78rem; color: #64748b;">Click 'x' to remove a size pill, or add a new size configuration below.</span>
@@ -645,25 +992,25 @@
                   <!-- Rendered dynamically via JS -->
                 </div>
 
-                <div style="display: flex; gap: 8px; max-width: 500px;">
-                  <input type="text" id="newSizeTagInput" placeholder="Enter size (e.g. 5 cm x 3.6 m, Small, Large)..." style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.83rem; outline: none;">
-                  <button type="button" id="btnAddSizeTag" style="background: #8b5cf6; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i class="fa fa-plus"></i> Add Size Tag
+                <div class="modal-size-input-row" style="display: flex; gap: 8px; width: 100%; align-items: center;">
+                  <input type="text" id="newSizeTagInput" placeholder="Enter size (e.g. 5 cm x 3.6 m, Small)..." style="flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.84rem; outline: none; box-sizing: border-box;">
+                  <button type="button" id="btnAddSizeTag" style="background: #8b5cf6; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0; white-space: nowrap; box-sizing: border-box;">
+                    <i class="fa fa-plus"></i> <span>Add Size Tag</span>
                   </button>
                 </div>
               </div>
 
               <!-- 3. Technical Specifications Table Manager -->
               <div style="grid-column: 1 / -1; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <div>
-                    <label style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px;">
+                <div class="modal-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                  <div class="modal-section-header-text">
+                    <label class="modal-section-title" style="font-weight: 800; color: #0f172a; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; margin: 0 0 2px 0;">
                       <i class="fa fa-table" style="color: #0284c7;"></i> Technical Specifications Table
                     </label>
-                    <span style="font-size: 0.78rem; color: #64748b;">Manage structured specification rows (e.g. Material: Fiberglass, Setting Time: 3-5 mins)</span>
+                    <span class="modal-section-desc" style="font-size: 0.78rem; color: #64748b;">Manage structured specification rows (e.g. Material: Fiberglass)</span>
                   </div>
-                  <button type="button" id="btnAddSpecRow" style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i class="fa fa-plus"></i> Add Spec Row
+                  <button type="button" id="btnAddSpecRow" class="modal-section-btn" style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;">
+                    <i class="fa fa-plus"></i> <span>Add Spec Row</span>
                   </button>
                 </div>
 
@@ -701,26 +1048,26 @@
     <div class="chart-modal-content" style="max-width: 900px; max-height: 85vh; overflow-y: auto; padding: 32px; background: #ffffff; border-radius: 28px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4);">
       
       <!-- Executive Header & Practical Analytics Filters -->
-      <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+      <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 18px; margin-bottom: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
           <div>
-            <span style="background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-bottom: 6px;">Executive Intelligence</span>
-            <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin: 0;">Product Demand & Market Share</h2>
+            <span style="background: #eff6ff; color: #2563eb; padding: 4px 12px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-bottom: 4px;">Executive Intelligence</span>
+            <h2 class="demand-modal-title" style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.25;">Product Demand & Market Share</h2>
           </div>
           
-          <button type="button" id="closeDemandAnalyticsModal" onclick="window.closeDemandAnalyticsModal()" style="background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s;" title="Close modal">
+          <button type="button" id="closeDemandAnalyticsModal" onclick="window.closeDemandAnalyticsModal()" style="background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s; flex-shrink: 0; margin-left: 10px;" title="Close modal">
             <i class="fa fa-times" style="font-size: 1.1rem;"></i>
           </button>
         </div>
 
         <!-- Practical Executive Analytics Filters Bar -->
-        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 14px 16px; border-radius: 16px; border: 1px solid #e2e8f0;">
+        <div class="demand-filters-bar">
           
           <!-- Period Filter Select -->
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <i class="fa fa-calendar-alt" style="color: #3b82f6; font-size: 0.9rem;"></i>
-            <select id="demandPeriodFilter" style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 6px 12px; font-size: 0.82rem; font-weight: 700; color: #0f172a; cursor: pointer; outline: none;">
-              <option value="ytd" selected>📅 2026 Year-to-Date</option>
+          <div class="demand-filter-control">
+            <i class="fa fa-calendar-alt" style="color: #3b82f6; font-size: 0.88rem; flex-shrink: 0;"></i>
+            <select id="demandPeriodFilter" class="demand-filter-select">
+              <option value="ytd" selected>2026 Year-to-Date</option>
               <option value="today">⚡ Today (Real Time)</option>
               <option value="7days">📆 Last 7 Days</option>
               <option value="custom">📅 Custom Date Range...</option>
@@ -728,10 +1075,10 @@
           </div>
 
           <!-- Target Market Region Filter Select -->
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <i class="fa fa-globe" style="color: #8b5cf6; font-size: 0.9rem;"></i>
-            <select id="demandRegionFilter" style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 6px 12px; font-size: 0.82rem; font-weight: 700; color: #0f172a; cursor: pointer; outline: none;">
-              <option value="all" selected>🌐 Global Markets (All Regions)</option>
+          <div class="demand-filter-control">
+            <i class="fa fa-globe" style="color: #8b5cf6; font-size: 0.88rem; flex-shrink: 0;"></i>
+            <select id="demandRegionFilter" class="demand-filter-select">
+              <option value="all" selected>Global Markets (All Regions)</option>
               <option value="india">🇮🇳 India (Domestic)</option>
               <option value="usa">🇺🇸 USA & North America</option>
               <option value="uae">🇦🇪 UAE & Middle East</option>
@@ -740,24 +1087,24 @@
           </div>
 
           <!-- Custom Date Input Box (Revealed when Custom selected) -->
-          <div id="customDateRangeBox" style="display: none; align-items: center; gap: 8px;">
-            <input type="date" id="demandStartDate" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 8px; font-size: 0.8rem; font-weight: 600; color: #0f172a;">
+          <div id="customDateRangeBox" class="demand-custom-date-box" style="display: none;">
+            <input type="date" id="demandStartDate" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 8px; font-size: 0.8rem; font-weight: 600; color: #0f172a; flex: 1;">
             <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">to</span>
-            <input type="date" id="demandEndDate" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 8px; font-size: 0.8rem; font-weight: 600; color: #0f172a;">
-            <button type="button" id="btnApplyCustomDate" style="background: #2563eb; color: white; border: none; padding: 6px 16px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
+            <input type="date" id="demandEndDate" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 8px; font-size: 0.8rem; font-weight: 600; color: #0f172a; flex: 1;">
+            <button type="button" id="btnApplyCustomDate" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;">
               Apply Range
             </button>
           </div>
 
           <!-- Active Filter Summary Pill -->
-          <div id="demandFilterSummaryBadge" style="margin-top: 6px; width: 100%; font-size: 0.78rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 4px 10px; border-radius: 8px; display: inline-block;">
+          <div id="demandFilterSummaryBadge" class="demand-filter-summary">
             Active Filter: 2026 Year-to-Date | Global Markets
           </div>
         </div>
       </div>
 
       <!-- Grid: Donut + Product-Wise Ranked Pill List (Exact Match for Photo 2) -->
-      <div style="display: grid; grid-template-columns: 210px 1fr; gap: 24px; margin-bottom: 28px; align-items: center;">
+      <div class="demand-modal-grid" style="display: grid; grid-template-columns: 210px 1fr; gap: 24px; margin-bottom: 28px; align-items: center;">
         
         <!-- Left: Donut SVG Ring -->
         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -769,9 +1116,6 @@
               <circle id="modalDonutSeg2" class="donut-segment" cx="100" cy="100" r="70" fill="transparent" stroke="#ec4899" stroke-width="32" stroke-dasharray="79.2 439.8" stroke-dashoffset="-307.8" style="transition: all 0.25s ease; pointer-events: stroke; cursor: pointer;" />
               <circle id="modalDonutSeg3" class="donut-segment" cx="100" cy="100" r="70" fill="transparent" stroke="#10b981" stroke-width="32" stroke-dasharray="52.8 439.8" stroke-dashoffset="-387" style="transition: all 0.25s ease; pointer-events: stroke; cursor: pointer;" />
             </svg>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
-              <i id="modalDonutIcon" class="fa fa-chart-pie" style="font-size: 1.6rem; color: #3b82f6; transition: all 0.25s ease;"></i>
-            </div>
           </div>
 
           <div id="modalHoverInfoCard" style="margin-top: 14px; width: 100%; max-width: 210px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; text-align: center; transition: all 0.25s ease;">
@@ -787,13 +1131,21 @@
       </div>
 
       <!-- All Catalog Products Lead Breakdown Table -->
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;"><i class="fa fa-boxes" style="color: #2563eb; margin-right: 8px;"></i> All Catalog Products Lead Demand Breakdown</h3>
-          <span id="modalCatalogCountPill" style="font-size: 0.78rem; font-weight: 800; color: #2563eb; background: #eff6ff; padding: 4px 12px; border-radius: 12px;">All Catalog Items</span>
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 22px;">
+        <div class="catalog-breakdown-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px;">
+          <h3 class="catalog-breakdown-title" style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <i class="fa fa-boxes" style="color: #2563eb;"></i>
+            <span class="desktop-title">All Catalog Products Lead Demand Breakdown</span>
+            <span class="mobile-title">Catalog Products Demand</span>
+          </h3>
+          <span id="modalCatalogCountPill" style="font-size: 0.76rem; font-weight: 800; color: #2563eb; background: #eff6ff; padding: 4px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;">
+            <span class="desktop-title">26 Catalog Products</span>
+            <span class="mobile-title">26 Products</span>
+          </span>
         </div>
 
-        <div style="border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; background: #ffffff;">
+        <!-- Desktop View Table (Visible > 992px) -->
+        <div class="modal-catalog-desktop-table" style="border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; background: #ffffff; width: 100%;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
             <thead>
               <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
@@ -809,10 +1161,69 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile View List of Cards (Visible <= 992px) -->
+        <div id="modalCatalogMobileList" class="modal-catalog-mobile-list" style="display: none; flex-direction: column; gap: 8px; width: 100%;">
+          <!-- Dynamically populated for Mobile -->
+        </div>
       </div>
-    </div> <!-- /#view-crm -->
-  </div> <!-- /.main-content -->
-</div> <!-- /.admin-layout -->
+    </div>
+  </div>
+
+  <!-- Detailed Product Lead Breakdown Popup Modal (Opens when clicking any catalog item) -->
+  <div class="chart-modal" id="productLeadDetailModal" style="z-index: 1060;">
+    <div class="chart-modal-content" style="max-width: 600px; max-height: 85vh; overflow-y: auto; padding: 28px; background: #ffffff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.45);">
+      
+      <!-- Modal Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+        <div style="flex: 1; min-width: 0; padding-right: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+            <span id="leadDetailRankBadge" style="background: #dbeafe; color: #2563eb; padding: 3px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;">#1</span>
+            <span id="leadDetailCategoryBadge" style="background: #f1f5f9; color: #475569; padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">Casting Tapes</span>
+            <span id="leadDetailCodeBadge" style="background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; font-family: monospace;">PK-CAST-01</span>
+          </div>
+          <h2 id="leadDetailProductTitle" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.25;">PK Cast (Fiberglass Bandage)</h2>
+        </div>
+        
+        <button type="button" id="closeProductLeadDetailModal" onclick="window.closeProductLeadDetailModal()" style="background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s; flex-shrink: 0;" title="Close modal">
+          <i class="fa fa-times" style="font-size: 1.1rem;"></i>
+        </button>
+      </div>
+
+      <!-- Quick Metrics Summary Cards -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 12px 14px; text-align: center;">
+          <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #2563eb; letter-spacing: 0.5px; margin-bottom: 2px;">Inquiry Leads</div>
+          <div id="leadDetailCount" style="font-size: 1.4rem; font-weight: 900; color: #1d4ed8;">4 Leads</div>
+        </div>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 12px 14px; text-align: center;">
+          <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #16a34a; letter-spacing: 0.5px; margin-bottom: 2px;">Demand Share</div>
+          <div id="leadDetailShare" style="font-size: 1.4rem; font-weight: 900; color: #15803d;">50%</div>
+        </div>
+      </div>
+
+      <!-- Leads Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0;">
+          <i class="fa fa-users" style="color: #3b82f6; margin-right: 6px;"></i> Buyer Inquiries for this Product
+        </h4>
+        <span id="leadDetailInquiryCount" style="font-size: 0.75rem; font-weight: 800; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 8px;">4 Records</span>
+      </div>
+
+      <!-- List of Leads Container -->
+      <div id="leadDetailInquiriesList" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+        <!-- Dynamically injected by showProductLeadDetailModal() -->
+      </div>
+
+      <!-- Footer Buttons -->
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+        <button type="button" onclick="window.closeProductLeadDetailModal()" style="background: #f1f5f9; color: #475569; border: none; padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Instant RFQ Pricing & Freight Estimator Modal -->
   <div class="chart-modal" id="quickQuoteModal">
@@ -986,7 +1397,7 @@
               <i class="fa fa-tag"></i> 1. Certificate Identity & Visual Badge
             </h4>
             
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
+            <div class="cert-form-grid-2col" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
               <div>
                 <label style="display: block; font-weight: 700; color: #334155; font-size: 0.82rem; margin-bottom: 6px;">Certificate Title * (e.g. ISO 13485 : 2016, CDSCO Registered)</label>
                 <input type="text" id="certFormTitle" required placeholder="e.g. ISO 13485 : 2016" style="width: 100%; padding: 11px 14px; border-radius: 12px; border: 1.5px solid #cbd5e1; font-size: 0.92rem; font-weight: 700; color: #0f172a; outline: none; background: #fff;">
@@ -1022,7 +1433,7 @@
               <i class="fa fa-university"></i> 2. Governing Standards & Authorities
             </h4>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="cert-form-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               <div>
                 <label style="display: block; font-weight: 700; color: #334155; font-size: 0.82rem; margin-bottom: 6px;">Governing Standard</label>
                 <input type="text" id="certFormStandard" placeholder="e.g. ISO 13485:2016 / MDR 2017" style="width: 100%; padding: 11px 14px; border-radius: 12px; border: 1.5px solid #cbd5e1; font-size: 0.9rem; color: #0f172a; outline: none; background: #fff;">
@@ -1118,12 +1529,95 @@
     </div>
   </div>
 
-  <script src="assets/js/admin-auth.js?v=9000"></script>
-  <script src="assets/js/admin-core.js?v=42000"></script>
-  <script src="assets/js/admin-crm.js?v=42000"></script>
+  <!-- Add/Edit FAQ Modal -->
+  <div class="chart-modal" id="adminFaqModal">
+    <div class="chart-modal-content" style="max-width: 680px; max-height: 90vh; overflow-y: auto; padding: 36px; background: #F8FAFC; border-radius: 28px;">
+      <i class="fa fa-times chart-modal-close" onclick="window.closeFaqModal()" style="top: 20px; right: 25px; color: #64748B; cursor: pointer; font-size: 1.25rem;"></i>
+      
+      <div style="border-bottom: 1.5px solid #E2E8F0; padding-bottom: 16px; margin-bottom: 24px;">
+        <h2 style="color: #0f172a; margin: 0; font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 10px;" id="adminFaqModalTitle">
+          <i class="fa fa-question-circle" style="color: #014E9E;"></i> Add FAQ Question
+        </h2>
+        <p style="color: #64748B; font-size: 0.88rem; margin: 4px 0 0 0;">Manage questions and answers displayed in the FAQ Desk on the About Us page.</p>
+      </div>
+
+      <form id="adminFaqForm">
+        <input type="hidden" id="faqModalId">
+
+        <div style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px;">
+          
+          <div>
+            <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Question *</label>
+            <input type="text" id="faqModalQuestion" required placeholder="e.g. How long does PK Cast take to set and bear weight?" style="width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.92rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff;">
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Answer (Supports rich text & HTML) *</label>
+            <textarea id="faqModalAnswer" required rows="5" placeholder="Detailed medical and product answer..." style="width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.9rem; line-height: 1.5; color: #0f172a; outline: none; background: #ffffff; resize: vertical;"></textarea>
+          </div>
+
+          <div class="faq-form-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Category Tag</label>
+              <input type="text" id="faqModalCategory" placeholder="e.g. Casting & Bandages" style="width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.9rem; color: #0f172a; outline: none; background: #ffffff;">
+            </div>
+
+            <div>
+              <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Display Order</label>
+              <input type="number" id="faqModalOrder" min="1" max="99" value="1" style="width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.9rem; color: #0f172a; outline: none; background: #ffffff;">
+            </div>
+          </div>
+
+          <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;">
+            <input type="checkbox" id="faqModalEnabled" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: #059669;">
+            <label for="faqModalEnabled" style="font-weight: 800; color: #065f46; font-size: 0.92rem; cursor: pointer; margin: 0;">
+              Publish and display this Question on Website (About Us Page)
+            </label>
+          </div>
+
+        </div>
+
+        <div style="border-top: 1.5px solid #e2e8f0; padding-top: 20px; display: flex; justify-content: flex-end; gap: 14px;">
+          <button type="button" onclick="window.closeFaqModal()" style="background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; padding: 12px 24px; border-radius: 14px; font-weight: 700; font-size: 0.9rem; cursor: pointer;">Cancel</button>
+          <button type="submit" style="background: linear-gradient(135deg, #014E9E 0%, #0284c7 100%); color: #ffffff; border: none; padding: 12px 32px; border-radius: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 16px rgba(1, 78, 158, 0.35); display: flex; align-items: center; gap: 8px;">
+            <i class="fa fa-check"></i> Save FAQ Question
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Universal Custom Delete Confirmation Modal -->
+  <div class="chart-modal" id="adminConfirmDeleteModal" style="z-index: 99999999 !important;">
+    <div class="chart-modal-content" style="max-width: 440px; padding: 32px 28px; background: #ffffff; border-radius: 28px; box-shadow: 0 25px 60px -10px rgba(15, 23, 42, 0.45); text-align: center; border: 1.5px solid #fecaca; margin: auto;">
+      <div style="width: 68px; height: 68px; border-radius: 50%; background: #fef2f2; border: 2px solid #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.85rem; margin: 0 auto 16px auto; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.15);">
+        <i class="fa fa-trash-o"></i>
+      </div>
+      
+      <h3 style="margin: 0 0 8px 0; color: #0f172a; font-size: 1.3rem; font-weight: 800;" id="deleteConfirmTitle">Confirm Deletion</h3>
+      <p style="margin: 0 0 24px 0; color: #64748b; font-size: 0.88rem; line-height: 1.5;" id="deleteConfirmMessage">Are you sure you want to permanently delete this item? This action cannot be undone.</p>
+      
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button type="button" id="btnCancelCustomDelete" style="flex: 1; padding: 12px 20px; border-radius: 14px; background: #f1f5f9; border: 1.5px solid #cbd5e1; color: #475569; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;">
+          Cancel
+        </button>
+        <button type="button" id="btnConfirmCustomDelete" style="flex: 1; padding: 12px 20px; border-radius: 14px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none; color: #ffffff; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35); transition: all 0.2s;">
+          <i class="fa fa-trash"></i> Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/admin-auth.js?v=14000"></script>
+  <script src="assets/js/admin-core.js?v=14000"></script>
+  <script src="assets/js/admin-crm.js?v=14000"></script>
   <script src="assets/js/products-data.js?v=42000"></script>
-  <script src="assets/js/admin-catalog.js?v=42000"></script>
-  <script src="assets/js/certificates-data.js?v=42000"></script>
-  <script src="assets/js/admin-certificates.js?v=42000"></script>
+  <script src="assets/js/admin-catalog.js?v=14000"></script>
+  <script src="assets/js/certificates-data.js?v=14000"></script>
+  <script src="assets/js/admin-certificates.js?v=14000"></script>
+  <script src="assets/js/faq-data.js?v=14000"></script>
+  <script src="assets/js/admin-faq.js?v=14000"></script>
+  <script src="assets/js/site-settings.js?v=14000"></script>
+  <script src="assets/js/admin-contact.js?v=14000"></script>
 </body>
 </html>

@@ -24,7 +24,7 @@
   <title>About Us & Certifications | PlastoKast™ Orthopedic</title>
   <meta name="description" content="Learn about PlastoKast's state-of-the-art GIDC manufacturing facility, international quality standards (ISO, CE, FDA), and download product instructions for use (IFU).">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="assets/css/styles.css?v=823">
+  <link rel="stylesheet" href="assets/css/styles.css?v=14000">
 </head>
 <body>
   <!-- Visible Dynamic Blue Background & Glass Nodes Layer -->
@@ -92,8 +92,18 @@
     </div>
   </section>
 
+  <!-- About Us Quick Navigation Sub-Bar (Floating Glass Capsule) -->
+  <div class="about-subnav-bar">
+    <div class="about-subnav-links">
+      <a href="#who-we-are" class="about-subnav-item active"><i class="fa fa-info-circle"></i> Who We Are</a>
+      <a href="#certificates" class="about-subnav-item"><i class="fa fa-certificate"></i> Quality Certificates</a>
+      <a href="#faq" class="about-subnav-item"><i class="fa fa-question-circle"></i> FAQ Desk</a>
+      <a href="#about-contact" class="about-subnav-item"><i class="fa fa-building-o"></i> Facility & Office</a>
+    </div>
+  </div>
+
   <!-- About Us Hero Section: Text Left, Illustration Right -->
-  <section class="about-page-hero">
+  <section class="about-page-hero" id="who-we-are">
     <div class="container">
       <div class="about-page-grid">
         
@@ -217,7 +227,7 @@
 
 
   <!-- FAQ Accordions -->
-  <section class="section-padding" style="background-color: var(--bg-card); border-top: 1px solid var(--border-light); transition: background-color var(--transition-normal);">
+  <section class="section-padding" id="faq" style="background-color: var(--bg-card); border-top: 1px solid var(--border-light); transition: background-color var(--transition-normal);">
     <div class="container">
       <div class="text-center" style="max-width: 700px; margin: 0 auto 36px auto;">
         <span class="hero-badge">Common Questions</span>
@@ -226,7 +236,7 @@
       </div>
 
       <div class="faq-section">
-        <div class="faq-list">
+        <div class="faq-list" id="aboutFaqList">
           
           <div class="faq-item">
             <button class="faq-question">
@@ -359,7 +369,7 @@
         </div>
 
         <!-- Column 4: Registered Office & Factory -->
-        <div class="footer-widget">
+        <div class="footer-widget" id="about-contact">
           <h4 class="footer-title">Office & Plant</h4>
           <div class="footer-contact-list">
             <div class="footer-contact-item">
@@ -406,47 +416,131 @@
   </div>
 
   <script src="assets/js/products-data.js?v=135"></script>
-  <script src="assets/js/certificates-data.js?v=823"></script>
+  <script src="assets/js/certificates-data.js?v=14000"></script>
+  <script src="assets/js/faq-data.js?v=14000"></script>
+  <script src="assets/js/site-settings.js?v=14000"></script>
   <script src="assets/js/i18n.js?v=200"></script>
-  <script src="assets/js/main.js?v=823"></script>
-  <script src="assets/js/inquiry-modal.js?v=700"></script>
+  <script src="assets/js/main.js?v=14000"></script>
+  <script src="assets/js/inquiry-modal.js?v=14000"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const faqItems = document.querySelectorAll(".faq-item");
+      // 1. Dynamic FAQ Accordion Rendering & Interaction
+      function renderAboutFaqs() {
+        const faqContainer = document.getElementById("aboutFaqList");
+        if (!faqContainer) return;
+
+        let faqs = [];
+        if (typeof getFaqsData === "function") {
+          faqs = getFaqsData();
+        }
+        if (!faqs || faqs.length === 0) {
+          if (typeof DEFAULT_FAQS !== "undefined") {
+            faqs = DEFAULT_FAQS;
+          }
+        }
+
+        const activeFaqs = (faqs || []).filter(f => f && f.enabled !== false);
+        const finalFaqs = activeFaqs.length > 0 ? activeFaqs : (typeof DEFAULT_FAQS !== "undefined" ? DEFAULT_FAQS : []);
+
+        if (finalFaqs.length > 0) {
+          faqContainer.innerHTML = finalFaqs.map((faq, idx) => `
+            <div class="faq-item" data-id="${faq.id}">
+              <button class="faq-question" type="button">
+                ${faq.question}
+                <i class="fa fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  ${faq.answer}
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        const faqItems = faqContainer.querySelectorAll(".faq-item");
+        faqItems.forEach(item => {
+          const questionBtn = item.querySelector(".faq-question");
+          const answer = item.querySelector(".faq-answer");
+
+          if (questionBtn && answer) {
+            questionBtn.addEventListener("click", () => {
+              const isActive = item.classList.contains("active");
+
+              // Close all FAQ items
+              faqItems.forEach(i => {
+                i.classList.remove("active");
+                const ans = i.querySelector(".faq-answer");
+                if (ans) ans.style.maxHeight = "0";
+              });
+
+              // Toggle clicked item
+              if (!isActive) {
+                item.classList.add("active");
+                answer.style.maxHeight = answer.scrollHeight + "px";
+              }
+            });
+          }
+        });
+      }
+
+      renderAboutFaqs();
+      window.addEventListener("plastokast_faqs_updated", renderAboutFaqs);
+      window.addEventListener("storage", (e) => {
+        if (e.key === "plastokast_faqs_data") renderAboutFaqs();
+      });
+
+      // 2. Scroll to top button display
       const scrollTopBtn = document.getElementById("scroll-top-btn");
+      if (scrollTopBtn) {
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 400) {
+            scrollTopBtn.classList.add("active");
+          } else {
+            scrollTopBtn.classList.remove("active");
+          }
+        });
+      }
 
-      faqItems.forEach(item => {
-        const questionBtn = item.querySelector(".faq-question");
-        const answer = item.querySelector(".faq-answer");
-
-        questionBtn.addEventListener("click", () => {
-          const isActive = item.classList.contains("active");
-
-          // Close all FAQ items
-          faqItems.forEach(i => {
-            i.classList.remove("active");
-            i.querySelector(".faq-answer").style.maxHeight = "0";
-          });
-
-          // Toggle current
-          if (!isActive) {
-            item.classList.add("active");
-            answer.style.maxHeight = answer.scrollHeight + "px";
+      // 3. About Sub-Nav Smooth Scroll & Scrollspy
+      const subnavLinks = document.querySelectorAll(".about-subnav-item");
+      subnavLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+          const targetId = link.getAttribute("href");
+          if (targetId && targetId.startsWith("#")) {
+            e.preventDefault();
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+              const headerOffset = 120;
+              const elPos = targetEl.getBoundingClientRect().top;
+              const offsetPos = elPos + window.pageYOffset - headerOffset;
+              window.scrollTo({ top: offsetPos, behavior: "smooth" });
+              subnavLinks.forEach(l => l.classList.remove("active"));
+              link.classList.add("active");
+            }
           }
         });
       });
 
-      // Scroll to top displaying
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 400) {
-          scrollTopBtn.classList.add("active");
-        } else {
-          scrollTopBtn.classList.remove("active");
-        }
-      });
+      // 4. Handle initial hash in URL (e.g. about.html#certificates or about.html#faq)
+      if (window.location.hash) {
+        setTimeout(() => {
+          const targetEl = document.querySelector(window.location.hash);
+          if (targetEl) {
+            const headerOffset = 120;
+            const elPos = targetEl.getBoundingClientRect().top;
+            const offsetPos = elPos + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPos, behavior: "smooth" });
+            const matchingLink = document.querySelector(`.about-subnav-item[href="${window.location.hash}"]`);
+            if (matchingLink) {
+              subnavLinks.forEach(l => l.classList.remove("active"));
+              matchingLink.classList.add("active");
+            }
+          }
+        }, 150);
+      }
 
-      // Certificate Lightbox Handler
-      const certCards = document.querySelectorAll(".cert-card");
+      // 5. Certificate Lightbox Modal & Tab Switching
       const certLightbox = document.getElementById("cert-lightbox");
       const certLightboxClose = document.getElementById("cert-lightbox-close");
       const certLightboxBody = document.getElementById("cert-lightbox-body");
@@ -454,36 +548,42 @@
       window.switchCertTab = function(tabName) {
         const tabDetails = document.getElementById("certTabDetails");
         const tabPhoto = document.getElementById("certTabPhoto");
+        const btnDetails = document.getElementById("btnTabDetails");
+        const btnPhoto = document.getElementById("btnTabPhoto");
 
         if (tabName === "details") {
           if (tabDetails) tabDetails.classList.add("active");
           if (tabPhoto) tabPhoto.classList.remove("active");
+          if (btnDetails) btnDetails.classList.add("active");
+          if (btnPhoto) btnPhoto.classList.remove("active");
         } else if (tabName === "photo") {
           if (tabDetails) tabDetails.classList.remove("active");
           if (tabPhoto) tabPhoto.classList.add("active");
+          if (btnDetails) btnDetails.classList.remove("active");
+          if (btnPhoto) btnPhoto.classList.add("active");
         }
       };
 
       function openCertLightbox(card) {
-        const title = card.getAttribute("data-cert-title");
-        const subtitle = card.getAttribute("data-cert-subtitle");
-        const standard = card.getAttribute("data-cert-standard");
-        const status = card.getAttribute("data-cert-status");
-        const reg = card.getAttribute("data-cert-reg");
-        const issued = card.getAttribute("data-cert-issued");
-        const expiry = card.getAttribute("data-cert-expiry");
-        const scope = card.getAttribute("data-cert-scope");
-        const authority = card.getAttribute("data-cert-authority");
-        const accreditation = card.getAttribute("data-cert-accreditation");
-        const org = card.getAttribute("data-cert-org");
-        const address = card.getAttribute("data-cert-address");
-        const image = card.getAttribute("data-cert-image");
+        const title = card.getAttribute("data-cert-title") || "";
+        const subtitle = card.getAttribute("data-cert-subtitle") || "";
+        const standard = card.getAttribute("data-cert-standard") || "";
+        const status = card.getAttribute("data-cert-status") || "";
+        const reg = card.getAttribute("data-cert-reg") || "";
+        const issued = card.getAttribute("data-cert-issued") || "";
+        const expiry = card.getAttribute("data-cert-expiry") || "";
+        const scope = card.getAttribute("data-cert-scope") || "";
+        const authority = card.getAttribute("data-cert-authority") || "";
+        const accreditation = card.getAttribute("data-cert-accreditation") || "";
+        const org = card.getAttribute("data-cert-org") || "PLASTOKAST";
+        const address = card.getAttribute("data-cert-address") || "";
+        const image = card.getAttribute("data-cert-image") || "";
         const icon = card.getAttribute("data-cert-icon") || "fa-certificate";
 
         certLightboxBody.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-            <div style="display: flex; align-items: center; gap: 16px; width: 100%; margin-bottom: 20px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
-              <div class="cert-badge-icon" style="width: 54px; height: 54px; font-size: 1.5rem; flex-shrink: 0; margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 16px; width: 100%; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 14px;">
+              <div class="cert-badge-icon" style="width: 52px; height: 52px; font-size: 1.4rem; flex-shrink: 0; margin-bottom: 0;">
                 <i class="fa ${icon}"></i>
               </div>
               <div style="text-align: left;">
@@ -492,7 +592,19 @@
               </div>
             </div>
 
-            <!-- View 1: Details -->
+            <!-- Tab Buttons -->
+            <div class="cert-modal-tabs">
+              <button type="button" class="cert-tab-btn active" id="btnTabDetails" onclick="switchCertTab('details')">
+                <i class="fa fa-list-alt"></i> Compliance Details
+              </button>
+              ${image ? `
+              <button type="button" class="cert-tab-btn" id="btnTabPhoto" onclick="switchCertTab('photo')">
+                <i class="fa fa-file-image-o"></i> Certificate Scan
+              </button>
+              ` : ''}
+            </div>
+
+            <!-- Tab View 1: Compliance Details -->
             <div class="cert-tab-content active" id="certTabDetails">
               <table class="specs-table" style="font-size: 0.86rem; width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 16px;">
                 <tbody>
@@ -534,31 +646,23 @@
                   </tr>
                   ${issued ? `
                   <tr>
-                    <th style="padding: 10px 14px; background-color: var(--primary-light); border-bottom: 1px solid var(--border-light); font-weight: 700;">Issue Date</th>
-                    <td style="padding: 10px 14px; border-bottom: 1px solid var(--border-light); color: var(--text-dark);">${issued}</td>
-                  </tr>
-                  ` : ''}
-                  ${expiry ? `
-                  <tr>
-                    <th style="padding: 10px 14px; background-color: var(--primary-light); font-weight: 700;">Valid Until</th>
-                    <td style="padding: 10px 14px; font-weight: 700; color: #16a34a;">${expiry}</td>
-                  </tr>
-                  ` : ''}
-                  ${status ? `
-                  <tr>
-                    <th style="padding: 10px 14px; background-color: var(--primary-light); font-weight: 700;">Compliance Status</th>
-                    <td style="padding: 10px 14px; font-weight: 700; color: #16a34a;">${status}</td>
+                    <th style="padding: 10px 14px; background-color: var(--primary-light); font-weight: 700;">Issue Date</th>
+                    <td style="padding: 10px 14px; color: var(--text-dark);">${issued}</td>
                   </tr>
                   ` : ''}
                 </tbody>
               </table>
 
               ${image ? `
-              <div style="display: flex; align-items: center; justify-content: center; margin-top: 18px;">
-                <button type="button" class="btn btn-primary" onclick="switchCertTab('photo')" style="padding: 11px 28px; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; border-radius: 50px;">
-                  <i class="fa fa-file-image-o"></i> View Certificate Photo
+              <div style="display: flex; align-items: center; justify-content: center; margin-top: 14px;">
+                <button type="button" class="btn btn-primary" onclick="switchCertTab('photo')" style="padding: 10px 24px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; border-radius: 50px;">
+                  <i class="fa fa-file-image-o"></i> View Certificate Scan
                 </button>
-               <!-- View 2: Photo Scan View -->
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Tab View 2: Photo Scan View -->
             ${image ? `
             <div class="cert-tab-content" id="certTabPhoto">
               <div class="cert-photo-view-box">
@@ -567,10 +671,13 @@
                     <img src="${image}" alt="${title} Certificate Photo" class="cert-photo-img">
                   </a>
                 </div>
-                <div style="display: flex; gap: 14px; align-items: center; justify-content: center; margin-top: 10px;">
-                  <button type="button" class="btn btn-primary" onclick="switchCertTab('details')" style="padding: 10px 26px; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; border-radius: 50px;">
+                <div style="display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 10px;">
+                  <button type="button" class="btn btn-secondary" onclick="switchCertTab('details')" style="padding: 9px 22px; font-size: 0.86rem; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; border-radius: 50px;">
                     <i class="fa fa-arrow-left"></i> Back to Details
                   </button>
+                  <a href="${image}" target="_blank" class="btn btn-primary" style="padding: 9px 22px; font-size: 0.86rem; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; border-radius: 50px;">
+                    <i class="fa fa-external-link"></i> Full High-Res
+                  </a>
                 </div>
               </div>
             </div>
@@ -629,7 +736,7 @@
               <h4 style="font-size: 1.15rem; font-weight: 700;">${cert.title}</h4>
               <p style="font-size: 0.85rem; color: var(--text-muted);">${cert.shortDesc || cert.subtitle || ''}</p>
               <span style="font-size: 0.75rem; color: var(--primary); font-weight: 700; margin-top: auto; display: flex; align-items: center; gap: 4px;">
-                <i class="fa fa-file-text-o"></i> View Details & Photo
+                <i class="fa fa-file-text-o"></i> View Details & Scan
               </span>
             </div>
           `).join('');

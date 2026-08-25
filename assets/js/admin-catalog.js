@@ -120,7 +120,7 @@ function initAdminCatalog() {
       const isSelected = selectedProductIds.has(prod.id);
       
       const card = document.createElement('div');
-      card.className = 'admin-card';
+      card.className = 'admin-card catalog-product-card';
       card.style.padding = '0';
       card.style.overflow = 'hidden';
       card.style.cursor = 'pointer';
@@ -129,7 +129,7 @@ function initAdminCatalog() {
       card.style.border = isSelected ? '2px solid #ef4444' : '1px solid #e2e8f0';
       card.style.borderRadius = '16px';
       card.style.boxShadow = isSelected ? '0 4px 15px rgba(239, 68, 68, 0.15)' : '0 2px 8px rgba(0,0,0,0.02)';
-      card.style.maxWidth = '220px';
+      card.style.maxWidth = '100%';
       card.style.width = '100%';
       
       card.addEventListener('mouseenter', () => {
@@ -165,17 +165,17 @@ function initAdminCatalog() {
 
       // Checkbox visible ONLY when in Delete Mode
       const checkboxHTML = isDeleteMode ? `
-        <input type="checkbox" class="product-checkbox" data-id="${prod.id}" ${isSelected ? 'checked' : ''} style="position: absolute; top: 10px; left: 10px; width: 20px; height: 20px; cursor: pointer; accent-color: #ef4444; z-index: 10;">
+        <input type="checkbox" class="product-checkbox" data-id="${prod.id}" ${isSelected ? 'checked' : ''} style="position: absolute; top: 8px; left: 8px; width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444; z-index: 10;">
       ` : '';
 
       card.innerHTML = `
-        <div style="height: 140px; padding: 12px; background-color: #ffffff; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; box-sizing: border-box; position: relative;">
+        <div class="catalog-card-image-box" style="height: 140px; padding: 10px; background-color: #ffffff; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; box-sizing: border-box; position: relative;">
           ${checkboxHTML}
-          <img src="${imageSrc}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; display: block;" alt="${prod.title}">
+          <img src="${imageSrc}" class="catalog-card-img" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; display: block;" alt="${prod.title}">
         </div>
-        <div style="padding: 12px 14px;">
-          <h3 style="font-size: 0.95rem; color: #0f172a; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prod.title}">${prod.title}</h3>
-          <div style="font-family: monospace; font-size: 0.78rem; color: #64748b; font-weight: 600;">${prod.code}</div>
+        <div class="catalog-card-body" style="padding: 10px 12px;">
+          <h3 class="catalog-card-title" style="font-size: 0.9rem; color: #0f172a; font-weight: 700; margin: 0 0 4px 0; line-height: 1.3;" title="${prod.title}">${prod.title}</h3>
+          <div class="catalog-card-code" style="font-family: monospace; font-size: 0.75rem; color: #64748b; font-weight: 600;">${prod.code}</div>
         </div>
       `;
       
@@ -409,11 +409,12 @@ function initAdminCatalog() {
 
     featuresState.forEach((feat, idx) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+      row.className = 'feature-editor-row';
+      row.style.cssText = 'display: flex; gap: 8px; align-items: center; width: 100%; box-sizing: border-box;';
       row.innerHTML = `
-        <span style="color: #2563eb; font-size: 0.9rem;"><i class="fa fa-check-circle"></i></span>
-        <input type="text" class="feature-item-input" data-idx="${idx}" value="${(feat || '').replace(/"/g, '&quot;')}" placeholder="Feature detail..." style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; color: #0f172a; outline: none;">
-        <button type="button" class="btn-remove-feature" data-idx="${idx}" style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 8px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer;"><i class="fa fa-trash"></i></button>
+        <span style="color: #2563eb; font-size: 0.9rem; flex-shrink: 0;"><i class="fa fa-check-circle"></i></span>
+        <input type="text" class="feature-item-input" data-idx="${idx}" value="${(feat || '').replace(/"/g, '&quot;')}" placeholder="Feature detail..." style="flex: 1; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.84rem; color: #0f172a; outline: none; box-sizing: border-box;">
+        <button type="button" class="btn-remove-feature" data-idx="${idx}" style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 9px 10px; border-radius: 10px; font-weight: 700; font-size: 0.78rem; cursor: pointer; flex-shrink: 0;"><i class="fa fa-trash"></i></button>
       `;
       container.appendChild(row);
     });
@@ -517,12 +518,13 @@ function initAdminCatalog() {
 
     specsState.forEach((spec, idx) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+      row.className = 'spec-editor-row';
+      row.style.cssText = 'display: flex; gap: 8px; align-items: center; width: 100%; box-sizing: border-box;';
       row.innerHTML = `
-        <input type="text" class="spec-key-input" data-idx="${idx}" value="${(spec.key || '').replace(/"/g, '&quot;')}" placeholder="Spec Name (e.g. Material)" style="width: 35%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.83rem; font-weight: 700; color: #0f172a; outline: none;">
-        <span style="color: #94a3b8; font-weight: 700;">:</span>
-        <input type="text" class="spec-val-input" data-idx="${idx}" value="${(spec.val || '').replace(/"/g, '&quot;')}" placeholder="Spec Value (e.g. Fiberglass Fabric)" style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.83rem; color: #0f172a; outline: none;">
-        <button type="button" class="btn-remove-spec" data-idx="${idx}" style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 8px 10px; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer;"><i class="fa fa-trash"></i></button>
+        <input type="text" class="spec-key-input" data-idx="${idx}" value="${(spec.key || '').replace(/"/g, '&quot;')}" placeholder="Spec Name (e.g. Material)" style="flex: 1; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.84rem; font-weight: 700; color: #0f172a; outline: none; box-sizing: border-box;">
+        <span style="color: #94a3b8; font-weight: 700; flex-shrink: 0;">:</span>
+        <input type="text" class="spec-val-input" data-idx="${idx}" value="${(spec.val || '').replace(/"/g, '&quot;')}" placeholder="Spec Value (e.g. Fiberglass Fabric)" style="flex: 1.2; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.84rem; color: #0f172a; outline: none; box-sizing: border-box;">
+        <button type="button" class="btn-remove-spec" data-idx="${idx}" style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 9px 10px; border-radius: 10px; font-weight: 700; font-size: 0.78rem; cursor: pointer; flex-shrink: 0;"><i class="fa fa-trash"></i></button>
       `;
       container.appendChild(row);
     });
@@ -822,6 +824,7 @@ function initAdminCatalog() {
     btnToggleDeleteMode.addEventListener('click', () => {
       isDeleteMode = true;
       btnToggleDeleteMode.style.display = 'none';
+      if (btnAddNewProduct) btnAddNewProduct.style.display = 'none';
       if (deleteModeControls) deleteModeControls.style.display = 'flex';
       renderCatalog();
     });
@@ -834,6 +837,7 @@ function initAdminCatalog() {
       selectedProductIds.clear();
       if (deleteModeControls) deleteModeControls.style.display = 'none';
       if (btnToggleDeleteMode) btnToggleDeleteMode.style.display = 'flex';
+      if (btnAddNewProduct) btnAddNewProduct.style.display = 'flex';
       renderCatalog();
     });
   }
@@ -844,17 +848,27 @@ function initAdminCatalog() {
       const count = selectedProductIds.size;
       if (count === 0) return;
       
-      const confirmDelete = confirm(`Are you sure you want to permanently delete ${count} selected product(s)?`);
-      if (confirmDelete) {
+      const doDelete = () => {
         catalogItems = catalogItems.filter(p => !selectedProductIds.has(p.id));
         selectedProductIds.clear();
         isDeleteMode = false;
         if (deleteModeControls) deleteModeControls.style.display = 'none';
         if (btnToggleDeleteMode) btnToggleDeleteMode.style.display = 'flex';
+        if (btnAddNewProduct) btnAddNewProduct.style.display = 'flex';
         
         localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
         updateMetrics();
         renderCatalog();
+      };
+
+      if (typeof window.confirmCustomDelete === "function") {
+        window.confirmCustomDelete({
+          title: "Delete Selected Products?",
+          message: `Are you sure you want to permanently delete <strong>${count} selected product(s)</strong> from the medical catalog?`,
+          onConfirm: doDelete
+        });
+      } else {
+        if (confirm(`Delete ${count} products?`)) doDelete();
       }
     });
   }
@@ -867,14 +881,24 @@ function initAdminCatalog() {
       const prod = catalogItems.find(p => p.id === currentEditProductId);
       const prodName = prod ? prod.title : 'this product';
       
-      const confirmDelete = confirm(`Are you sure you want to delete "${prodName}"?`);
-      if (confirmDelete) {
+      const doDelete = () => {
         catalogItems = catalogItems.filter(p => p.id !== currentEditProductId);
         selectedProductIds.delete(currentEditProductId);
         localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
-        productModal.classList.remove('show');
+        productModal.classList.remove('show', 'active');
+        productModal.style.display = 'none';
         updateMetrics();
         renderCatalog();
+      };
+
+      if (typeof window.confirmCustomDelete === "function") {
+        window.confirmCustomDelete({
+          title: "Delete Product?",
+          message: `Are you sure you want to permanently delete <strong>"${prodName}"</strong> from the catalog?`,
+          onConfirm: doDelete
+        });
+      } else {
+        if (confirm(`Delete "${prodName}"?`)) doDelete();
       }
     });
   }

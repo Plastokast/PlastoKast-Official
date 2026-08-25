@@ -229,9 +229,20 @@ function initAdminCertificates() {
     const cert = certs.find(c => c.id === id);
     if (!cert) return;
 
-    if (confirm(`Are you sure you want to delete certificate "${cert.title}"? This will immediately remove it from the About Us Quality Standards section.`)) {
-      deleteCertificate(id);
-      renderCertificatesTable();
+    if (typeof window.confirmCustomDelete === "function") {
+      window.confirmCustomDelete({
+        title: "Delete Quality Certificate?",
+        message: `Are you sure you want to delete certificate <strong>"${cert.title}"</strong>? This will immediately remove it from the About Us Quality Standards section.`,
+        onConfirm: () => {
+          deleteCertificate(id);
+          renderCertificatesTable();
+        }
+      });
+    } else {
+      if (confirm(`Delete certificate "${cert.title}"?`)) {
+        deleteCertificate(id);
+        renderCertificatesTable();
+      }
     }
   };
 

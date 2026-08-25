@@ -94,33 +94,39 @@ document.addEventListener('DOMContentLoaded', () => {
     let targetMouseX = 0;
 
     const resize = () => {
-      width = container.clientWidth;
-      height = container.clientHeight;
+      const isMobile = window.innerWidth <= 900;
+      width = isMobile ? window.innerWidth : (container ? container.clientWidth : window.innerWidth);
+      height = isMobile ? window.innerHeight : (container ? container.clientHeight : window.innerHeight);
       canvas.width = width;
       canvas.height = height;
     };
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', resize);
     resize();
 
-    // Mouse parallax tracking
-    container.addEventListener('mousemove', (e) => {
-      const rect = container.getBoundingClientRect();
-      targetMouseX = ((e.clientX - rect.left) / width - 0.5) * 0.4;
-    });
-    container.addEventListener('mouseleave', () => {
-      targetMouseX = 0;
-    });
+    // Container-scoped mouse hover parallax tracking (interacts when cursor is on the design)
+    if (container) {
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        targetMouseX = ((e.clientX - rect.left) / (width || 1) - 0.5) * 0.4;
+      });
+      container.addEventListener('mouseleave', () => {
+        targetMouseX = 0;
+      });
+    }
 
-    // Ambient floating particles
+    // Ambient rising bubbles / particles
     const particles = [];
-    const numParticles = 30;
+    const numParticles = 45;
     for (let i = 0; i < numParticles; i++) {
       particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 2.2 + 1,
-        vy: Math.random() * 0.4 + 0.1,
-        alpha: Math.random() * 0.5 + 0.2
+        x: Math.random() * (width || 500),
+        y: Math.random() * (height || 800),
+        r: Math.random() * 4.5 + 1.8,
+        vy: Math.random() * 0.7 + 0.25,
+        vx: (Math.random() - 0.5) * 0.2,
+        alpha: Math.random() * 0.5 + 0.25,
+        color: Math.random() > 0.45 ? '#0284c7' : '#2563eb'
       });
     }
 
@@ -129,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFrame() {
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse interpolation
+      const isMobile = window.innerWidth <= 900;
+
+      // Smooth mouse interpolation (desktop only)
       mouseX += (targetMouseX - mouseX) * 0.05;
 
       // 1. Draw Tech Grid Background (Light Slate)
@@ -149,117 +157,139 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.stroke();
       }
 
-      // 2. Draw Floating Dust Particles (Medical Blue)
+      // 2. Draw Floating Bubbles Rising Upwards
       particles.forEach(p => {
         p.y -= p.vy;
-        if (p.y < 0) p.y = height;
+        p.x += p.vx;
+
+        // Wrap around top to bottom
+        if (p.y < -20) {
+          p.y = height + 20;
+          p.x = Math.random() * width;
+        }
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
         
+        ctx.save();
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(37, 99, 235, ${p.alpha * 0.35})`;
+        
+        if (isMobile) {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.color;
+          ctx.fillStyle = p.color === '#0284c7'
+            ? `rgba(2, 132, 199, ${p.alpha * 0.7})`
+            : `rgba(37, 99, 235, ${p.alpha * 0.6})`;
+        } else {
+          ctx.fillStyle = `rgba(37, 99, 235, ${p.alpha * 0.35})`;
+        }
         ctx.fill();
+        ctx.restore();
       });
 
-      // 3. Draw 3D Double Helix
-      const numNodes = 24;
-      const spacing = height / (numNodes + 1);
-      const amplitude = width * 0.22;
-      const centerX = width / 2 + mouseX * width;
+      // 3. Draw 3D Double Helix (Desktop Only inside left box)
+      if (!isMobile) {
+        const numNodes = 24;
+        const spacing = height / (numNodes + 1);
+        const amplitude = width * 0.22;
+        const centerX = width / 2 + mouseX * width;
 
-      const strand1Points = [];
-      const strand2Points = [];
+        const strand1Points = [];
+        const strand2Points = [];
 
-      for (let i = 0; i < numNodes; i++) {
-        const y = spacing * (i + 1);
+        for (let i = 0; i < numNodes; i++) {
+          const y = spacing * (i + 1);
+          
+          const phase1 = angle + (i * 0.35);
+          const phase2 = phase1 + Math.PI;
+
+          const x1 = centerX + Math.sin(phase1) * amplitude;
+          const x2 = centerX + Math.sin(phase2) * amplitude;
+
+          const z1 = Math.cos(phase1);
+          const z2 = Math.cos(phase2);
+
+          strand1Points.push({ x: x1, y: y, z: z1 });
+          strand2Points.push({ x: x2, y: y, z: z2 });
+
+          // Draw Connecting Rung
+          const grad = ctx.createLinearGradient(x1, y, x2, y);
+          grad.addColorStop(0, `rgba(2, 132, 199, ${0.25 + (z1 + 1) * 0.25})`);
+          grad.addColorStop(0.5, `rgba(37, 99, 235, ${0.35 + (z1 + z2 + 2) * 0.2})`);
+          grad.addColorStop(1, `rgba(14, 165, 233, ${0.25 + (z2 + 1) * 0.25})`);
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y);
+          ctx.lineTo(x2, y);
+          ctx.lineWidth = 1.8;
+          ctx.strokeStyle = grad;
+          ctx.stroke();
+        }
+
+        // Draw Backbone Curves
+        ctx.lineWidth = 2.5;
         
-        const phase1 = angle + (i * 0.35);
-        const phase2 = phase1 + Math.PI;
-
-        const x1 = centerX + Math.sin(phase1) * amplitude;
-        const x2 = centerX + Math.sin(phase2) * amplitude;
-
-        const z1 = Math.cos(phase1);
-        const z2 = Math.cos(phase2);
-
-        strand1Points.push({ x: x1, y: y, z: z1 });
-        strand2Points.push({ x: x2, y: y, z: z2 });
-
-        // Draw Connecting Rung
-        const grad = ctx.createLinearGradient(x1, y, x2, y);
-        grad.addColorStop(0, `rgba(2, 132, 199, ${0.25 + (z1 + 1) * 0.25})`);
-        grad.addColorStop(0.5, `rgba(37, 99, 235, ${0.35 + (z1 + z2 + 2) * 0.2})`);
-        grad.addColorStop(1, `rgba(14, 165, 233, ${0.25 + (z2 + 1) * 0.25})`);
-
+        // Backbone 1 (Cyan)
         ctx.beginPath();
-        ctx.moveTo(x1, y);
-        ctx.lineTo(x2, y);
-        ctx.lineWidth = 1.8;
-        ctx.strokeStyle = grad;
+        for (let i = 0; i < strand1Points.length - 1; i++) {
+          const p1 = strand1Points[i];
+          const p2 = strand1Points[i + 1];
+          const xc = (p1.x + p2.x) / 2;
+          const yc = (p1.y + p2.y) / 2;
+          if (i === 0) ctx.moveTo(p1.x, p1.y);
+          ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
+        }
+        ctx.strokeStyle = 'rgba(2, 132, 199, 0.55)';
         ctx.stroke();
-      }
 
-      // Draw Backbone Curves
-      ctx.lineWidth = 2.5;
-      
-      // Backbone 1 (Cyan)
-      ctx.beginPath();
-      for (let i = 0; i < strand1Points.length - 1; i++) {
-        const p1 = strand1Points[i];
-        const p2 = strand1Points[i + 1];
-        const xc = (p1.x + p2.x) / 2;
-        const yc = (p1.y + p2.y) / 2;
-        if (i === 0) ctx.moveTo(p1.x, p1.y);
-        ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
-      }
-      ctx.strokeStyle = 'rgba(2, 132, 199, 0.55)';
-      ctx.stroke();
-
-      // Backbone 2 (Medical Blue)
-      ctx.beginPath();
-      for (let i = 0; i < strand2Points.length - 1; i++) {
-        const p1 = strand2Points[i];
-        const p2 = strand2Points[i + 1];
-        const xc = (p1.x + p2.x) / 2;
-        const yc = (p1.y + p2.y) / 2;
-        if (i === 0) ctx.moveTo(p1.x, p1.y);
-        ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
-      }
-      ctx.strokeStyle = 'rgba(37, 99, 235, 0.55)';
-      ctx.stroke();
-
-      // Draw Glowing Sphere Nodes
-      for (let i = 0; i < numNodes; i++) {
-        const p1 = strand1Points[i];
-        const p2 = strand2Points[i];
-
-        // Node 1 (Cyan)
-        const r1 = 3.5 + (p1.z + 1) * 2.5;
-        const alpha1 = 0.5 + (p1.z + 1) * 0.25;
-        
-        ctx.save();
-        ctx.shadowBlur = p1.z > 0 ? 10 : 0;
-        ctx.shadowColor = '#0284c7';
+        // Backbone 2 (Medical Blue)
         ctx.beginPath();
-        ctx.arc(p1.x, p1.y, r1, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(2, 132, 199, ${alpha1})`;
-        ctx.fill();
-        ctx.restore();
+        for (let i = 0; i < strand2Points.length - 1; i++) {
+          const p1 = strand2Points[i];
+          const p2 = strand2Points[i + 1];
+          const xc = (p1.x + p2.x) / 2;
+          const yc = (p1.y + p2.y) / 2;
+          if (i === 0) ctx.moveTo(p1.x, p1.y);
+          ctx.quadraticCurveTo(p1.x, p1.y, xc, yc);
+        }
+        ctx.strokeStyle = 'rgba(37, 99, 235, 0.55)';
+        ctx.stroke();
 
-        // Node 2 (Medical Blue)
-        const r2 = 3.5 + (p2.z + 1) * 2.5;
-        const alpha2 = 0.5 + (p2.z + 1) * 0.25;
+        // Draw Glowing Sphere Nodes
+        for (let i = 0; i < numNodes; i++) {
+          const p1 = strand1Points[i];
+          const p2 = strand2Points[i];
 
-        ctx.save();
-        ctx.shadowBlur = p2.z > 0 ? 10 : 0;
-        ctx.shadowColor = '#2563eb';
-        ctx.beginPath();
-        ctx.arc(p2.x, p2.y, r2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(37, 99, 235, ${alpha2})`;
-        ctx.fill();
-        ctx.restore();
+          // Node 1 (Cyan)
+          const r1 = 3.5 + (p1.z + 1) * 2.5;
+          const alpha1 = 0.5 + (p1.z + 1) * 0.25;
+          
+          ctx.save();
+          ctx.shadowBlur = p1.z > 0 ? 10 : 0;
+          ctx.shadowColor = '#0284c7';
+          ctx.beginPath();
+          ctx.arc(p1.x, p1.y, r1, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(2, 132, 199, ${alpha1})`;
+          ctx.fill();
+          ctx.restore();
+
+          // Node 2 (Medical Blue)
+          const r2 = 3.5 + (p2.z + 1) * 2.5;
+          const alpha2 = 0.5 + (p2.z + 1) * 0.25;
+
+          ctx.save();
+          ctx.shadowBlur = p2.z > 0 ? 10 : 0;
+          ctx.shadowColor = '#2563eb';
+          ctx.beginPath();
+          ctx.arc(p2.x, p2.y, r2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(37, 99, 235, ${alpha2})`;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        angle -= 0.018; // Smooth rotation
       }
 
-      angle -= 0.018; // Smooth rotation
       requestAnimationFrame(renderFrame);
     }
     

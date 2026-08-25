@@ -24,7 +24,7 @@
   <title>Product Details | PlastoKast™ Orthopedic Solutions</title>
   <meta name="description" content="View detailed technical specifications, dimensions, features, and compliance metrics of PlastoKast orthopedic products.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="assets/css/styles.css?v=823">
+  <link rel="stylesheet" href="assets/css/styles.css?v=14000">
 </head>
 <body>
   <!-- Visible Dynamic Blue Background & Glass Nodes Layer -->
@@ -175,15 +175,15 @@
               <div class="product-inquiry-contact-list">
                 <div class="product-inquiry-contact-item">
                   <i class="fa fa-phone"></i>
-                  <span>Inquiry Phone: <a href="tel:+919909412068">+91 99094 12068</a> / <a href="tel:+918905332576">+91 89053 32576</a></span>
+                  <span id="productDetailPhoneContainer">Inquiry Phone: <a href="tel:+919909412068" data-setting="phone1">+91 99094 12068</a> / <a href="tel:+918905332576" data-setting="phone2">+91 89053 32576</a></span>
                 </div>
                 <div class="product-inquiry-contact-item">
                   <i class="fa fa-envelope"></i>
-                  <span>Sales Email: <a href="mailto:plastokast.sales@gmail.com">plastokast.sales@gmail.com</a></span>
+                  <span>Sales Email: <a href="mailto:plastokast.sales@gmail.com" data-setting="email">plastokast.sales@gmail.com</a></span>
                 </div>
                 <div class="product-inquiry-contact-item">
                   <i class="fa fa-building"></i>
-                  <span>Plant: PlastoKast House, Surat, Gujarat, India - 395004</span>
+                  <span>Plant: <span data-setting="shortAddress">PlastoKast House, Surat, Gujarat, India - 395004</span></span>
                 </div>
               </div>
 
@@ -191,7 +191,7 @@
                 <button class="btn btn-primary" onclick="document.getElementById('detail-add-btn').click();">
                   <i class="fa fa-paper-plane"></i> Send Inquiry
                 </button>
-                <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20product%20inquiry." target="_blank" class="btn btn-secondary btn-whatsapp-inquiry">
+                <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20product%20inquiry." target="_blank" class="btn btn-secondary btn-whatsapp-inquiry" data-setting="whatsapp">
                   <i class="fa fa-whatsapp"></i> Chat on WhatsApp
                 </a>
               </div>
@@ -301,9 +301,10 @@
   </footer>
 
   <script src="assets/js/products-data.js?v=800"></script>
+  <script src="assets/js/site-settings.js?v=14000"></script>
   <script src="assets/js/i18n.js?v=800"></script>
-  <script src="assets/js/main.js?v=823"></script>
-  <script src="assets/js/inquiry-modal.js?v=800"></script>
+  <script src="assets/js/main.js?v=14000"></script>
+  <script src="assets/js/inquiry-modal.js?v=14000"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const detailSection = document.getElementById("product-detail-section");
@@ -407,26 +408,115 @@
         </div>
       `).join("");
 
-      // High-Resolution Magnifying Hover Zoom Effect
+      // 60FPS GPU-Accelerated Interactive Touch & Mouse Zoom Pan Lens
       const mainImgElement = document.getElementById("detail-main-img");
       if (mainImgElement) {
-        mainImgElement.style.transition = "transform 0.1s ease, transform-origin 0.1s ease";
-        const wrapper = mainImgElement.closest(".detail-image-wrapper") || mainImgElement.parentElement;
+        const wrapper = mainImgElement.closest(".main-image-wrapper") || mainImgElement.parentElement;
         wrapper.style.overflow = "hidden";
         wrapper.style.position = "relative";
-        
-        mainImgElement.addEventListener("mousemove", (e) => {
-          const rect = e.target.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width) * 100;
-          const y = ((e.clientY - rect.top) / rect.height) * 100;
-          mainImgElement.style.transformOrigin = `${x}% ${y}%`;
-          mainImgElement.style.transform = "scale(1.8)";
+        wrapper.style.touchAction = "none";
+        wrapper.style.userSelect = "none";
+        wrapper.style.webkitUserSelect = "none";
+        wrapper.style.cursor = "zoom-in";
+
+        mainImgElement.style.pointerEvents = "none";
+        mainImgElement.style.willChange = "transform";
+        mainImgElement.style.transformOrigin = "center center";
+        mainImgElement.style.transform = "translate3d(0, 0, 0) scale(1)";
+
+        let isZooming = false;
+        let targetScale = 1;
+        let currentScale = 1;
+        let targetPanX = 0;
+        let targetPanY = 0;
+        let currentPanX = 0;
+        let currentPanY = 0;
+        let animFrameId = null;
+
+        const renderZoomFrame = () => {
+          const factor = 0.22;
+          currentScale += (targetScale - currentScale) * factor;
+          currentPanX += (targetPanX - currentPanX) * factor;
+          currentPanY += (targetPanY - currentPanY) * factor;
+
+          mainImgElement.style.transform = `translate3d(${currentPanX.toFixed(2)}px, ${currentPanY.toFixed(2)}px, 0) scale(${currentScale.toFixed(3)})`;
+
+          const diffScale = Math.abs(targetScale - currentScale);
+          const diffX = Math.abs(targetPanX - currentPanX);
+          const diffY = Math.abs(targetPanY - currentPanY);
+
+          if (isZooming || diffScale > 0.001 || diffX > 0.1 || diffY > 0.1) {
+            animFrameId = requestAnimationFrame(renderZoomFrame);
+          } else {
+            currentScale = targetScale;
+            currentPanX = targetPanX;
+            currentPanY = targetPanY;
+            mainImgElement.style.transform = `translate3d(${currentPanX}px, ${currentPanY}px, 0) scale(${currentScale})`;
+            animFrameId = null;
+          }
+        };
+
+        const startZoomLoop = () => {
+          if (!animFrameId) {
+            animFrameId = requestAnimationFrame(renderZoomFrame);
+          }
+        };
+
+        const updateCoordinates = (clientX, clientY, zoomLevel = 2.4) => {
+          const rect = wrapper.getBoundingClientRect();
+          targetScale = zoomLevel;
+
+          const normX = ((clientX - rect.left) / rect.width) - 0.5;
+          const normY = ((clientY - rect.top) / rect.height) - 0.5;
+
+          const maxPanX = (rect.width * (zoomLevel - 1)) / 2;
+          const maxPanY = (rect.height * (zoomLevel - 1)) / 2;
+
+          targetPanX = Math.max(-maxPanX, Math.min(maxPanX, -normX * 2 * maxPanX));
+          targetPanY = Math.max(-maxPanY, Math.min(maxPanY, -normY * 2 * maxPanY));
+
+          startZoomLoop();
+        };
+
+        const stopZoom = () => {
+          isZooming = false;
+          targetScale = 1;
+          targetPanX = 0;
+          targetPanY = 0;
+          startZoomLoop();
+        };
+
+        // --- Mobile Touch Gestures ---
+        wrapper.addEventListener("touchstart", (e) => {
+          if (e.touches.length === 1) {
+            isZooming = true;
+            updateCoordinates(e.touches[0].clientX, e.touches[0].clientY, 2.5);
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener("touchmove", (e) => {
+          if (isZooming && e.touches.length === 1) {
+            e.preventDefault();
+            updateCoordinates(e.touches[0].clientX, e.touches[0].clientY, 2.5);
+          }
+        }, { passive: false });
+
+        wrapper.addEventListener("touchend", stopZoom, { passive: true });
+        wrapper.addEventListener("touchcancel", stopZoom, { passive: true });
+
+        // --- Desktop Mouse Hover & Pan ---
+        wrapper.addEventListener("mouseenter", (e) => {
+          isZooming = true;
+          updateCoordinates(e.clientX, e.clientY, 2.0);
         });
-        
-        mainImgElement.addEventListener("mouseleave", () => {
-          mainImgElement.style.transform = "scale(1)";
-          mainImgElement.style.transformOrigin = "center center";
+
+        wrapper.addEventListener("mousemove", (e) => {
+          if (isZooming) {
+            updateCoordinates(e.clientX, e.clientY, 2.0);
+          }
         });
+
+        wrapper.addEventListener("mouseleave", stopZoom);
       }
 
       // B2B Wishlist Toggle Logic

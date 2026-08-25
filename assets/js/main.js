@@ -262,15 +262,68 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const modal = document.getElementById("quickview-modal");
     const closeBtn = document.getElementById("quickview-close");
-    closeBtn.addEventListener("click", () => modal.classList.remove("active"));
+    const container = modal.querySelector(".quickview-container");
+    
+    const closeQuickView = () => {
+      modal.classList.remove("active");
+      const inq = document.getElementById("inquiryModal");
+      if (!inq || inq.style.display !== "flex") {
+        document.documentElement.classList.remove("modal-open", "inquiry-modal-locked");
+        document.body.classList.remove("modal-open", "inquiry-modal-locked");
+      }
+    };
+
+    closeBtn.addEventListener("click", closeQuickView);
     modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.remove("active");
+      if (e.target === modal) closeQuickView();
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("active")) {
-        modal.classList.remove("active");
+        closeQuickView();
       }
     });
+
+    // 1. Completely block mousewheel & touchmove on backdrop overlay
+    modal.addEventListener("wheel", (e) => {
+      if (e.target === modal) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    modal.addEventListener("touchmove", (e) => {
+      if (e.target === modal) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // 2. Prevent overscroll chaining on container boundaries
+    if (container) {
+      container.addEventListener("touchstart", () => {
+        const top = container.scrollTop;
+        const total = container.scrollHeight;
+        const current = top + container.offsetHeight;
+
+        if (top === 0) {
+          container.scrollTop = 1;
+        } else if (current >= total) {
+          container.scrollTop = top - 1;
+        }
+      }, { passive: true });
+
+      container.addEventListener("wheel", (e) => {
+        const delta = e.deltaY;
+        const up = delta < 0;
+        const top = container.scrollTop;
+        const total = container.scrollHeight;
+        const visible = container.offsetHeight;
+
+        if (up && top <= 0) {
+          e.preventDefault();
+        } else if (!up && top + visible >= total) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
   }
 
   window.showProductQuickView = function(productId) {
@@ -314,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ${specEntries}
         </div>
         
-        <div style="margin-top: 14px; display: flex; gap: 12px;">
+        <div style="margin-top: 14px; display: flex; gap: 12px; padding-bottom: 8px;">
           <button class="btn btn-primary" style="flex: 1; padding: 12px 16px; font-size: 0.85rem;" onclick="window.openInquiryModal('${product.id}'); const qm = document.getElementById('quickview-modal'); if(qm) qm.classList.remove('active');">
             <i class="fa fa-paper-plane"></i> Send Inquiry
           </button>
@@ -326,6 +379,114 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     
     modal.classList.add("active");
+    document.documentElement.classList.add("modal-open", "inquiry-modal-locked");
+    document.body.classList.add("modal-open", "inquiry-modal-locked");
+
+    // 60FPS GPU-Accelerated Interactive Touch & Mouse Zoom Pan Lens for QuickView
+    const qvImgWrapper = modal.querySelector(".quickview-main-img-wrapper");
+    const qvMainImg = document.getElementById("quickview-main-img");
+    if (qvImgWrapper && qvMainImg) {
+      qvImgWrapper.style.overflow = "hidden";
+      qvImgWrapper.style.position = "relative";
+      qvImgWrapper.style.touchAction = "none";
+      qvImgWrapper.style.userSelect = "none";
+      qvImgWrapper.style.webkitUserSelect = "none";
+      qvImgWrapper.style.cursor = "zoom-in";
+      qvMainImg.style.pointerEvents = "none";
+      qvMainImg.style.willChange = "transform";
+      qvMainImg.style.transformOrigin = "center center";
+      qvMainImg.style.transform = "translate3d(0, 0, 0) scale(1)";
+
+      let isZooming = false;
+      let targetScale = 1;
+      let currentScale = 1;
+      let targetPanX = 0;
+      let targetPanY = 0;
+      let currentPanX = 0;
+      let currentPanY = 0;
+      let animFrameId = null;
+
+      const renderQvFrame = () => {
+        const factor = 0.22;
+        currentScale += (targetScale - currentScale) * factor;
+        currentPanX += (targetPanX - currentPanX) * factor;
+        currentPanY += (targetPanY - currentPanY) * factor;
+
+        qvMainImg.style.transform = `translate3d(${currentPanX.toFixed(2)}px, ${currentPanY.toFixed(2)}px, 0) scale(${currentScale.toFixed(3)})`;
+
+        const diffScale = Math.abs(targetScale - currentScale);
+        const diffX = Math.abs(targetPanX - currentPanX);
+        const diffY = Math.abs(targetPanY - currentPanY);
+
+        if (isZooming || diffScale > 0.001 || diffX > 0.1 || diffY > 0.1) {
+          animFrameId = requestAnimationFrame(renderQvFrame);
+        } else {
+          currentScale = targetScale;
+          currentPanX = targetPanX;
+          currentPanY = targetPanY;
+          qvMainImg.style.transform = `translate3d(${currentPanX}px, ${currentPanY}px, 0) scale(${currentScale})`;
+          animFrameId = null;
+        }
+      };
+
+      const startQvLoop = () => {
+        if (!animFrameId) {
+          animFrameId = requestAnimationFrame(renderQvFrame);
+        }
+      };
+
+      const updateQvCoords = (clientX, clientY, zoomLevel = 2.4) => {
+        const rect = qvImgWrapper.getBoundingClientRect();
+        targetScale = zoomLevel;
+
+        const normX = ((clientX - rect.left) / rect.width) - 0.5;
+        const normY = ((clientY - rect.top) / rect.height) - 0.5;
+
+        const maxPanX = (rect.width * (zoomLevel - 1)) / 2;
+        const maxPanY = (rect.height * (zoomLevel - 1)) / 2;
+
+        targetPanX = Math.max(-maxPanX, Math.min(maxPanX, -normX * 2 * maxPanX));
+        targetPanY = Math.max(-maxPanY, Math.min(maxPanY, -normY * 2 * maxPanY));
+
+        startQvLoop();
+      };
+
+      const stopQvZoom = () => {
+        isZooming = false;
+        targetScale = 1;
+        targetPanX = 0;
+        targetPanY = 0;
+        startQvLoop();
+      };
+
+      qvImgWrapper.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) {
+          isZooming = true;
+          updateQvCoords(e.touches[0].clientX, e.touches[0].clientY, 2.5);
+        }
+      }, { passive: true });
+
+      qvImgWrapper.addEventListener("touchmove", (e) => {
+        if (isZooming && e.touches.length === 1) {
+          e.preventDefault();
+          updateQvCoords(e.touches[0].clientX, e.touches[0].clientY, 2.5);
+        }
+      }, { passive: false });
+
+      qvImgWrapper.addEventListener("touchend", stopQvZoom, { passive: true });
+      qvImgWrapper.addEventListener("touchcancel", stopQvZoom, { passive: true });
+
+      qvImgWrapper.addEventListener("mouseenter", (e) => {
+        isZooming = true;
+        updateQvCoords(e.clientX, e.clientY, 2.0);
+      });
+      qvImgWrapper.addEventListener("mousemove", (e) => {
+        if (isZooming) {
+          updateQvCoords(e.clientX, e.clientY, 2.0);
+        }
+      });
+      qvImgWrapper.addEventListener("mouseleave", stopQvZoom);
+    }
   };
   
   window.changeQuickViewImg = function(imgSrc, thumbEl) {

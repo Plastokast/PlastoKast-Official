@@ -25,13 +25,70 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       body.inquiry-modal-locked {
         overflow: hidden !important;
-        touch-action: none;
+        touch-action: none !important;
+        -webkit-overflow-scrolling: auto !important;
       }
       #inquiryModal, #addProductSubModal, #removeProductSubModal, #inquirySuccessToast {
-        overscroll-behavior: contain;
+        overscroll-behavior: contain !important;
+        overscroll-behavior-y: contain !important;
+        touch-action: none;
       }
       #selectedProductsList, #subProductListGrid, #subRemoveListGrid, .inquiry-modal-scrollable {
-        overscroll-behavior: contain;
+        overscroll-behavior: contain !important;
+        overscroll-behavior-y: contain !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y !important;
+      }
+      .inq-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .inq-field-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .inq-label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .inq-input, .inq-select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #0f172a;
+        box-sizing: border-box;
+        background: #ffffff;
+        font-family: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .inq-input:focus, .inq-select:focus, #inqCustMsg:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+      .inq-phone-box {
+        display: flex;
+        align-items: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .inq-phone-box:focus-within {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
       }
       .sub-product-item {
         display: flex;
@@ -52,6 +109,39 @@ document.addEventListener("DOMContentLoaded", () => {
         border-color: #2563eb;
         background: #eff6ff;
       }
+      @media (max-width: 600px) {
+        #inquiryModal, #addProductSubModal, #removeProductSubModal {
+          padding: 12px 10px calc(24px + env(safe-area-inset-bottom, 16px)) 10px !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        #inquiryModal > div, #addProductSubModal > div, #removeProductSubModal > div {
+          max-height: 84dvh !important;
+          border-radius: 20px !important;
+          margin-bottom: calc(8px + env(safe-area-inset-bottom, 8px)) !important;
+        }
+        .inquiry-header-box {
+          padding: 18px 20px !important;
+        }
+        .inquiry-header-box h3 {
+          font-size: 1.18rem !important;
+        }
+        .inquiry-header-box p {
+          font-size: 0.78rem !important;
+        }
+        .inquiry-modal-scrollable {
+          padding: 14px 14px calc(36px + env(safe-area-inset-bottom, 16px)) 14px !important;
+          max-height: calc(84dvh - 85px) !important;
+        }
+        .inq-form-row {
+          grid-template-columns: 1fr !important;
+          gap: 12px !important;
+        }
+        .inquiry-submit-btn {
+          padding: 13px !important;
+          font-size: 0.95rem !important;
+        }
+      }
     `;
     document.head.appendChild(styleEl);
   }
@@ -60,31 +150,31 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById("inquiryModal")) {
     const modalHTML = `
       <!-- Main Inquiry Form Modal -->
-      <div id="inquiryModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 30000; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
+      <div id="inquiryModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: 100dvh; background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 30000; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
         <div style="background: #ffffff; width: 100%; max-width: 600px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); overflow: hidden; border: 1px solid #e2e8f0; animation: modalFadeIn 0.3s ease; position: relative;">
           
           <!-- Header -->
-          <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 24px 30px; position: relative;">
-            <span id="closeInquiryModal" style="position: absolute; top: 20px; right: 24px; font-size: 1.5rem; color: #94a3b8; cursor: pointer; line-height: 1; transition: color 0.2s;">&times;</span>
+          <div class="inquiry-header-box" style="background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 22px 28px; position: relative;">
+            <span id="closeInquiryModal" style="position: absolute; top: 18px; right: 20px; font-size: 1.5rem; color: #94a3b8; cursor: pointer; line-height: 1; transition: color 0.2s;">&times;</span>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
               <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px;">Official RFQ</span>
             </div>
-            <h3 style="font-size: 1.4rem; font-weight: 800; margin: 0; color: #ffffff;">Product Quote & Inquiry</h3>
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin: 0; color: #ffffff;">Product Quote & Inquiry</h3>
             <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px; margin-bottom: 0;">Submit your details directly to the PlastoKast Medical Sales Team.</p>
           </div>
 
           <!-- Body Form -->
-          <div class="inquiry-modal-scrollable" style="padding: 24px 30px; max-height: 78vh; overflow-y: auto;">
+          <div class="inquiry-modal-scrollable" style="padding: 22px 26px; max-height: 76vh; overflow-y: auto;">
             
             <!-- Multi-Product Preview & Management Container -->
-            <div id="inquiryProductContainer" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 16px; margin-bottom: 20px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <div id="inquiryProductContainer" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 14px; margin-bottom: 18px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
                 <span id="inquiryProductCountLabel" style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Selected Products (1)</span>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <button type="button" id="btnOpenAddProducts" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.78rem; font-weight: 700; padding: 6px 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s;">
+                <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                  <button type="button" id="btnOpenAddProducts" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 700; padding: 5px 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
                     <i class="fa fa-plus-circle"></i> Add Other Products
                   </button>
-                  <button type="button" id="btnOpenRemoveProducts" style="display: none; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-size: 0.78rem; font-weight: 700; padding: 6px 12px; border-radius: 10px; cursor: pointer; align-items: center; gap: 5px; transition: all 0.2s;">
+                  <button type="button" id="btnOpenRemoveProducts" style="display: none; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; font-size: 0.75rem; font-weight: 700; padding: 5px 10px; border-radius: 8px; cursor: pointer; align-items: center; gap: 4px; transition: all 0.2s;">
                     <i class="fa fa-minus-circle"></i> Remove Products
                   </button>
                 </div>
@@ -96,34 +186,34 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             </div>
 
-            <form id="popInquiryForm" style="display: flex; flex-direction: column; gap: 16px;">
+            <form id="popInquiryForm" style="display: flex; flex-direction: column; gap: 14px;">
               
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Full Name *</label>
-                  <input type="text" id="inqCustName" placeholder="Dr. / Mr. / Ms. Name" required style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box;">
+              <div class="inq-form-row">
+                <div class="inq-field-group">
+                  <label class="inq-label">Full Name *</label>
+                  <input type="text" id="inqCustName" class="inq-input" placeholder="Dr. / Mr. / Ms. Name" required>
                 </div>
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Work Email *</label>
-                  <input type="email" id="inqCustEmail" placeholder="name@hospital.com" required style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box;">
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hospital / Facility *</label>
-                  <input type="text" id="inqCustFacility" placeholder="City Med Hospital / Self" required style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Quantity / Units</label>
-                  <input type="text" id="inqCustQty" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 100 or 500" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box;">
+                <div class="inq-field-group">
+                  <label class="inq-label">Work Email *</label>
+                  <input type="email" id="inqCustEmail" class="inq-input" placeholder="name@hospital.com" required>
                 </div>
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Country / Region *</label>
-                  <select id="inqCustCountry" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box; background: #ffffff; cursor: pointer;">
+              <div class="inq-form-row">
+                <div class="inq-field-group">
+                  <label class="inq-label">Hospital / Facility *</label>
+                  <input type="text" id="inqCustFacility" class="inq-input" placeholder="City Med Hospital / Self" required>
+                </div>
+                <div class="inq-field-group">
+                  <label class="inq-label">Quantity / Units</label>
+                  <input type="text" id="inqCustQty" class="inq-input" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 100 or 500">
+                </div>
+              </div>
+
+              <div class="inq-form-row">
+                <div class="inq-field-group">
+                  <label class="inq-label">Country / Region *</label>
+                  <select id="inqCustCountry" class="inq-select" style="cursor: pointer;">
                     <option value="India" data-code="+91" selected>🇮🇳 India (+91)</option>
                     <option value="United States" data-code="+1">🇺🇸 United States (+1)</option>
                     <option value="United Kingdom" data-code="+44">🇬🇧 United Kingdom (+44)</option>
@@ -160,21 +250,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     <option value="Nepal" data-code="+977">🇳🇵 Nepal (+977)</option>
                   </select>
                 </div>
-                <div>
-                  <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Phone / WhatsApp</label>
-                  <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: white;">
-                    <span id="phoneCountryPrefix" style="background: #f1f5f9; color: #1e293b; font-weight: 700; font-size: 0.88rem; padding: 11px 12px; border-right: 1px solid #cbd5e1; user-select: none; font-family: monospace; display: flex; align-items: center; justify-content: center; min-width: 54px;">+91</span>
-                    <input type="tel" id="inqCustPhone" placeholder="98765 43210" style="flex: 1; border: none; outline: none; padding: 11px 12px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box;">
+                <div class="inq-field-group">
+                  <label class="inq-label">Phone / WhatsApp</label>
+                  <div class="inq-phone-box">
+                    <span id="phoneCountryPrefix" style="background: #f1f5f9; color: #1e293b; font-weight: 700; font-size: 0.88rem; padding: 11px 12px; border-right: 1px solid #cbd5e1; user-select: none; font-family: monospace; display: flex; align-items: center; justify-content: center; min-width: 52px; flex-shrink: 0;">+91</span>
+                    <input type="tel" id="inqCustPhone" placeholder="98765 43210" style="flex: 1; min-width: 0; border: none; outline: none; padding: 11px 12px; font-size: 0.9rem; color: #0f172a; box-sizing: border-box; background: transparent;">
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Message / Details</label>
-                <textarea id="inqCustMsg" placeholder="Type your inquiry or message here..." style="width: 100%; height: 75px; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; resize: vertical; box-sizing: border-box; font-family: inherit;"></textarea>
+              <div class="inq-field-group">
+                <label class="inq-label">Message / Details</label>
+                <textarea id="inqCustMsg" placeholder="Type your inquiry or message here..." style="width: 100%; height: 72px; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; color: #0f172a; resize: vertical; box-sizing: border-box; font-family: inherit;"></textarea>
               </div>
 
-              <button type="submit" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s;">
+              <button type="submit" class="inquiry-submit-btn" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.35); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s;">
                 <i class="fa fa-paper-plane"></i> Submit Official Inquiry
               </button>
             </form>
@@ -307,7 +397,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Global Body Lock Helper Functions ---
   function disableBodyScroll() {
-    document.body.classList.add("inquiry-modal-locked");
+    document.documentElement.classList.add("inquiry-modal-locked", "modal-open");
+    document.body.classList.add("inquiry-modal-locked", "modal-open");
   }
 
   function enableBodyScroll() {
@@ -316,9 +407,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const addSubOpen = addProductSubModal && addProductSubModal.style.display === "flex";
     const removeSubOpen = removeProductSubModal && removeProductSubModal.style.display === "flex";
     const successOpen = successToast && successToast.style.display === "flex";
+    const qm = document.getElementById("quickview-modal");
+    const qmOpen = qm && qm.classList.contains("active");
 
-    if (!modalOpen && !addSubOpen && !removeSubOpen && !successOpen) {
-      document.body.classList.remove("inquiry-modal-locked");
+    if (!modalOpen && !addSubOpen && !removeSubOpen && !successOpen && !qmOpen) {
+      document.documentElement.classList.remove("inquiry-modal-locked", "modal-open");
+      document.body.classList.remove("inquiry-modal-locked", "modal-open");
     }
   }
 
@@ -369,15 +463,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     selectedProductsListEl.innerHTML = activeSelectedProducts.map(p => `
-      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div style="width: 40px; height: 40px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); box-sizing: border-box;">
+        <div style="width: 44px; height: 44px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
           <img src="${(p.images && p.images.length > 0) ? p.images[0] : 'assets/images/logo.png'}" alt="${p.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
         </div>
-        <div style="flex: 1; overflow: hidden;">
+        <div style="flex: 1; min-width: 0; overflow: hidden;">
           <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>
-          <div style="display: flex; gap: 8px; align-items: center; margin-top: 1px;">
-            <span style="font-family: monospace; font-size: 0.72rem; color: #64748b; font-weight: 600;">${p.code || 'PK-MEDICAL'}</span>
-            <span style="font-size: 0.68rem; color: #2563eb; background: #eff6ff; padding: 1px 5px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">${p.categoryLabel || 'Orthopedic'}</span>
+          <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px; flex-wrap: wrap;">
+            <span style="font-family: monospace; font-size: 0.72rem; color: #64748b; font-weight: 600; background: #f1f5f9; padding: 1px 5px; border-radius: 4px;">${p.code || 'PK-MEDICAL'}</span>
+            <span style="font-size: 0.65rem; color: #2563eb; background: #eff6ff; border: 1px solid #dbeafe; padding: 1px 5px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">${p.categoryLabel || 'Orthopedic'}</span>
           </div>
         </div>
       </div>

@@ -29,6 +29,13 @@
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      touch-action: pan-y;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -37,7 +44,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       position: relative;
       padding: 20px;
     }
@@ -206,7 +212,7 @@
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       color: #0f172a;
-      font-size: 0.95rem;
+      font-size: 16px; /* Prevents iOS Safari auto-zoom */
       font-weight: 500;
       transition: all 0.3s;
       font-family: inherit;
@@ -285,10 +291,121 @@
       color: #64748b;
     }
 
+    /* ==========================================================================
+       Mobile View (<= 900px):
+       Live 3D DNA Canvas spans fullscreen behind frosted glass login card
+       ========================================================================== */
     @media (max-width: 900px) {
-      .login-container { flex-direction: column; height: auto; min-height: initial; }
-      .canvas-panel { display: none; }
-      .form-panel { padding: 36px 24px; }
+      html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        touch-action: pan-y !important;
+      }
+
+      body {
+        padding: 24px 16px !important;
+        overflow-x: hidden !important;
+      }
+
+      .login-container {
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: initial !important;
+        max-width: 440px !important;
+        width: 100% !important;
+        position: relative !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        overflow: hidden !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+      }
+
+      /* Live canvas spans fullscreen background on mobile */
+      .canvas-panel {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        border-radius: 0 !important;
+        border: none !important;
+        z-index: 1 !important;
+        background: radial-gradient(circle at 50% 30%, #e0f2fe 0%, #eff6ff 55%, #e0e7ff 100%) !important;
+        pointer-events: none !important;
+        overflow: hidden !important;
+        box-shadow: none !important;
+      }
+
+      /* Frosted glassmorphic form panel in front of live rising bubbles */
+      .form-panel {
+        position: relative !important;
+        z-index: 10 !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        box-sizing: border-box !important;
+        padding: 38px 24px !important;
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(16px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+        border-radius: 28px !important;
+        box-shadow: 
+          0 20px 45px -10px rgba(15, 23, 42, 0.14),
+          0 10px 25px -5px rgba(37, 99, 235, 0.08),
+          inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
+      }
+
+      .brand-title-bar {
+        margin-bottom: 20px;
+      }
+
+      .brand-mini-logo {
+        height: 38px;
+        width: auto;
+        max-width: 150px;
+      }
+
+      .security-tag {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+      }
+
+      .form-header h2 {
+        font-size: 1.65rem;
+      }
+
+      .input-wrapper input {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        font-size: 16px;
+      }
+
+      .btn-login {
+        background: linear-gradient(135deg, #014E9E 0%, #0284c7 100%);
+        box-shadow: 0 6px 20px rgba(1, 78, 158, 0.35);
+      }
+    }
+
+    /* Ultra-Compact Mobile (<= 360px) */
+    @media (max-width: 360px) {
+      .form-panel {
+        padding: 28px 16px !important;
+      }
+      .brand-mini-logo {
+        height: 32px;
+        max-width: 120px;
+      }
+      .form-header h2 {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
@@ -309,7 +426,6 @@
         <div class="brand-title-bar">
           <div class="brand-badge-box">
             <img src="assets/images/logo.png?v=200" alt="PlastoKast Logo" class="brand-mini-logo">
-            <span class="brand-name-text">PlastoKast</span>
           </div>
           <div class="security-tag">
             <i class="fa fa-shield"></i> Admin Portal
@@ -354,6 +470,6 @@
     
   </div>
 
-  <script src="assets/js/admin-auth.js?v=9000"></script>
+  <script src="assets/js/admin-auth.js?v=14000"></script>
 </body>
 </html>

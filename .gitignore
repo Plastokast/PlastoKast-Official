@@ -16,6 +16,7 @@ ENV/
 # Temporary / Scratch files
 *.log
 *.tmp
+audit_*.py
 scratch/
 .gemini/
 brain/

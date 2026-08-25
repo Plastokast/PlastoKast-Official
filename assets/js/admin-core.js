@@ -1,8 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Handle Mobile Navigation Drawer & Backdrop
+  const mobileNavToggle = document.getElementById('adminMobileNavToggle');
+  const adminSidebar = document.getElementById('adminSidebar');
+  const sidebarBackdrop = document.getElementById('adminSidebarBackdrop');
+  const closeSidebarBtn = document.getElementById('adminCloseSidebarBtn');
+  const activeViewBadge = document.getElementById('adminActiveViewTitle');
+
+  function openMobileSidebar() {
+    if (adminSidebar) adminSidebar.classList.add('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileSidebar() {
+    if (adminSidebar) adminSidebar.classList.remove('mobile-open');
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileNavToggle) {
+    mobileNavToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (adminSidebar && adminSidebar.classList.contains('mobile-open')) {
+        closeMobileSidebar();
+      } else {
+        openMobileSidebar();
+      }
+    });
+  }
+
+  if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+  if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeMobileSidebar);
+
+  // Close drawer if user presses Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && adminSidebar && adminSidebar.classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    }
+  });
+
+  // Automatically reset drawer state if resized to desktop view
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 992) {
+      closeMobileSidebar();
+    }
+  });
+
   // Handle Sidebar Navigation
   const navItems = document.querySelectorAll('.sidebar .nav-item[data-target]');
   const viewSections = document.querySelectorAll('.main-content .view-section');
+
+  // Initial Sync of Active View Title on page load
+  const initialActiveNav = document.querySelector('.sidebar .nav-item.active');
+  if (initialActiveNav && activeViewBadge) {
+    activeViewBadge.textContent = initialActiveNav.textContent.trim();
+  }
 
   navItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -26,8 +79,21 @@ document.addEventListener('DOMContentLoaded', () => {
           window.refreshCatalog();
         } else if (targetId === 'view-certificates' && typeof window.refreshCertificates === 'function') {
           window.refreshCertificates();
+        } else if (targetId === 'view-faq' && typeof window.refreshFaqs === 'function') {
+          window.refreshFaqs();
+        } else if (targetId === 'view-contact-settings' && typeof window.refreshContactSettings === 'function') {
+          window.refreshContactSettings();
         }
       }
+
+      // 5. Update Mobile Topbar Active Title
+      if (activeViewBadge) {
+        const itemText = item.textContent.trim();
+        activeViewBadge.textContent = itemText;
+      }
+
+      // 6. Close mobile drawer on item tap
+      closeMobileSidebar();
     });
   });
 
@@ -235,12 +301,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const regionText = demandRegionFilter ? demandRegionFilter.options[demandRegionFilter.selectedIndex].text : 'Global Markets';
 
     if (periodVal === 'custom') {
-      if (customDateRangeBox) customDateRangeBox.style.display = 'flex';
+      if (customDateRangeBox) {
+        customDateRangeBox.style.display = 'flex';
+        customDateRangeBox.classList.add('show-custom-range');
+      }
       const sDate = demandStartDate?.value || '2026-08-01';
       const eDate = demandEndDate?.value || '2026-08-15';
       demandFilterSummaryBadge.innerHTML = `<i class="fa fa-filter"></i> Active Filter: <strong>Custom Range (${sDate} to ${eDate})</strong> | ${regionText}`;
     } else {
-      if (customDateRangeBox) customDateRangeBox.style.display = 'none';
+      if (customDateRangeBox) {
+        customDateRangeBox.style.display = 'none';
+        customDateRangeBox.classList.remove('show-custom-range');
+      }
       const periodText = demandPeriodFilter.options[demandPeriodFilter.selectedIndex].text;
       demandFilterSummaryBadge.innerHTML = `<i class="fa fa-filter"></i> Active Filter: <strong>${periodText}</strong> | ${regionText}`;
     }
@@ -396,10 +468,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const paddingPct = totalLeads > 0 ? Math.max(0, 100 - (castPct + splintPct + plasterPct)) : 0;
 
     const productsData = [
-      { key: 'cast', title: 'PK Cast™ (Fiberglass Casting Tapes)', leads: liveCastLeads, pct: castPct, color: '#3b82f6', rankColor: '#dbeafe', rankTextColor: '#2563eb' },
-      { key: 'splint', title: 'PK Splint™ (Pre-padded Splints)', leads: liveSplintLeads, pct: splintPct, color: '#8b5cf6', rankColor: '#f3e8ff', rankTextColor: '#9333ea' },
-      { key: 'plaster', title: 'PK Plaster™ (POP Bandages)', leads: livePlasterLeads, pct: plasterPct, color: '#ec4899', rankColor: '#fce7f3', rankTextColor: '#db2777' },
-      { key: 'padding', title: 'PK Padding & Consumables', leads: livePaddingLeads, pct: paddingPct, color: '#10b981', rankColor: '#d1fae5', rankTextColor: '#059669' }
+      { key: 'cast', brand: 'PK Cast™', subtitle: 'Fiberglass Casting Tapes', title: 'PK Cast™ (Fiberglass Casting Tapes)', leads: liveCastLeads, pct: castPct, color: '#3b82f6', rankColor: '#dbeafe', rankTextColor: '#2563eb' },
+      { key: 'splint', brand: 'PK Splint™', subtitle: 'Pre-padded Splints', title: 'PK Splint™ (Pre-padded Splints)', leads: liveSplintLeads, pct: splintPct, color: '#8b5cf6', rankColor: '#f3e8ff', rankTextColor: '#9333ea' },
+      { key: 'plaster', brand: 'PK Plaster™', subtitle: 'POP Bandages', title: 'PK Plaster™ (POP Bandages)', leads: livePlasterLeads, pct: plasterPct, color: '#ec4899', rankColor: '#fce7f3', rankTextColor: '#db2777' },
+      { key: 'padding', brand: 'PK Padding', subtitle: 'Padding & Consumables', title: 'PK Padding & Consumables', leads: livePaddingLeads, pct: paddingPct, color: '#10b981', rankColor: '#d1fae5', rankTextColor: '#059669' }
     ];
 
     productsData.sort((a, b) => b.leads - a.leads);
@@ -476,28 +548,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const rankListContainer = document.getElementById('demandRankList');
     if (rankListContainer) {
       rankListContainer.innerHTML = productsData.map((p, idx) => `
-        <div class="legend-hover-item" data-segment="${idx}" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.25s ease; cursor: pointer;">
-          <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; margin-right: 12px;">
-            <span style="background: ${p.rankColor}; color: ${p.rankTextColor}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0;">#${p.rank}</span>
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: ${p.color}; display: inline-block; flex-shrink: 0;"></span>
-            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</span>
-          </span>
-          <span style="font-size: 0.85rem; font-weight: 800; color: ${p.color}; flex-shrink: 0; white-space: nowrap;">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
+        <div class="legend-hover-item" data-segment="${idx}">
+          <!-- Desktop Layout (Single Row) -->
+          <div class="legend-desktop-row">
+            <div class="legend-item-left">
+              <span class="legend-rank-badge" style="background: ${p.rankColor}; color: ${p.rankTextColor};">#${p.rank}</span>
+              <span class="legend-dot" style="background: ${p.color};"></span>
+              <span class="legend-prod-name">${p.title}</span>
+            </div>
+            <span class="legend-leads-pill" style="color: ${p.color};">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
+          </div>
+
+          <!-- Mobile Layout (Pixel-Perfect Aligned Card with Progress Bar) -->
+          <div class="legend-mobile-row">
+            <div class="legend-mobile-header">
+              <div class="legend-mobile-info">
+                <span class="legend-rank-badge" style="background: ${p.rankColor}; color: ${p.rankTextColor};">#${p.rank}</span>
+                <div class="legend-mobile-titles">
+                  <span class="legend-brand-name">${p.brand}</span>
+                  <span class="legend-mobile-sub">${p.subtitle}</span>
+                </div>
+              </div>
+              <span class="legend-mobile-leads" style="background: ${p.rankColor}; color: ${p.color};">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
+            </div>
+            <div class="legend-mobile-progress">
+              <div class="legend-mobile-bar" style="width: ${p.pct}%; background: ${p.color};"></div>
+            </div>
+          </div>
         </div>
       `).join('');
     }
 
-    // Modal Product Line Ranked Cards List (Clean 1-Line Layout!)
+    // Modal Product Line Ranked Cards List
     const modalProductLineCards = document.getElementById('modalProductLineCards');
     if (modalProductLineCards) {
       modalProductLineCards.innerHTML = productsData.map(p => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; min-height: 52px; transition: all 0.25s ease;">
-          <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
-            <span style="background: ${p.rankColor}; color: ${p.rankTextColor}; font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; flex-shrink: 0;">#${p.rank}</span>
-            <span style="width: 10px; height: 10px; border-radius: 50%; background: ${p.color}; display: inline-block; flex-shrink: 0;"></span>
-            <span style="font-size: 0.92rem; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</span>
+        <div class="modal-product-card" style="border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; transition: all 0.25s ease;">
+          <!-- Desktop Modal Row -->
+          <div class="legend-desktop-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+              <span style="background: ${p.rankColor}; color: ${p.rankTextColor}; font-size: 0.75rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; flex-shrink: 0;">#${p.rank}</span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${p.color}; display: inline-block; flex-shrink: 0;"></span>
+              <span style="font-size: 0.92rem; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</span>
+            </div>
+            <span style="font-size: 0.92rem; font-weight: 800; color: ${p.color}; white-space: nowrap; flex-shrink: 0; margin-left: 16px;">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
           </div>
-          <span style="font-size: 0.95rem; font-weight: 800; color: ${p.color}; white-space: nowrap; flex-shrink: 0; margin-left: 16px;">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
+
+          <!-- Mobile Modal Row (Stacked Title & Subtitle + Progress Bar) -->
+          <div class="legend-mobile-row" style="display: none; flex-direction: column; gap: 8px; width: 100%;">
+            <div class="legend-mobile-header" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div class="legend-mobile-info" style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                <span class="legend-rank-badge" style="background: ${p.rankColor}; color: ${p.rankTextColor}; font-size: 0.74rem; font-weight: 800; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">#${p.rank}</span>
+                <div class="legend-mobile-titles" style="display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0;">
+                  <span class="legend-brand-name" style="font-size: 0.88rem; font-weight: 800; color: #0f172a;">${p.brand}</span>
+                  <span class="legend-mobile-sub" style="font-size: 0.73rem; font-weight: 600; color: #64748b;">${p.subtitle}</span>
+                </div>
+              </div>
+              <span class="legend-mobile-leads" style="background: ${p.rankColor}; color: ${p.color}; font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; white-space: nowrap;">${p.leads} Lead${p.leads === 1 ? '' : 's'} (${p.pct}%)</span>
+            </div>
+            <div class="legend-mobile-progress" style="width: 100%; height: 5px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+              <div class="legend-mobile-bar" style="width: ${p.pct}%; background: ${p.color}; height: 100%; border-radius: 10px;"></div>
+            </div>
+          </div>
         </div>
       `).join('');
     }
@@ -508,14 +620,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const catalogList = (typeof STATIC_PRODUCTS_DATA !== 'undefined') ? STATIC_PRODUCTS_DATA : [];
     if (modalCatalogCountPill) {
-      modalCatalogCountPill.textContent = `${catalogList.length > 0 ? catalogList.length : 4} Catalog Products`;
+      const count = catalogList.length > 0 ? catalogList.length : 4;
+      modalCatalogCountPill.innerHTML = `
+        <span class="desktop-title">${count} Catalog Products</span>
+        <span class="mobile-title">${count} Products</span>
+      `;
     }
 
     if (modalCatalogTableBody) {
       if (catalogList.length > 0) {
         // Calculate 100% pure unscaled real leads for each catalog product item
         const itemMetrics = catalogList.map(item => {
-          let itemCount = 0;
+          const matchingInqs = [];
           inquiries.forEach(inq => {
             const code = (item.code || '').toLowerCase();
             const title = (item.title || '').toLowerCase();
@@ -537,71 +653,272 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (matched) {
-              itemCount += 1;
+              matchingInqs.push(inq);
             }
           });
 
           return {
-            code: item.code,
-            title: item.title,
-            categoryLabel: item.categoryLabel || item.category,
-            category: item.category,
-            count: itemCount
+            code: item.code || '',
+            title: item.title || '',
+            categoryLabel: item.categoryLabel || item.category || 'General',
+            category: item.category || 'General',
+            count: matchingInqs.length,
+            inquiries: matchingInqs
           };
         });
 
         const catTotal = itemMetrics.reduce((sum, m) => sum + m.count, 0);
         itemMetrics.sort((a, b) => b.count - a.count);
+        itemMetrics.forEach((m, idx) => {
+          m.rank = idx + 1;
+          m.sharePct = catTotal > 0 ? Math.round((m.count / catTotal) * 100) : 0;
+        });
 
-        modalCatalogTableBody.innerHTML = itemMetrics.map((m, idx) => {
-          const sharePct = catTotal > 0 ? Math.round((m.count / catTotal) * 100) : 0;
-          const barColor = '#3b82f6';
-          const rankBg = '#dbeafe';
-          const rankText = '#2563eb';
+        // Store globally for detail popup
+        window.CATALOG_ITEM_METRICS = itemMetrics;
 
-          return `
-            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;" onmouseenter="this.style.background='#f8fafc'" onmouseleave="this.style.background='transparent'">
+        // 1. Render Desktop Table Body
+        if (modalCatalogTableBody) {
+          modalCatalogTableBody.innerHTML = itemMetrics.map((m, idx) => {
+            const sharePct = m.sharePct;
+            const barColor = '#3b82f6';
+            const rankBg = '#dbeafe';
+            const rankText = '#2563eb';
+
+            return `
+              <tr class="catalog-rank-row" onclick="window.showProductLeadDetailModal(${idx})" style="border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='#eff6ff'" onmouseleave="this.style.background='transparent'">
+                <td style="padding: 12px 16px; font-weight: 700; color: #0f172a;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: ${rankBg}; color: ${rankText}; font-size: 0.75rem; font-weight: 800; padding: 2px 7px; border-radius: 8px;">#${idx + 1}</span>
+                    <span style="width: 9px; height: 9px; border-radius: 50%; background: ${barColor}; display: inline-block; flex-shrink: 0;"></span>
+                    <span style="font-weight: 700; color: #1e293b; font-size: 0.88rem;">${m.title}</span>
+                  </div>
+                </td>
+                <td style="padding: 12px 16px; color: #64748b; font-weight: 600; font-size: 0.84rem;">${m.categoryLabel}</td>
+                <td style="padding: 12px 16px; font-weight: 800; color: ${barColor};">${m.count} Lead${m.count === 1 ? '' : 's'}</td>
+                <td style="padding: 12px 16px; font-weight: 800; color: ${barColor};">${sharePct}%</td>
+                <td style="padding: 12px 16px;">
+                  <div style="width: 100%; max-width: 130px; background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="width: ${Math.max(6, sharePct)}%; height: 100%; background: ${barColor}; border-radius: 4px; transition: all 0.3s ease;"></div>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // 2. Render Mobile List (#modalCatalogMobileList)
+        const modalCatalogMobileList = document.getElementById('modalCatalogMobileList');
+        if (modalCatalogMobileList) {
+          modalCatalogMobileList.innerHTML = itemMetrics.map((m, idx) => {
+            const rankBg = '#dbeafe';
+            const rankText = '#2563eb';
+
+            return `
+              <div class="modal-catalog-mobile-item" onclick="window.showProductLeadDetailModal(${idx})" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; gap: 10px; cursor: pointer; transition: all 0.2s;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                  <span style="background: ${rankBg}; color: ${rankText}; font-size: 0.74rem; font-weight: 800; padding: 4px 8px; border-radius: 8px; flex-shrink: 0;">#${idx + 1}</span>
+                  <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                    <span style="font-weight: 800; color: #0f172a; font-size: 0.88rem; line-height: 1.25;">${m.title}</span>
+                    <span style="font-size: 0.74rem; font-weight: 600; color: #64748b;">${m.categoryLabel}</span>
+                  </div>
+                </div>
+                <i class="fa fa-chevron-right" style="color: #94a3b8; font-size: 0.8rem; flex-shrink: 0;"></i>
+              </div>
+            `;
+          }).join('');
+        }
+      } else {
+        // Fallback Product Lines Table
+        if (modalCatalogTableBody) {
+          modalCatalogTableBody.innerHTML = productsData.map(p => `
+            <tr class="catalog-rank-row" style="border-bottom: 1px solid #f1f5f9;">
               <td style="padding: 12px 16px; font-weight: 700; color: #0f172a;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <span style="background: ${rankBg}; color: ${rankText}; font-size: 0.75rem; font-weight: 800; padding: 2px 7px; border-radius: 8px;">#${idx + 1}</span>
-                  <span style="width: 9px; height: 9px; border-radius: 50%; background: ${barColor}; display: inline-block; flex-shrink: 0;"></span>
-                  <span style="font-weight: 700; color: #1e293b; font-size: 0.88rem;">${m.title}</span>
+                  <span style="background: #dbeafe; color: #2563eb; font-size: 0.75rem; font-weight: 800; padding: 2px 7px; border-radius: 8px;">#${p.rank}</span>
+                  <span style="width: 9px; height: 9px; border-radius: 50%; background: #3b82f6; display: inline-block; flex-shrink: 0;"></span>
+                  <span style="font-weight: 700; color: #1e293b; font-size: 0.88rem;">${p.title}</span>
                 </div>
               </td>
-              <td style="padding: 12px 16px; color: #64748b; font-weight: 600; font-size: 0.84rem;">${m.categoryLabel}</td>
-              <td style="padding: 12px 16px; font-weight: 800; color: ${barColor};">${m.count} Lead${m.count === 1 ? '' : 's'}</td>
-              <td style="padding: 12px 16px; font-weight: 800; color: ${barColor};">${sharePct}%</td>
+              <td style="padding: 12px 16px; color: #64748b; font-weight: 600;">Orthopedic Line</td>
+              <td style="padding: 12px 16px; font-weight: 800; color: #3b82f6;">${p.leads} Lead${p.leads === 1 ? '' : 's'}</td>
+              <td style="padding: 12px 16px; font-weight: 800; color: #3b82f6;">${p.pct}%</td>
               <td style="padding: 12px 16px;">
                 <div style="width: 100%; max-width: 130px; background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden;">
-                  <div style="width: ${Math.max(6, sharePct)}%; height: 100%; background: ${barColor}; border-radius: 4px; transition: all 0.3s ease;"></div>
+                  <div style="width: ${Math.max(6, p.pct)}%; height: 100%; background: #3b82f6; border-radius: 4px;"></div>
                 </div>
               </td>
             </tr>
+          `).join('');
+        }
+      }
+    }
+  };
+
+  // Helper to format dynamic relative time (e.g. 5 minutes ago, 1 day ago)
+  function formatInquiryRelativeTime(dateOrTimestamp) {
+    if (!dateOrTimestamp) return 'Just now';
+    
+    let past = new Date(dateOrTimestamp);
+    if (isNaN(past.getTime())) {
+      // Try replacing dashes/spaces if needed
+      past = new Date(String(dateOrTimestamp).replace(/-/g, '/'));
+    }
+    
+    if (isNaN(past.getTime())) {
+      return String(dateOrTimestamp);
+    }
+
+    const now = new Date();
+    const diffMs = now - past;
+    
+    if (diffMs < 0 || diffMs < 60000) return 'Just now';
+    
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffMins === 1) return '1 minute ago';
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffHours === 1) return '1 hour ago';
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 30) return `${diffDays} days ago`;
+    if (diffMonths === 1) return '1 month ago';
+    if (diffMonths < 12) return `${diffMonths} months ago`;
+    if (diffYears === 1) return '1 year ago';
+    return `${diffYears} years ago`;
+  }
+
+  // Product Lead Detail Modal Global Functions
+  window.showProductLeadDetailModal = function(idx) {
+    const item = (window.CATALOG_ITEM_METRICS && window.CATALOG_ITEM_METRICS[idx]) ? window.CATALOG_ITEM_METRICS[idx] : null;
+    if (!item) return;
+
+    const modal = document.getElementById('productLeadDetailModal');
+    if (!modal) return;
+
+    const rankEl = document.getElementById('leadDetailRankBadge');
+    const catEl = document.getElementById('leadDetailCategoryBadge');
+    const codeEl = document.getElementById('leadDetailCodeBadge');
+    const titleEl = document.getElementById('leadDetailProductTitle');
+    const countEl = document.getElementById('leadDetailCount');
+    const shareEl = document.getElementById('leadDetailShare');
+    const inqCountEl = document.getElementById('leadDetailInquiryCount');
+    const inqContainer = document.getElementById('leadDetailInquiriesList');
+
+    if (rankEl) rankEl.textContent = `#${item.rank || (idx + 1)}`;
+    if (catEl) catEl.textContent = item.categoryLabel || item.category || 'Orthopedic Line';
+    if (codeEl) codeEl.textContent = item.code || 'CATALOG';
+    if (titleEl) titleEl.textContent = item.title || 'Product Name';
+    if (countEl) countEl.textContent = `${item.count} Lead${item.count === 1 ? '' : 's'}`;
+    if (shareEl) shareEl.textContent = `${item.sharePct || 0}%`;
+    if (inqCountEl) inqCountEl.textContent = `${item.count} Record${item.count === 1 ? '' : 's'}`;
+
+    if (inqContainer) {
+      if (item.inquiries && item.inquiries.length > 0) {
+        inqContainer.innerHTML = item.inquiries.map((inq) => {
+          const rawTime = inq.timestamp || inq.date || inq.created_at || inq.time;
+          const timeAgo = formatInquiryRelativeTime(rawTime);
+
+          return `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px; transition: all 0.2s;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+                <div style="font-weight: 800; color: #0f172a; font-size: 0.92rem;">
+                  <i class="fa fa-user-circle" style="color: #3b82f6; margin-right: 4px;"></i> ${inq.name || 'Anonymous Buyer'}
+                  ${inq.company ? `<span style="font-weight: 600; color: #64748b; font-size: 0.8rem;"> • ${inq.company}</span>` : ''}
+                </div>
+                <span style="font-size: 0.72rem; font-weight: 700; color: #2563eb; background: #eff6ff; border: 1px solid #dbeafe; padding: 2px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa fa-clock" style="font-size: 0.68rem; color: #3b82f6;"></i> ${timeAgo}
+                </span>
+              </div>
+
+              <div style="display: flex; gap: 12px; font-size: 0.78rem; color: #475569; margin-bottom: 8px; flex-wrap: wrap;">
+                ${inq.email ? `<span><i class="fa fa-envelope" style="color: #94a3b8;"></i> ${inq.email}</span>` : ''}
+                ${inq.phone ? `<span><i class="fa fa-phone" style="color: #94a3b8;"></i> ${inq.phone}</span>` : ''}
+                ${inq.country ? `<span><i class="fa fa-map-marker-alt" style="color: #94a3b8;"></i> ${inq.country}</span>` : ''}
+              </div>
+
+              ${inq.message ? `
+                <div style="font-size: 0.8rem; color: #334155; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #f1f5f9; line-height: 1.35; margin-bottom: 8px;">
+                  "${inq.message}"
+                </div>
+              ` : ''}
+
+              <div style="display: flex; justify-content: flex-end;">
+                <button type="button" onclick="window.viewInquiryFromDetail('${inq.id || ''}')" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.76rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa fa-external-link-alt" style="font-size: 0.68rem;"></i> Open in CRM
+                </button>
+              </div>
+            </div>
           `;
         }).join('');
       } else {
-        // Fallback Product Lines Table
-        modalCatalogTableBody.innerHTML = productsData.map(p => `
-          <tr style="border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 12px 16px; font-weight: 700; color: #0f172a;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="background: #dbeafe; color: #2563eb; font-size: 0.75rem; font-weight: 800; padding: 2px 7px; border-radius: 8px;">#${p.rank}</span>
-                <span style="width: 9px; height: 9px; border-radius: 50%; background: #3b82f6; display: inline-block; flex-shrink: 0;"></span>
-                <span style="font-weight: 700; color: #1e293b; font-size: 0.88rem;">${p.title}</span>
-              </div>
-            </td>
-            <td style="padding: 12px 16px; color: #64748b; font-weight: 600;">Orthopedic Line</td>
-            <td style="padding: 12px 16px; font-weight: 800; color: #3b82f6;">${p.leads} Lead${p.leads === 1 ? '' : 's'}</td>
-            <td style="padding: 12px 16px; font-weight: 800; color: #3b82f6;">${p.pct}%</td>
-            <td style="padding: 12px 16px;">
-              <div style="width: 100%; max-width: 130px; background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden;">
-                <div style="width: ${Math.max(6, p.pct)}%; height: 100%; background: #3b82f6; border-radius: 4px;"></div>
-              </div>
-            </td>
-          </tr>
-        `).join('');
+        inqContainer.innerHTML = `
+          <div style="text-align: center; padding: 28px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; font-size: 1.2rem;">
+              <i class="fa fa-inbox"></i>
+            </div>
+            <div style="font-weight: 700; font-size: 0.88rem; color: #1e293b; margin-bottom: 4px;">No Active RFQ Inquiries</div>
+            <div style="font-size: 0.76rem; color: #64748b; max-width: 320px; margin: 0 auto; line-height: 1.3;">
+              No customer inquiries have been submitted for <strong>${item.title}</strong> yet in the current time period.
+            </div>
+          </div>
+        `;
       }
     }
+
+    modal.classList.add('show');
+  };
+
+  window.closeProductLeadDetailModal = function() {
+    const modal = document.getElementById('productLeadDetailModal');
+    if (modal) {
+      modal.classList.remove('show');
+    }
+  };
+
+  window.viewInquiryFromDetail = function(inquiryId) {
+    window.closeProductLeadDetailModal();
+    window.closeDemandAnalyticsModal();
+    if (typeof window.switchAdminView === 'function') {
+      window.switchAdminView('view-crm');
+    }
+  };
+
+  // Universal Custom Delete Confirmation Dialog
+  window.confirmCustomDelete = function(options) {
+    const modal = document.getElementById("adminConfirmDeleteModal");
+    const titleEl = document.getElementById("deleteConfirmTitle");
+    const msgEl = document.getElementById("deleteConfirmMessage");
+    const btnConfirm = document.getElementById("btnConfirmCustomDelete");
+    const btnCancel = document.getElementById("btnCancelCustomDelete");
+
+    if (!modal) {
+      if (confirm(options.message || "Are you sure you want to delete this item?")) {
+        if (typeof options.onConfirm === "function") options.onConfirm();
+      }
+      return;
+    }
+
+    if (titleEl) titleEl.textContent = options.title || "Confirm Deletion";
+    if (msgEl) msgEl.innerHTML = options.message || "Are you sure you want to permanently delete this item? This action cannot be undone.";
+
+    function closeModal() {
+      modal.classList.remove("show", "active");
+      modal.style.display = "none";
+    }
+
+    btnCancel.onclick = closeModal;
+    btnConfirm.onclick = () => {
+      closeModal();
+      if (typeof options.onConfirm === "function") options.onConfirm();
+    };
+
+    modal.classList.add("show", "active");
+    modal.style.display = "flex";
   };
 
   // Initial call & bind window storage listener
@@ -609,3 +926,4 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('storage', window.updateLiveDemandAnalytics);
 
 });
+
