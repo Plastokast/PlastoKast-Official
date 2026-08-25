@@ -745,15 +745,18 @@ document.addEventListener("DOMContentLoaded", () => {
         timestamp: new Date().toISOString()
       };
 
-      // Save to localStorage for Admin CRM
-      let inquiries = [];
-      try {
-        const raw = localStorage.getItem("plastokast_inquiries");
-        if (raw) inquiries = JSON.parse(raw);
-      } catch(err) {}
-
-      inquiries.unshift(inquiryData);
-      localStorage.setItem("plastokast_inquiries", JSON.stringify(inquiries));
+      // Save to Cloud Firebase & localStorage for Admin CRM
+      if (window.PlastoKastDB && typeof window.PlastoKastDB.saveInquiry === 'function') {
+        window.PlastoKastDB.saveInquiry(inquiryData);
+      } else {
+        let inquiries = [];
+        try {
+          const raw = localStorage.getItem("plastokast_inquiries");
+          if (raw) inquiries = JSON.parse(raw);
+        } catch(err) {}
+        inquiries.unshift(inquiryData);
+        localStorage.setItem("plastokast_inquiries", JSON.stringify(inquiries));
+      }
 
       // Optional email dispatcher if function exists
       if (typeof dispatchInquiryEmail === "function") {

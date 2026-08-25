@@ -2,6 +2,7 @@ import os
 
 def check_files():
     files = [
+        "assets/js/firebase-db.js",
         "assets/js/faq-data.js",
         "assets/js/site-settings.js",
         "assets/js/admin-faq.js",

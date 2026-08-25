@@ -115,9 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Permanent Delete Single Lead
   window.deleteSingleLead = function(id) {
     const doDelete = () => {
-      let inquiries = getInquiries();
-      inquiries = inquiries.filter(i => i.id !== id);
-      localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      if (window.PlastoKastDB && typeof window.PlastoKastDB.deleteInquiries === 'function') {
+        window.PlastoKastDB.deleteInquiries(id);
+      } else {
+        let inquiries = getInquiries();
+        inquiries = inquiries.filter(i => i.id !== id);
+        localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      }
       
       renderTable();
       updateDashboardNotifications();
@@ -143,9 +147,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectedIds.length === 0) return;
 
     const doDelete = () => {
-      let inquiries = getInquiries();
-      inquiries = inquiries.filter(i => !selectedIds.includes(i.id));
-      localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      if (window.PlastoKastDB && typeof window.PlastoKastDB.deleteInquiries === 'function') {
+        window.PlastoKastDB.deleteInquiries(selectedIds);
+      } else {
+        let inquiries = getInquiries();
+        inquiries = inquiries.filter(i => !selectedIds.includes(i.id));
+        localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      }
 
       isCrmDeleteMode = false;
       if (crmDeleteModeControls) crmDeleteModeControls.style.display = 'none';
@@ -380,7 +388,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Automatically mark lead as READ when opened!
     if (inq.read !== true) {
       inquiries[inqIndex].read = true;
-      localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      if (window.PlastoKastDB && typeof window.PlastoKastDB.updateInquiry === 'function') {
+        window.PlastoKastDB.updateInquiry(inq.id, { read: true });
+      } else {
+        localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+      }
       renderTable();
       updateDashboardNotifications();
     }
@@ -430,8 +442,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const inqIndex = inquiries.findIndex(i => i.id === currentActiveInquiryId);
       
       if (inqIndex > -1) {
-        inquiries[inqIndex].status = statusSelect.value;
-        localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+        const newStatus = statusSelect.value;
+        inquiries[inqIndex].status = newStatus;
+        if (window.PlastoKastDB && typeof window.PlastoKastDB.updateInquiry === 'function') {
+          window.PlastoKastDB.updateInquiry(currentActiveInquiryId, { status: newStatus });
+        } else {
+          localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+        }
         renderTable();
         dossierModal.classList.remove('show');
       }
@@ -560,6 +577,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  // Connect Firebase Real-Time Firestore Listener for Instant Cloud Sync across Mobile & Desktop
+  if (window.PlastoKastDB && typeof window.PlastoKastDB.onInquiriesChange === 'function') {
+    window.PlastoKastDB.onInquiriesChange((inquiries) => {
+      renderTable();
+      updateDashboardNotifications();
+      if (typeof window.updateLiveDemandAnalytics === 'function') {
+        window.updateLiveDemandAnalytics();
+      }
+    });
+  }
 
   // Also hook into status saves
   if (saveStatusBtn) {

@@ -677,14 +677,17 @@ document.addEventListener("DOMContentLoaded", () => {
       timestamp: new Date().toISOString()
     };
 
-    let inquiries = [];
-    try {
-      const raw = localStorage.getItem('plastokast_inquiries');
-      if (raw) inquiries = JSON.parse(raw);
-    } catch(e) {}
-
-    inquiries.unshift(newInquiry);
-    localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+    if (window.PlastoKastDB && typeof window.PlastoKastDB.saveInquiry === 'function') {
+      window.PlastoKastDB.saveInquiry(newInquiry);
+    } else {
+      let inquiries = [];
+      try {
+        const raw = localStorage.getItem('plastokast_inquiries');
+        if (raw) inquiries = JSON.parse(raw);
+      } catch(e) {}
+      inquiries.unshift(newInquiry);
+      localStorage.setItem('plastokast_inquiries', JSON.stringify(inquiries));
+    }
     
     if (typeof dispatchInquiryEmail === 'function') {
       dispatchInquiryEmail(newInquiry);
