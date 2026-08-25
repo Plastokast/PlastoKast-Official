@@ -363,7 +363,12 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
           <div>
             <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin: 0;">Inquiry & RFQ Logger</h2>
-            <p style="color: #64748b; font-size: 0.88rem; margin-top: 4px; margin-bottom: 0;">Manage inbound buyer RFQs, conversion pipeline, and client dossiers.</p>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+              <p style="color: #64748b; font-size: 0.88rem; margin: 0;">Manage inbound buyer RFQs, conversion pipeline, and client dossiers.</p>
+              <span style="display: inline-flex; align-items: center; gap: 6px; background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; padding: 3px 10px; border-radius: 20px; font-size: 0.76rem; font-weight: 700;">
+                <i class="fa fa-envelope"></i> Alerts to: <strong id="crmActiveAdminEmail">ankitdobariya34@gmail.com</strong>
+              </span>
+            </div>
           </div>
 
           <div class="admin-toolbar crm-toolbar" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -769,10 +774,29 @@
                 </div>
               </div>
 
-              <!-- Section 4: Physical Address -->
+              <!-- Section 4: Admin Lead Notification Email (Incoming Inquiries) -->
+              <div style="margin-bottom: 26px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                  <h4 style="font-size: 1.05rem; font-weight: 800; color: #7c3aed; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-bell"></i> 4. Admin Lead Notification Email (Incoming RFQs)
+                  </h4>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #7c3aed; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 2px 8px; border-radius: 6px;">Live Cloud Synced</span>
+                </div>
+                
+                <div>
+                  <label style="display: block; font-weight: 700; color: #334155; font-size: 0.84rem; margin-bottom: 6px;">Admin Recipient Email (Where Customer Quotes Are Delivered)</label>
+                  <div style="position: relative;">
+                    <i class="fa fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #7c3aed; font-size: 1rem;"></i>
+                    <input type="email" id="settingAdminLeadEmail" placeholder="ankitdobariya34@gmail.com" style="width: 100%; padding: 12px 14px 12px 42px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff;">
+                  </div>
+                  <span style="font-size: 0.74rem; color: #64748b; margin-top: 5px; display: block;">Whenever a customer submits an inquiry on the website, lead alerts will be delivered immediately to this inbox.</span>
+                </div>
+              </div>
+
+              <!-- Section 5: Physical Address -->
               <div style="margin-bottom: 26px; padding-top: 20px; border-top: 1px solid #f1f5f9;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #014E9E; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
-                  <i class="fa fa-map-marker"></i> 4. Factory & Registered Office Address
+                  <i class="fa fa-map-marker"></i> 5. Factory & Registered Office Address
                 </h4>
                 
                 <div style="display: flex; flex-direction: column; gap: 14px;">

@@ -9,6 +9,7 @@ function initAdminContactSettings() {
   const phone2Input = document.getElementById("settingPhone2");
   const whatsappInput = document.getElementById("settingWhatsapp");
   const emailInput = document.getElementById("settingEmail");
+  const adminLeadEmailInput = document.getElementById("settingAdminLeadEmail");
   const addressInput = document.getElementById("settingAddress");
   const shortAddressInput = document.getElementById("settingShortAddress");
   const hoursInput = document.getElementById("settingHours");
@@ -26,6 +27,7 @@ function initAdminContactSettings() {
     if (phone2Input) phone2Input.value = settings.phone2 || "";
     if (whatsappInput) whatsappInput.value = settings.whatsapp || "";
     if (emailInput) emailInput.value = settings.email || "";
+    if (adminLeadEmailInput) adminLeadEmailInput.value = settings.adminLeadEmail || "ankitdobariya34@gmail.com";
     if (addressInput) addressInput.value = settings.address || "";
     if (shortAddressInput) shortAddressInput.value = settings.shortAddress || "";
     if (hoursInput) hoursInput.value = settings.workingHours || "";
@@ -55,6 +57,7 @@ function initAdminContactSettings() {
       phone2: phone2Input ? phone2Input.value.trim() : "",
       whatsapp: whatsappInput ? whatsappInput.value.trim() : "",
       email: emailInput ? emailInput.value.trim() : "",
+      adminLeadEmail: adminLeadEmailInput ? adminLeadEmailInput.value.trim() : "ankitdobariya34@gmail.com",
       address: addressInput ? addressInput.value.trim() : "",
       shortAddress: shortAddressInput ? shortAddressInput.value.trim() : "",
       workingHours: hoursInput ? hoursInput.value.trim() : ""
@@ -63,7 +66,7 @@ function initAdminContactSettings() {
     saveSiteSettings(updated);
 
     // Show visual toast notification
-    showContactSaveToast("Contact & Phone Numbers updated across the entire live website!");
+    showContactSaveToast("Contact details and Admin Lead Notification Email saved successfully!");
   };
 
   window.resetAdminContactDefaults = function() {
@@ -111,7 +114,7 @@ function initAdminContactSettings() {
   }
 
   // Bind live input listeners for real-time preview
-  [phone1Input, phone2Input, whatsappInput, emailInput, addressInput, shortAddressInput, hoursInput].forEach(inp => {
+  [phone1Input, phone2Input, whatsappInput, emailInput, adminLeadEmailInput, addressInput, shortAddressInput, hoursInput].forEach(inp => {
     if (inp) {
       inp.addEventListener("input", updateLivePreview);
     }

@@ -548,6 +548,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    const emailBadge = document.getElementById('crmActiveAdminEmail');
+    if (emailBadge && typeof getSiteSettings === 'function') {
+      const s = getSiteSettings();
+      emailBadge.textContent = s.adminLeadEmail || 'ankitdobariya34@gmail.com';
+    }
   }
 
   // Expose global refresh function

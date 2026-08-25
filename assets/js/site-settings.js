@@ -9,6 +9,7 @@ const DEFAULT_SITE_SETTINGS = {
   phone2: "+91 89053 32576",
   whatsapp: "+91 99094 12068",
   email: "plastokast.sales@gmail.com",
+  adminLeadEmail: "ankitdobariya34@gmail.com",
   address: "Ground Floor, Common Plot, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat - 395004, Gujarat, India",
   shortAddress: "PlastoKast House, Surat, Gujarat, India – 395004",
   workingHours: "Monday – Saturday: 9:00 AM – 7:00 PM",
@@ -47,6 +48,13 @@ function saveSiteSettings(newSettings) {
   const current = getSiteSettings();
   const merged = { ...current, ...newSettings };
   localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+  
+  if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+    try {
+      firebase.firestore().collection('settings').doc('site').set(merged, { merge: true }).catch(()=>{});
+    } catch(e) {}
+  }
+
   window.dispatchEvent(new CustomEvent("plastokast_settings_updated", { detail: merged }));
   applyDynamicSiteSettings();
   return merged;
@@ -54,6 +62,11 @@ function saveSiteSettings(newSettings) {
 
 function resetSiteSettingsToDefault() {
   localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SITE_SETTINGS));
+  if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+    try {
+      firebase.firestore().collection('settings').doc('site').set(DEFAULT_SITE_SETTINGS, { merge: true }).catch(()=>{});
+    } catch(e) {}
+  }
   window.dispatchEvent(new CustomEvent("plastokast_settings_updated", { detail: DEFAULT_SITE_SETTINGS }));
   applyDynamicSiteSettings();
   return DEFAULT_SITE_SETTINGS;
@@ -166,4 +179,24 @@ if (typeof document !== "undefined") {
   window.addEventListener("storage", (e) => {
     if (e.key === SETTINGS_STORAGE_KEY) applyDynamicSiteSettings();
   });
+
+  // Sync settings with Cloud Firestore in real time
+  function listenToCloudSettings() {
+    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
+      try {
+        firebase.firestore().collection('settings').doc('site').onSnapshot(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const current = getSiteSettings();
+            const merged = { ...current, ...data };
+            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+            applyDynamicSiteSettings();
+          }
+        }, err => {});
+      } catch(e) {}
+    } else {
+      setTimeout(listenToCloudSettings, 1000);
+    }
+  }
+  listenToCloudSettings();
 }
