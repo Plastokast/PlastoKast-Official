@@ -534,11 +534,13 @@ document.addEventListener("DOMContentLoaded", () => {
           const countryStr = inq.country ? ` (${inq.country})` : '';
           const item = document.createElement('div');
           item.className = 'stat-item';
-          item.style.cssText = `flex-direction: row; justify-content: space-between; align-items: center; cursor: pointer; ${idx < top3.length - 1 ? 'border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;' : ''}`;
+          item.style.cssText = `width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 14px; background: rgba(255,255,255,0.14); border-radius: 14px; border: 1px solid rgba(255,255,255,0.22); margin-bottom: 6px; box-sizing: border-box; backdrop-filter: blur(10px); transition: all 0.2s ease;`;
           item.title = 'Click to view dossier';
           item.innerHTML = `
-            <span style="display: flex; align-items: center; gap: 8px; opacity: 1; font-weight: 600;"><i class="fa fa-user-circle"></i> ${inq.name}${countryStr}</span>
-            <span style="font-size: 0.75rem; opacity: 0.85;">${timeAgo}</span>
+            <span style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.86rem; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+              <i class="fa fa-user-circle" style="font-size: 1rem; color: #fef08a;"></i> ${inq.name}${countryStr}
+            </span>
+            <span style="font-size: 0.74rem; font-weight: 700; color: #fef08a; background: rgba(0,0,0,0.18); padding: 3px 8px; border-radius: 8px; white-space: nowrap;">${timeAgo}</span>
           `;
           item.addEventListener('click', () => {
             if (window.switchAdminTab) window.switchAdminTab('crm');
