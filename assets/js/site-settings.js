@@ -7,7 +7,7 @@
 const DEFAULT_SITE_SETTINGS = {
   phone1: "+91 99094 12068",
   phone2: "+91 89053 32576",
-  whatsapp: "+91 99094 12068",
+  whatsapp: "+91 89053 32576",
   email: "plastokast.sales@gmail.com",
   adminLeadEmail: "ankitdobariya34@gmail.com",
   facebook: "https://www.facebook.com/share/19H4HK8o91/?mibextid=wwXIfr",
@@ -133,13 +133,10 @@ function applyDynamicSiteSettings() {
     el.href = settings.linkedin || DEFAULT_SITE_SETTINGS.linkedin;
   });
 
-  // 2. Floating WhatsApp widget
-  document.querySelectorAll(".whatsapp-widget, a[href*='api.whatsapp.com']").forEach(el => {
-    const currentHref = el.getAttribute("href") || "";
-    // Update phone number in whatsapp URL while keeping original text parameter if present
-    const urlMatch = currentHref.match(/text=([^&]*)/);
-    const textParam = urlMatch ? urlMatch[1] : "Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products.";
-    el.href = `https://api.whatsapp.com/send?phone=${whatsappClean}&text=${textParam}`;
+  // 2. Floating WhatsApp widget & General WhatsApp links (Connects to +91 89053 32576)
+  const defaultGeneralMsg = "Hi%20PlastoKast,%20I%20have%20some%20requirements%20and%20would%20like%20to%20get%20more%20details.";
+  document.querySelectorAll(".whatsapp-widget, .social-icon[aria-label='WhatsApp'], .footer-socials a[aria-label='WhatsApp']").forEach(el => {
+    el.href = `https://api.whatsapp.com/send?phone=${whatsappClean}&text=${defaultGeneralMsg}`;
   });
 
   // 3. Mobile Drawer Phone & WhatsApp buttons
@@ -151,7 +148,7 @@ function applyDynamicSiteSettings() {
 
   const drawerWhatsapp = document.querySelector(".drawer-whatsapp-btn");
   if (drawerWhatsapp) {
-    drawerWhatsapp.href = `https://api.whatsapp.com/send?phone=${whatsappClean}&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products.`;
+    drawerWhatsapp.href = `https://api.whatsapp.com/send?phone=${whatsappClean}&text=${defaultGeneralMsg}`;
   }
 
   // 4. Update Footer Contact spans
@@ -174,11 +171,6 @@ function applyDynamicSiteSettings() {
   const prodInquiryPhone = document.getElementById("productDetailPhoneContainer");
   if (prodInquiryPhone) {
     prodInquiryPhone.innerHTML = `Inquiry Phone: <a href="tel:${phone1Clean}">${settings.phone1}</a> / <a href="tel:${phone2Clean}">${settings.phone2}</a>`;
-  }
-
-  const prodWhatsappBtn = document.querySelector(".btn-whatsapp-inquiry");
-  if (prodWhatsappBtn) {
-    prodWhatsappBtn.href = `https://api.whatsapp.com/send?phone=${whatsappClean}&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20product%20inquiry.`;
   }
 }
 
