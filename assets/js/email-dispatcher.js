@@ -69,7 +69,7 @@ Website: https://plastokast.com | Email: info@plastokast.com
       inquiry_reference_id: "#" + refId,
       inquiry_subject: subject,
       requested_products_and_details: message,
-      _subject: `🚨 New RFQ: ${custName} - ${facility} (#${refId})`,
+      _subject: `[New RFQ Lead] ${custName} - ${facility} (#${refId})`,
       _template: "table",
       _captcha: "false",
       _autoresponse: autoResponseMessage
