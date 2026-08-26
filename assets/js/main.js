@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="drawer-footer">
-        <a href="https://api.whatsapp.com/send?phone=+919909412068&text=Hi%20PlastoKast,%20I%20am%20interested%20in%20your%20products." target="_blank" class="drawer-whatsapp-btn">
+        <a href="https://api.whatsapp.com/send?phone=918905332576&text=Hi%20PlastoKast,%20I%20have%20some%20requirements%20and%20would%20like%20to%20get%20more%20details." target="_blank" class="drawer-whatsapp-btn">
           <i class="fa fa-whatsapp"></i> Chat on WhatsApp
         </a>
         <a href="tel:+919909412068" class="drawer-phone-btn">
