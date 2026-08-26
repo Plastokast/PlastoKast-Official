@@ -274,6 +274,53 @@ export default async function handler(req, res) {
 </html>
 `;
 
+    async function sendViaResend(toAddr, subject, htmlContent, isCustomer = false) {
+      // Primary sender using verified domain
+      const primaryFrom = isCustomer 
+        ? "PlastoKast™ Medical <inquiry@plastokast.com>" 
+        : "PlastoKast Alerts <inquiry@plastokast.com>";
+      
+      try {
+        let res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            from: primaryFrom,
+            reply_to: "plastokast.sales@gmail.com",
+            to: Array.isArray(toAddr) ? toAddr : [toAddr],
+            subject: subject,
+            html: htmlContent
+          })
+        });
+        let resJson = await res.json();
+        
+        // If domain is still pending verification in Resend, fall back to onboarding@resend.dev
+        if (resJson && resJson.name === "validation_error" && resJson.statusCode === 403) {
+          const fallbackFrom = "PlastoKast Medical <onboarding@resend.dev>";
+          const fallbackRes = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${RESEND_API_KEY}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              from: fallbackFrom,
+              to: Array.isArray(toAddr) ? toAddr : [toAddr],
+              subject: subject,
+              html: htmlContent
+            })
+          });
+          resJson = await fallbackRes.json();
+        }
+        return resJson;
+      } catch(e) {
+        return { error: e.message };
+      }
+    }
+
     // -------------------------------------------------------------
     // Parallel Resend Dispatch
     // -------------------------------------------------------------
@@ -281,56 +328,33 @@ export default async function handler(req, res) {
 
     // 1. Dispatch to Admin (Always)
     dispatches.push(
-      fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: "PlastoKast Alerts <onboarding@resend.dev>",
-          to: [ADMIN_EMAIL],
-          subject: `🚨 NEW LEAD [#${inquiryId}]: ${name} (${country}) - ${productName || "Product Inquiry"}`,
-          html: adminHTML
-        })
-      })
+      sendViaResend(
+        ADMIN_EMAIL,
+        `🚨 NEW LEAD [#${inquiryId}]: ${name} (${country}) - ${productName || "Product Inquiry"}`,
+        adminHTML,
+        false
+      )
     );
 
     // 2. Dispatch to Customer (If customer provided an email address)
     if (email && email.includes("@")) {
       dispatches.push(
-        fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            from: "PlastoKast Medical <onboarding@resend.dev>",
-            to: [email],
-            subject: `Inquiry Received: PlastoKast™ Medical Products [#${inquiryId}]`,
-            html: customerHTML
-          })
-        })
+        sendViaResend(
+          email,
+          `Inquiry Received: PlastoKast™ Medical Products [#${inquiryId}]`,
+          customerHTML,
+          true
+        )
       );
     }
 
-    const results = await Promise.allSettled(dispatches);
-    const responses = [];
-    for (const r of results) {
-      if (r.status === "fulfilled") {
-        const json = await r.value.json().catch(() => ({}));
-        responses.push(json);
-      } else {
-        responses.push({ error: r.reason ? r.reason.message : "Unknown error" });
-      }
-    }
+    const results = await Promise.all(dispatches);
 
     return res.status(200).json({
       success: true,
       message: "Emails dispatched via Resend",
       inquiryId,
-      results: responses
+      results: results
     });
   } catch (err) {
     console.error("Resend Dispatch Error:", err);
