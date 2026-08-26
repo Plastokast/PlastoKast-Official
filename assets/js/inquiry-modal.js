@@ -759,11 +759,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("plastokast_inquiries", JSON.stringify(inquiries));
       }
 
-      // Optional email dispatcher if function exists
-      if (typeof dispatchInquiryEmail === "function") {
-        dispatchInquiryEmail(inquiryData);
-      }
-
       // 1. Immediately Close the Inquiry Form Popup & reset state
       resetAndCloseModal();
 
