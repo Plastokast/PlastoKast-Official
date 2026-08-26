@@ -22,6 +22,7 @@ def clean_and_update():
                 new_content = re.sub(r'assets/js/certificates-data\.js(\?[^"]*)?', 'assets/js/certificates-data.js?v=14300', new_content)
                 new_content = re.sub(r'assets/js/faq-data\.js(\?[^"]*)?', 'assets/js/faq-data.js?v=14300', new_content)
                 new_content = re.sub(r'assets/js/site-settings\.js(\?[^"]*)?', 'assets/js/site-settings.js?v=14300', new_content)
+                new_content = re.sub(r'assets/js/email-service\.js(\?[^"]*)?', 'assets/js/email-service.js?v=14300', new_content)
                 new_content = re.sub(r'assets/js/firebase-db\.js(\?[^"]*)?', 'assets/js/firebase-db.js?v=14300', new_content)
                 new_content = re.sub(r'assets/js/admin-core\.js(\?[^"]*)?', 'assets/js/admin-core.js?v=14300', new_content)
                 new_content = re.sub(r'assets/js/admin-faq\.js(\?[^"]*)?', 'assets/js/admin-faq.js?v=14300', new_content)

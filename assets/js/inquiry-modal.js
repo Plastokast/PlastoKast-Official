@@ -759,6 +759,11 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("plastokast_inquiries", JSON.stringify(inquiries));
       }
 
+      // Dispatch real-time email via Resend
+      if (typeof window.dispatchInquiryEmail === "function") {
+        window.dispatchInquiryEmail(inquiryData);
+      }
+
       // 1. Immediately Close the Inquiry Form Popup & reset state
       resetAndCloseModal();
 
