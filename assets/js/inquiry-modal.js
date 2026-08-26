@@ -736,6 +736,7 @@ document.addEventListener("DOMContentLoaded", () => {
         id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
         name: name,
         email: email,
+        phone: fullPhone,
         facility: facility || 'Self',
         country: country || 'India',
         customerType: 'Distributor / Buyer',
