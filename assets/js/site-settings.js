@@ -10,6 +10,9 @@ const DEFAULT_SITE_SETTINGS = {
   whatsapp: "+91 99094 12068",
   email: "plastokast.sales@gmail.com",
   adminLeadEmail: "ankitdobariya34@gmail.com",
+  facebook: "https://www.facebook.com/share/19H4HK8o91/?mibextid=wwXIfr",
+  instagram: "https://www.instagram.com/plastokast?igsi=MW91ZWYyMG5waGIzMw==",
+  linkedin: "https://www.linkedin.com/company/plastokast/?originalSubdomain=in",
   address: "Ground Floor, Common Plot, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat - 395004, Gujarat, India",
   shortAddress: "PlastoKast House, Surat, Gujarat, India – 395004",
   workingHours: "Monday – Saturday: 9:00 AM – 7:00 PM",
@@ -117,6 +120,17 @@ function applyDynamicSiteSettings() {
 
   document.querySelectorAll("[data-setting='workingHours']").forEach(el => {
     el.textContent = settings.workingHours;
+  });
+
+  // Social Links
+  document.querySelectorAll(".social-icon[aria-label='Facebook'], a[aria-label='Facebook']").forEach(el => {
+    el.href = settings.facebook || DEFAULT_SITE_SETTINGS.facebook;
+  });
+  document.querySelectorAll(".social-icon[aria-label='Instagram'], a[aria-label='Instagram']").forEach(el => {
+    el.href = settings.instagram || DEFAULT_SITE_SETTINGS.instagram;
+  });
+  document.querySelectorAll(".social-icon[aria-label='LinkedIn'], a[aria-label='LinkedIn']").forEach(el => {
+    el.href = settings.linkedin || DEFAULT_SITE_SETTINGS.linkedin;
   });
 
   // 2. Floating WhatsApp widget
