@@ -166,16 +166,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Hero Slideshow / Carousel Logic ---
-  const heroSlideshow = document.querySelector(".hero-slideshow");
-  if (heroSlideshow) {
+  // --- Dynamic Live Hero Slideshow / Carousel ---
+  let heroSlideInterval = null;
+  function renderHeroSlideshow() {
+    const heroSlideshow = document.querySelector(".hero-slideshow");
+    if (!heroSlideshow || typeof PRODUCTS_DATA === "undefined" || !Array.isArray(PRODUCTS_DATA) || PRODUCTS_DATA.length === 0) return;
+
+    if (heroSlideInterval) {
+      clearInterval(heroSlideInterval);
+      heroSlideInterval = null;
+    }
+
+    const heroProducts = PRODUCTS_DATA.slice(0, 5);
+    if (heroProducts.length === 0) return;
+
+    const slidesHtml = heroProducts.map((p, idx) => {
+      const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : 'media/pk_cast_colored_v73.jpg?v=73';
+      const captionTitle = p.title || 'PlastoKast Medical Solution';
+      return `
+        <div class="hero-slide ${idx === 0 ? 'active' : ''}" data-product-id="${p.id}">
+          <a href="product-detail.html?id=${p.id}">
+            <img src="${imgUrl}" alt="${captionTitle}" loading="${idx === 0 ? 'eager' : 'lazy'}">
+            <div class="hero-slide-caption">${captionTitle}</div>
+          </a>
+        </div>
+      `;
+    }).join("");
+
+    const dotsHtml = `
+      <div class="hero-slide-dots">
+        ${heroProducts.map((_, idx) => `<span class="hero-slide-dot ${idx === 0 ? 'active' : ''}" data-slide="${idx}"></span>`).join("")}
+      </div>
+    `;
+
+    heroSlideshow.innerHTML = slidesHtml + dotsHtml;
+
     const slides = heroSlideshow.querySelectorAll(".hero-slide");
     const dots = heroSlideshow.querySelectorAll(".hero-slide-dot");
-    const prevBtn = heroSlideshow.querySelector(".hero-slide-btn.prev");
-    const nextBtn = heroSlideshow.querySelector(".hero-slide-btn.next");
-    
     let currentSlide = 0;
-    let slideInterval = null;
 
     function showSlide(index) {
       if (index >= slides.length) currentSlide = 0;
@@ -203,31 +231,17 @@ document.addEventListener("DOMContentLoaded", () => {
       showSlide(currentSlide + 1);
     }
 
-    function prevSlide() {
-      showSlide(currentSlide - 1);
-    }
-
     function startAutoSlide() {
-      slideInterval = setInterval(nextSlide, 4000);
+      if (heroSlideInterval) clearInterval(heroSlideInterval);
+      heroSlideInterval = setInterval(nextSlide, 4000);
     }
 
     function stopAutoSlide() {
-      if (slideInterval) {
-        clearInterval(slideInterval);
+      if (heroSlideInterval) {
+        clearInterval(heroSlideInterval);
+        heroSlideInterval = null;
       }
     }
-
-    if (nextBtn) nextBtn.addEventListener("click", () => {
-      nextSlide();
-      stopAutoSlide();
-      startAutoSlide();
-    });
-    
-    if (prevBtn) prevBtn.addEventListener("click", () => {
-      prevSlide();
-      stopAutoSlide();
-      startAutoSlide();
-    });
 
     dots.forEach((dot, i) => {
       dot.addEventListener("click", () => {
@@ -237,11 +251,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    heroSlideshow.addEventListener("mouseenter", stopAutoSlide);
-    heroSlideshow.addEventListener("mouseleave", startAutoSlide);
+    heroSlideshow.onmouseenter = stopAutoSlide;
+    heroSlideshow.onmouseleave = startAutoSlide;
 
     startAutoSlide();
   }
+
+  renderHeroSlideshow();
+
+  window.addEventListener("plastokast_products_updated", () => {
+    renderHeroSlideshow();
+  });
 
   // --- Dynamic Product Quick View Modal & Click Event Bindings ---
   function initQuickViewModal() {
@@ -498,21 +518,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Bind click event to hero slides to trigger Quick View
-  const slides = document.querySelectorAll(".hero-slide");
-  slides.forEach(slide => {
-    slide.style.cursor = "pointer";
-    slide.addEventListener("click", () => {
-      let productId = "plastokast-fiberglass-tape"; // fallback
-      const altText = slide.querySelector("img") ? slide.querySelector("img").alt : "";
-      if (altText.includes("Colored") || altText.includes("Polyester")) {
-        productId = "plastokast-polyester-tape";
-      } else if (altText.includes("Kit") || altText.includes("Package")) {
-        productId = "pk-cast-kit";
-      } else if (altText.includes("Office") || altText.includes("HQ")) {
-        productId = "plastokast-fiberglass-tape";
+  document.addEventListener("click", (e) => {
+    const slide = e.target.closest(".hero-slide");
+    if (slide && !e.target.closest("a")) {
+      const productId = slide.getAttribute("data-product-id") || "plastokast-fiberglass-tape";
+      if (typeof window.showProductQuickView === "function") {
+        window.showProductQuickView(productId);
       }
-      window.showProductQuickView(productId);
-    });
+    }
   });
 
   // Bind event delegation for clicking on product cards (excluding details buttons and inputs)

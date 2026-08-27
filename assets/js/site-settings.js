@@ -185,18 +185,65 @@ function applyDynamicSiteSettings() {
   if (prodInquiryPhone) {
     prodInquiryPhone.innerHTML = `Inquiry Phone: <a href="tel:${phone1Clean}">${settings.phone1}</a> / <a href="tel:${phone2Clean}">${settings.phone2}</a>`;
   }
+
+  // 6. Dynamic Footer Product Solutions / Categories List
+  renderDynamicFooterCategories();
+}
+
+// --- Dynamic Footer Product Solutions / Categories Sync ---
+function renderDynamicFooterCategories() {
+  const footerContainers = document.querySelectorAll(
+    "[data-setting='footer-categories'], #footer-categories-list, .footer-product-solutions-links"
+  );
+  if (!footerContainers.length) return;
+
+  let categories = [];
+  if (typeof getCategoriesData === "function") {
+    categories = getCategoriesData();
+  } else {
+    try {
+      const stored = localStorage.getItem("plastokast_categories");
+      if (stored) categories = JSON.parse(stored);
+    } catch(e) {}
+  }
+
+  if (!categories || !Array.isArray(categories) || categories.length === 0) {
+    categories = [
+      { slug: "casting-tapes", label: "Casting Tapes" },
+      { slug: "splints", label: "Orthopedic Splints" },
+      { slug: "pop-bandages", label: "Plaster (POP) Bandages" },
+      { slug: "liners-accessories", label: "Cast Liners & Accessories" },
+      { slug: "surgical-consumables", label: "Surgical Consumables" },
+      { slug: "clinical-equipment", label: "Clinical Equipment" }
+    ];
+  }
+
+  const html = categories.slice(0, 8).map(cat => `
+    <li><a href="products.html?category=${cat.slug}"><i class="fa fa-angle-right"></i> ${cat.label}</a></li>
+  `).join("");
+
+  footerContainers.forEach(container => {
+    container.innerHTML = html;
+  });
 }
 
 // Auto-run on DOM load
 if (typeof document !== "undefined") {
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", applyDynamicSiteSettings);
+    document.addEventListener("DOMContentLoaded", () => {
+      applyDynamicSiteSettings();
+      renderDynamicFooterCategories();
+    });
   } else {
     applyDynamicSiteSettings();
+    renderDynamicFooterCategories();
   }
   window.addEventListener("plastokast_settings_updated", applyDynamicSiteSettings);
+  window.addEventListener("plastokast_categories_updated", renderDynamicFooterCategories);
+  window.addEventListener("plastokast_products_updated", renderDynamicFooterCategories);
   window.addEventListener("storage", (e) => {
     if (e.key === SETTINGS_STORAGE_KEY) applyDynamicSiteSettings();
+    if (e.key === "plastokast_categories") renderDynamicFooterCategories();
   });
 
   // Sync settings with Cloud Firestore in real time
