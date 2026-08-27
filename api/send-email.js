@@ -83,7 +83,7 @@ export default async function handler(req, res) {
     }
 
     // -------------------------------------------------------------
-    // TEMPLATE 1: Customer Confirmation Email (Medical Luxury)
+    // TEMPLATE 1: Customer Confirmation Email (Extended Luxury Corporate Design)
     // -------------------------------------------------------------
     const customerHTML = `
 <!DOCTYPE html>
@@ -93,45 +93,64 @@ export default async function handler(req, res) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inquiry Confirmation - PlastoKast</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155;">
-  <div style="max-width: 620px; margin: 30px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 35px rgba(1, 78, 158, 0.08); border: 1px solid #e2e8f0;">
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; -webkit-font-smoothing: antialiased;">
+  <div style="max-width: 640px; margin: 30px auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 45px rgba(1, 78, 158, 0.09); border: 1px solid #e2e8f0;">
     
-    <!-- Top Brand Header -->
-    <div style="background: linear-gradient(135deg, #014E9E 0%, #002d5e 100%); padding: 32px 36px; text-align: center;">
-      <div style="display: inline-block; background: #ffffff; padding: 10px 20px; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-        <span style="font-size: 22px; font-weight: 900; color: #014E9E; letter-spacing: -0.5px;">Plasto<span style="color: #0091ff;">Kast</span>™</span>
+    <!-- Top Brand Header with HD Logo -->
+    <div style="background: linear-gradient(135deg, #014E9E 0%, #002752 100%); padding: 36px 32px 32px 32px; text-align: center; border-bottom: 3px solid #0091ff;">
+      
+      <!-- HD Logo White Capsule Container -->
+      <div style="display: inline-block; background: #ffffff; padding: 12px 26px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18);">
+        <img src="https://res.cloudinary.com/ez2q6f97/image/upload/v1787410222/plastokast/branding/plastokast-logo-transparent.png" 
+             alt="PlastoKast" 
+             width="170" 
+             style="display: block; width: 170px; max-width: 100%; height: auto; margin: 0 auto; border: 0;" />
       </div>
-      <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 21px; font-weight: 800; letter-spacing: -0.3px;">Inquiry Received Successfully</h1>
-      <p style="margin: 0; color: #bae6fd; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
-        ISO 13485:2016 Certified &bull; WHO-GMP Registered Medical Manufacturer
+
+      <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">Inquiry Received Successfully</h1>
+      <p style="margin: 0 0 12px 0; color: #bae6fd; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;">
+        Connect Bones™ &bull; Precision Orthopedic Immobilization Systems
       </p>
+
+      <!-- Trust Badges Pill -->
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25); padding: 5px 16px; border-radius: 50px;">
+        <span style="color: #fef08a; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;">
+          ★ ISO 13485:2016 Certified &bull; WHO-GMP Registered &bull; CDSCO Compliant
+        </span>
+      </div>
     </div>
 
-    <!-- Status Banner -->
-    <div style="background-color: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 14px 36px; display: flex; align-items: center; justify-content: space-between;">
-      <span style="color: #166534; font-weight: 700; font-size: 13px;">✓ Lead Reference: <strong>#${inquiryId}</strong></span>
-      <span style="color: #166534; font-size: 12px; font-weight: 600;">${formattedDate}</span>
+    <!-- Status Ribbon -->
+    <div style="background-color: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 12px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+      <span style="color: #166534; font-weight: 800; font-size: 13px;">
+        ✓ Lead Reference: <strong>#${inquiryId}</strong>
+      </span>
+      <span style="color: #15803d; font-size: 12px; font-weight: 600;">
+        📅 ${formattedDate}
+      </span>
     </div>
 
     <!-- Main Content Body -->
-    <div style="padding: 32px 36px;">
-      <p style="font-size: 16px; line-height: 1.6; color: #1e293b; margin: 0 0 16px 0;">
-        Dear <strong>${name}</strong>,
+    <div style="padding: 32px 32px 24px 32px;">
+      
+      <!-- Greeting Section -->
+      <p style="font-size: 17px; line-height: 1.5; color: #0f172a; margin: 0 0 14px 0; font-weight: 700;">
+        Dear ${name},
       </p>
-      <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 24px 0;">
-        Thank you for contacting <strong>PlastoKast™ Inc.</strong> Our medical export desk and technical sales division have received your product inquiry. One of our regional export managers will get in touch with you shortly with our official quotation and product specifications.
+      <p style="font-size: 14px; line-height: 1.7; color: #475569; margin: 0 0 24px 0;">
+        Thank you for contacting <strong>PlastoKast™ Inc.</strong> Our medical export desk and technical sales division have received your product inquiry. One of our regional export managers is reviewing your specifications and will connect with you shortly with our official commercial quotation and product catalog.
       </p>
 
-      <!-- Products Summary Table Card -->
-      <div style="background-color: #f8fafc; border-radius: 14px; border: 1.5px solid #e2e8f0; overflow: hidden; margin-bottom: 26px;">
-        <div style="background-color: #014E9E; color: #ffffff; padding: 10px 16px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-          Requested Products & Specifications
+      <!-- Products Summary Card -->
+      <div style="background-color: #f8fafc; border-radius: 16px; border: 1.5px solid #e2e8f0; overflow: hidden; margin-bottom: 28px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+        <div style="background: linear-gradient(135deg, #014E9E 0%, #0284c7 100%); color: #ffffff; padding: 12px 18px; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+          📦 Requested Products & Specifications
         </div>
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="background-color: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; color: #475569;">Item Name</th>
-              <th style="padding: 10px 16px; font-size: 12px; font-weight: 700; color: #475569; text-align: right;">Quantity / Requirement</th>
+              <th style="padding: 10px 18px; font-size: 12px; font-weight: 700; color: #475569;">Item Description</th>
+              <th style="padding: 10px 18px; font-size: 12px; font-weight: 700; color: #475569; text-align: right;">Quantity / Units</th>
             </tr>
           </thead>
           <tbody>
@@ -141,30 +160,112 @@ export default async function handler(req, res) {
         ${
           notes
             ? `
-        <div style="padding: 12px 16px; background-color: #ffffff; border-top: 1px solid #e2e8f0; font-size: 13px; color: #475569;">
-          <strong style="color: #0f172a;">Your Message/Notes:</strong> ${notes}
+        <div style="padding: 14px 18px; background-color: #ffffff; border-top: 1px solid #e2e8f0; font-size: 13px; color: #334155; line-height: 1.6;">
+          <strong style="color: #014E9E; display: block; margin-bottom: 2px;">Your Special Notes / Requirement:</strong>
+          <span style="color: #475569;">"${notes}"</span>
         </div>
         `
             : ""
         }
       </div>
 
-      <!-- Quick Action: Direct WhatsApp Chat -->
-      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 28px;">
-        <h3 style="margin: 0 0 6px 0; color: #166534; font-size: 16px; font-weight: 800;">Need an Instant Quote or Catalog?</h3>
-        <p style="margin: 0 0 14px 0; color: #15803d; font-size: 13px;">Chat directly with our direct WhatsApp sales helpline on <strong>+91 89053 32576</strong></p>
+      <!-- Priority WhatsApp Assistance Callout -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1.5px solid #86efac; border-radius: 18px; padding: 22px 24px; text-align: center; margin-bottom: 32px; box-shadow: 0 6px 18px rgba(34, 197, 94, 0.12);">
+        <h3 style="margin: 0 0 6px 0; color: #166534; font-size: 17px; font-weight: 800;">Need an Instant Quote or Urgent Export Sample?</h3>
+        <p style="margin: 0 0 16px 0; color: #15803d; font-size: 13.5px; line-height: 1.5;">
+          Connect directly with our 24/7 International Sales Desk on WhatsApp:
+        </p>
         <a href="https://api.whatsapp.com/send?phone=918905332576&text=Hi%20PlastoKast,%20I%20have%20submitted%20an%20inquiry%20(Ref:%20${inquiryId})%20for%20medical%20products." 
-           style="display: inline-block; background-color: #25d366; color: #ffffff; font-weight: 800; font-size: 14px; text-decoration: none; padding: 12px 28px; border-radius: 50px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
+           style="display: inline-block; background-color: #25d366; color: #ffffff; font-weight: 800; font-size: 14px; text-decoration: none; padding: 13px 30px; border-radius: 50px; box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4); text-transform: uppercase; letter-spacing: 0.4px;">
           💬 Chat on WhatsApp (+91 89053 32576)
         </a>
       </div>
 
-      <!-- Company Footer Info -->
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 12px; color: #64748b; line-height: 1.6;">
-        <p style="margin: 0 0 4px 0; font-weight: 700; color: #334155;">PlastoKast™ Inc. • Connect Bones™</p>
-        <p style="margin: 0 0 4px 0;"><strong>Factory & Export House:</strong> Ground Floor, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat - 395004, Gujarat, India</p>
-        <p style="margin: 0 0 4px 0;"><strong>Direct Helplines:</strong> +91 99094 12068 | +91 89053 32576 &bull; <strong>Sales Email:</strong> plastokast.sales@gmail.com</p>
-        <p style="margin: 0;"><strong>Web:</strong> <a href="https://www.plastokast.com" style="color: #014E9E; text-decoration: none; font-weight: 600;">www.plastokast.com</a></p>
+      <!-- Classy "Why Healthcare Providers Choose PlastoKast" Section -->
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 28px; margin-bottom: 30px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="font-size: 11px; font-weight: 800; color: #014E9E; text-transform: uppercase; letter-spacing: 1px; background: #e0f2fe; padding: 4px 12px; border-radius: 50px;">
+            The PlastoKast™ Advantage
+          </span>
+          <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 8px 0 0 0;">
+            Why Global Surgeons & Hospitals Trust Us
+          </h2>
+        </div>
+
+        <!-- 4 Pillars Grid / Rows -->
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+          <tr>
+            <td style="background: #f8fafc; padding: 14px 16px; border-radius: 14px; border: 1px solid #e2e8f0; vertical-align: top;">
+              <div style="font-weight: 800; color: #014E9E; font-size: 13.5px; margin-bottom: 3px;">
+                🛡️ Certified Medical Manufacturing
+              </div>
+              <div style="font-size: 12.5px; color: #64748b; line-height: 1.5;">
+                Fully certified under ISO 13485:2016, WHO-GMP, and CDSCO registered for clinical excellence.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background: #f8fafc; padding: 14px 16px; border-radius: 14px; border: 1px solid #e2e8f0; vertical-align: top;">
+              <div style="font-weight: 800; color: #014E9E; font-size: 13.5px; margin-bottom: 3px;">
+                🔬 High-Grade Orthopedic Polymers
+              </div>
+              <div style="font-size: 12.5px; color: #64748b; line-height: 1.5;">
+                Engineered with high weight-to-strength ratio, water-resistant fiberglass & polyester casting tapes.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background: #f8fafc; padding: 14px 16px; border-radius: 14px; border: 1px solid #e2e8f0; vertical-align: top;">
+              <div style="font-weight: 800; color: #014E9E; font-size: 13.5px; margin-bottom: 3px;">
+                🌍 Worldwide Hospital & Export Reach
+              </div>
+              <div style="font-size: 12.5px; color: #64748b; line-height: 1.5;">
+                Supplying orthopedic trauma centers, government tenders, and distributors across 40+ nations.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="background: #f8fafc; padding: 14px 16px; border-radius: 14px; border: 1px solid #e2e8f0; vertical-align: top;">
+              <div style="font-weight: 800; color: #014E9E; font-size: 13.5px; margin-bottom: 3px;">
+                📦 Custom OEM & Institutional Supply
+              </div>
+              <div style="font-size: 12.5px; color: #64748b; line-height: 1.5;">
+                Flexible private labeling, custom dimensions, bulk container shipping, and direct factory pricing.
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Action: Catalog & Online Showcase Button -->
+      <div style="background-color: #f1f5f9; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 28px;">
+        <p style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #334155;">
+          Want to explore our complete range of Orthopedic Casting & Splinting products?
+        </p>
+        <a href="https://www.plastokast.com/products.html" 
+           style="display: inline-block; background-color: #014E9E; color: #ffffff; font-weight: 800; font-size: 13px; text-decoration: none; padding: 10px 24px; border-radius: 10px; box-shadow: 0 4px 12px rgba(1, 78, 158, 0.25);">
+          📄 View Full Product Catalog Online &rarr;
+        </a>
+      </div>
+
+      <!-- Executive Footer -->
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 22px; font-size: 12px; color: #64748b; line-height: 1.6;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="vertical-align: top; padding-bottom: 12px;">
+              <div style="font-size: 14px; font-weight: 800; color: #014E9E; margin-bottom: 2px;">PlastoKast™ Inc.</div>
+              <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Connect Bones™</div>
+              <div><strong>Plant & Export House:</strong> Ground Floor, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat - 395004, Gujarat, India</div>
+              <div style="margin-top: 4px;"><strong>Direct Helplines:</strong> +91 99094 12068 &bull; +91 89053 32576</div>
+              <div><strong>Sales Email:</strong> <a href="mailto:plastokast.sales@gmail.com" style="color: #014E9E; text-decoration: none; font-weight: 600;">plastokast.sales@gmail.com</a></div>
+              <div><strong>Official Website:</strong> <a href="https://www.plastokast.com" style="color: #014E9E; text-decoration: none; font-weight: 700;">www.plastokast.com</a></div>
+            </td>
+          </tr>
+        </table>
+        
+        <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 10px; text-align: center; font-size: 11px; color: #94a3b8;">
+          &copy; 2026 PlastoKast™ Inc. All rights reserved. &bull; This is an automated commercial inquiry receipt.
+        </div>
       </div>
 
     </div>
@@ -278,7 +379,7 @@ export default async function handler(req, res) {
     async function sendViaResend(toAddr, subject, htmlContent, isCustomer = false) {
       // Primary sender using verified domain
       const primaryFrom = isCustomer 
-        ? "PlastoKast™ Medical <inquiry@plastokast.com>" 
+        ? "PlastoKast <inquiry@plastokast.com>" 
         : "PlastoKast Alerts <inquiry@plastokast.com>";
       
       try {
@@ -298,9 +399,9 @@ export default async function handler(req, res) {
         });
         let resJson = await res.json();
         
-        // If domain is still pending verification in Resend, fall back to onboarding@resend.dev
+        // If domain fallback needed
         if (resJson && resJson.name === "validation_error" && resJson.statusCode === 403) {
-          const fallbackFrom = "PlastoKast Medical <onboarding@resend.dev>";
+          const fallbackFrom = "PlastoKast <onboarding@resend.dev>";
           const fallbackRes = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
