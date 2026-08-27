@@ -38,9 +38,9 @@ function initAdminContactSettings() {
   function updateLivePreview() {
     const p1 = phone1Input ? phone1Input.value : "+91 99094 12068";
     const p2 = phone2Input ? phone2Input.value : "+91 89053 32576";
-    const wa = whatsappInput ? whatsappInput.value : "+91 99094 12068";
+    const wa = whatsappInput ? whatsappInput.value : "+91 89053 32576";
     const em = emailInput ? emailInput.value : "plastokast.sales@gmail.com";
-    const ad = addressInput ? addressInput.value : "PlastoKast House, Surat, Gujarat, India – 395004";
+    const ad = addressInput ? addressInput.value : "Ground Floor, Common Plot, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat – 395004, Gujarat, India";
 
     if (previewPhone1) previewPhone1.textContent = p1;
     if (previewPhone2) previewPhone2.textContent = p2;

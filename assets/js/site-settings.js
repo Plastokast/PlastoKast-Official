@@ -110,12 +110,25 @@ function applyDynamicSiteSettings() {
     el.textContent = settings.email;
   });
 
+  // Format Full Address for clean multi-line display
+  function formatAddressHTML(addr) {
+    if (!addr) return "Ground Floor, Common Plot, Om Shree Sadguru Nityanand Co-op Housing Society, Laxmikant Asharam Road, Katargram, Surat – 395004, Gujarat, India";
+    // Cleanly split at comma before Katargram or Surat for optimal 2-3 line layout
+    return addr
+      .replace("Katargram, Surat", "<br>Katargram, Surat")
+      .replace("Surat - 395004", "Surat – 395004");
+  }
+
   document.querySelectorAll("[data-setting='address']").forEach(el => {
-    el.textContent = settings.address;
+    el.innerHTML = `<strong>PlastoKast™ Plant & Export House</strong><br>${formatAddressHTML(settings.address)}`;
+  });
+
+  document.querySelectorAll(".footer-contact-item .footer-address").forEach(el => {
+    el.innerHTML = `<strong>PlastoKast™ Plant & Export House</strong><br>${formatAddressHTML(settings.address)}`;
   });
 
   document.querySelectorAll("[data-setting='shortAddress']").forEach(el => {
-    el.textContent = settings.shortAddress;
+    el.innerHTML = formatAddressHTML(settings.address || settings.shortAddress);
   });
 
   document.querySelectorAll("[data-setting='workingHours']").forEach(el => {
