@@ -449,12 +449,6 @@ export default async function handler(req, res) {
         </div>
       </div>
 
-      <!-- Executive Footer -->
-      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 18px; text-align: center; font-size: 12px; color: #64748b;">
-        <p style="margin: 0 0 4px 0; font-weight: 700; color: #047857;">PlastoKast™ CRM Autonomous Notification Engine</p>
-        <p style="margin: 0; font-size: 11px; color: #94a3b8;">Delivered via Hostinger Verified Enterprise Mail Backbone</p>
-      </div>
-
     </div>
   </div>
 </body>
