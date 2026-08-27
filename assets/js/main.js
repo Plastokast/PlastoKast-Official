@@ -787,52 +787,11 @@ Target Recipient: ${recipientEmail}
 }
 
 function dispatchInquiryEmail(inquiry) {
-  const { recipientEmail, subject, body, trackingId } = formatInquiryEmailDetails(inquiry);
-  const formspreeUrl = localStorage.getItem("plastokast_formspree_url");
-
-  // 1. Primary API Dispatch to server endpoint /api/send-inquiry
-  fetch("/api/send-inquiry", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      recipientEmail: recipientEmail,
-      subject: subject,
-      trackingId: trackingId,
-      name: inquiry.name,
-      email: inquiry.email,
-      facility: inquiry.facility,
-      country: inquiry.country,
-      customerType: inquiry.customerType,
-      message: inquiry.message,
-      products: inquiry.products,
-      body: body
-    })
-  })
-  .then(res => res.json())
-  .then(data => console.log("API Inquiry Dispatch Status:", data))
-  .catch(err => console.warn("API Inquiry Dispatch Note:", err));
-
-  // 2. Secondary API Dispatch to Formspree / Webhook if configured
-  if (formspreeUrl && formspreeUrl.startsWith("http")) {
-    fetch(formspreeUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        _to: recipientEmail,
-        _subject: subject,
-        trackingId: trackingId,
-        name: inquiry.name,
-        email: inquiry.email,
-        facility: inquiry.facility,
-        country: inquiry.country,
-        customerType: inquiry.customerType,
-        message: inquiry.message,
-        products: inquiry.products,
-        formattedEmail: body
-      })
-    }).catch(err => console.warn("Formspree Dispatch Note:", err));
+  if (typeof window !== "undefined" && typeof window.dispatchInquiryEmail === "function") {
+    window.dispatchInquiryEmail(inquiry);
   }
-
+  const { recipientEmail, subject, body, trackingId } = formatInquiryEmailDetails(inquiry);
+  
   // 3. Return pre-formatted mailto URL
   const mailtoUrl = `mailto:${encodeURIComponent(recipientEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   return mailtoUrl;

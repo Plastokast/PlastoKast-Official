@@ -51,12 +51,37 @@ export default async function handler(req, res) {
       timeStyle: "short"
     });
 
+    // Ensure all products are unpacked and listed row-by-row
+    let finalProducts = Array.isArray(products) && products.length > 0 ? [...products] : [];
+
+    // Fallback: If products array is empty or only 1 item with "+ more", parse from notes or message
+    const rawCheck = `${notes} ${data.message || ""} ${productName}`;
+    if (finalProducts.length <= 1 && rawCheck.includes("PRODUCTS REQUESTED")) {
+      const rawText = data.message || notes || "";
+      const lines = rawText.split("\n");
+      const parsedItems = [];
+      for (const line of lines) {
+        // Match numbered list: "1. PK Cast Graphics (Fiberglass Bandage) [PK-CG-002] (Casting Tapes)"
+        const m = line.match(/^\s*\d+\.\s*(.*?)(?:\s*\[(.*?)\])?(?:\s*\((.*?)\))?$/);
+        if (m && m[1]) {
+          parsedItems.push({
+            name: m[1].trim(),
+            code: m[2] ? m[2].trim() : "",
+            qty: quantity || "Standard Bulk"
+          });
+        }
+      }
+      if (parsedItems.length > 0) {
+        finalProducts = parsedItems;
+      }
+    }
+
     // Format products list
     let productListHTML = "";
-    if (products && products.length > 0) {
-      productListHTML = products
+    if (finalProducts && finalProducts.length > 0) {
+      productListHTML = finalProducts
         .map(
-          (p) => `
+          (p, idx) => `
         <tr style="border-bottom: 1px solid #e2e8f0;">
           <td style="padding: 12px 18px; font-weight: 700; color: #0f172a; font-size: 14px;">
             ${p.name || p.title || "PlastoKast Orthopedic Product"}
