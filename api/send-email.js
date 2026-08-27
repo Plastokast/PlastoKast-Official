@@ -58,12 +58,12 @@ export default async function handler(req, res) {
         .map(
           (p) => `
         <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="padding: 12px 16px; font-weight: 700; color: #0f172a; font-size: 14px;">
+          <td style="padding: 12px 18px; font-weight: 700; color: #0f172a; font-size: 14px;">
             ${p.name || p.title || "PlastoKast Orthopedic Product"}
-            ${p.code ? `<span style="font-size: 12px; color: #64748b; font-weight: 500; display: block;">Item Code: ${p.code}</span>` : ""}
+            ${p.code ? `<span style="font-size: 12px; color: #64748b; font-weight: 600; display: block; margin-top: 2px;">Item Code: <strong style="color: #014E9E;">${p.code}</strong></span>` : ""}
           </td>
-          <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: #014E9E; font-size: 14px;">
-            ${p.qty || p.quantity || "Standard"}
+          <td style="padding: 12px 18px; text-align: right; font-weight: 800; color: #014E9E; font-size: 14px;">
+            ${p.qty || p.quantity || quantity || "Standard Bulk"}
           </td>
         </tr>
       `
@@ -72,14 +72,21 @@ export default async function handler(req, res) {
     } else {
       productListHTML = `
         <tr style="border-bottom: 1px solid #e2e8f0;">
-          <td style="padding: 12px 16px; font-weight: 700; color: #0f172a; font-size: 14px;">
+          <td style="padding: 12px 18px; font-weight: 700; color: #0f172a; font-size: 14px;">
             ${productName || "General Orthopedic Catalog Inquiry"}
           </td>
-          <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: #014E9E; font-size: 14px;">
+          <td style="padding: 12px 18px; text-align: right; font-weight: 800; color: #014E9E; font-size: 14px;">
             ${quantity || "Standard Bulk"}
           </td>
         </tr>
       `;
+    }
+
+    // Clean notes (strip any legacy fullMessage artifacts)
+    let cleanNotes = notes || "";
+    if (cleanNotes.includes("PRODUCTS REQUESTED")) {
+      const match = cleanNotes.match(/Customer Notes:\s*(.*)$/i);
+      cleanNotes = match && match[1] && match[1].trim() !== "None" ? match[1].trim() : "";
     }
 
     // -------------------------------------------------------------
@@ -99,12 +106,13 @@ export default async function handler(req, res) {
     <!-- Top Brand Header with HD Logo -->
     <div style="background: linear-gradient(135deg, #014E9E 0%, #002752 100%); padding: 36px 32px 32px 32px; text-align: center; border-bottom: 3px solid #0091ff;">
       
-      <!-- HD Logo White Capsule Container -->
-      <div style="display: inline-block; background: #ffffff; padding: 12px 26px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18);">
-        <img src="https://res.cloudinary.com/ez2q6f97/image/upload/v1787410222/plastokast/branding/plastokast-logo-transparent.png" 
+      <!-- HD Logo White Capsule Container with Typography Fallback -->
+      <div style="display: inline-block; background: #ffffff; padding: 12px 28px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18); text-align: center;">
+        <img src="https://www.plastokast.com/assets/images/logo.png" 
              alt="PlastoKast" 
-             width="170" 
-             style="display: block; width: 170px; max-width: 100%; height: auto; margin: 0 auto; border: 0;" />
+             width="180" 
+             style="display: block; width: 180px; max-width: 100%; height: auto; margin: 0 auto; border: 0;" />
+        <div style="font-size: 22px; font-weight: 900; color: #014E9E; letter-spacing: -0.5px; margin-top: 2px;">Plasto<span style="color: #0091ff;">Kast</span>™</div>
       </div>
 
       <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">Inquiry Received Successfully</h1>
@@ -158,11 +166,11 @@ export default async function handler(req, res) {
           </tbody>
         </table>
         ${
-          notes
+          cleanNotes
             ? `
         <div style="padding: 14px 18px; background-color: #ffffff; border-top: 1px solid #e2e8f0; font-size: 13px; color: #334155; line-height: 1.6;">
           <strong style="color: #014E9E; display: block; margin-bottom: 2px;">Your Special Notes / Requirement:</strong>
-          <span style="color: #475569;">"${notes}"</span>
+          <span style="color: #475569;">"${cleanNotes}"</span>
         </div>
         `
             : ""
@@ -335,10 +343,10 @@ export default async function handler(req, res) {
           </tbody>
         </table>
         ${
-          notes
+          cleanNotes
             ? `
         <div style="padding: 12px 16px; background-color: #1e293b; border-top: 1px solid #334155; font-size: 13px; color: #cbd5e1;">
-          <strong style="color: #fef08a;">Customer Notes:</strong> ${notes}
+          <strong style="color: #fef08a;">Customer Notes:</strong> ${cleanNotes}
         </div>
         `
             : ""

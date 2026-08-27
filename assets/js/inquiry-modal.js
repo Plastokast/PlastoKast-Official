@@ -732,6 +732,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const fullMessage = `PRODUCTS REQUESTED (${activeSelectedProducts.length}):\n----------------------------------------\n${productDetailsText}\n----------------------------------------\nQuantity / Units: ${qty || 'Standard Bulk Inquiry'}\nPhone/WhatsApp: ${fullPhone}\nCustomer Notes: ${msg || 'None'}`;
 
+      const structuredProducts = activeSelectedProducts.length > 0
+        ? activeSelectedProducts.map(p => ({
+            name: p.title || p.name || 'PlastoKast Orthopedic Product',
+            code: p.code || 'PK-MEDICAL',
+            qty: qty || 'Standard Bulk'
+          }))
+        : [{
+            name: firstProductTitle,
+            code: 'PK-MEDICAL',
+            qty: qty || 'Standard Bulk'
+          }];
+
       const inquiryData = {
         id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
         name: name,
@@ -742,6 +754,9 @@ document.addEventListener("DOMContentLoaded", () => {
         customerType: 'Distributor / Buyer',
         subject: fullSubject,
         message: fullMessage,
+        notes: msg || '',
+        products: structuredProducts,
+        quantity: qty || 'Standard Bulk',
         status: 'Pending',
         timestamp: new Date().toISOString()
       };
