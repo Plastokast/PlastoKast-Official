@@ -503,40 +503,23 @@ export default async function handler(req, res) {
     }
 
     // -------------------------------------------------------------
-    // Parallel Resend Dispatch
+    // Single Dedicated Admin Dispatch
     // -------------------------------------------------------------
-    const dispatches = [];
-
-    // 1. Dispatch to Admin (Dynamic from Admin Panel or default)
     const adminRecipient = adminEmail && adminEmail.includes("@") ? adminEmail : ADMIN_EMAIL;
-    dispatches.push(
-      sendViaResend(
-        adminRecipient,
-        `🚨 NEW LEAD [#${inquiryId}]: ${name} (${country}) - ${productName || "Product Inquiry"}`,
-        adminHTML,
-        false
-      )
+    const adminSubject = `🚨 NEW LEAD [#${inquiryId}]: ${name} (${country}) - ${productName || "Product Inquiry"}`;
+    
+    const adminResult = await sendViaResend(
+      adminRecipient,
+      adminSubject,
+      adminHTML,
+      false
     );
-
-    // 2. Dispatch to Customer (If customer provided an email address)
-    if (email && email.includes("@")) {
-      dispatches.push(
-        sendViaResend(
-          email,
-          `Inquiry Received: PlastoKast™ Medical Products [#${inquiryId}]`,
-          customerHTML,
-          true
-        )
-      );
-    }
-
-    const results = await Promise.all(dispatches);
 
     return res.status(200).json({
       success: true,
-      message: "Emails dispatched via Resend",
+      message: "Lead alert email dispatched to Admin via Resend",
       inquiryId,
-      results: results
+      result: adminResult
     });
   } catch (err) {
     console.error("Resend Dispatch Error:", err);
