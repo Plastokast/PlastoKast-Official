@@ -32,6 +32,7 @@ export default async function handler(req, res) {
       email,
       phone = "",
       country = "India",
+      adminEmail = "",
       notes = "",
       products = [],
       productName = "",
@@ -326,10 +327,11 @@ export default async function handler(req, res) {
     // -------------------------------------------------------------
     const dispatches = [];
 
-    // 1. Dispatch to Admin (Always)
+    // 1. Dispatch to Admin (Dynamic from Admin Panel or default)
+    const adminRecipient = adminEmail && adminEmail.includes("@") ? adminEmail : ADMIN_EMAIL;
     dispatches.push(
       sendViaResend(
-        ADMIN_EMAIL,
+        adminRecipient,
         `🚨 NEW LEAD [#${inquiryId}]: ${name} (${country}) - ${productName || "Product Inquiry"}`,
         adminHTML,
         false
