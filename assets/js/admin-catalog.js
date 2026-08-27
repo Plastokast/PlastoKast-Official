@@ -34,7 +34,7 @@ function initAdminCatalog() {
   let isDeleteMode = false;
   const selectedProductIds = new Set();
 
-  // Load catalog items from localStorage if available, or fallback to default PRODUCTS_DATA
+  // Load catalog items from localStorage / Firestore Cloud
   let catalogItems = [];
   function loadCatalogData() {
     const saved = localStorage.getItem('plastokast_products');
@@ -46,11 +46,21 @@ function initAdminCatalog() {
       }
     } else if (typeof PRODUCTS_DATA !== 'undefined') {
       catalogItems = JSON.parse(JSON.stringify(PRODUCTS_DATA));
-      localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
     }
   }
 
   loadCatalogData();
+
+  // Listen to Firestore Cloud products & categories changes in Real-Time
+  if (window.PlastoKastDB && typeof window.PlastoKastDB.onProductsChange === 'function') {
+    window.PlastoKastDB.onProductsChange((cloudProducts) => {
+      if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+        catalogItems = cloudProducts;
+        updateMetrics();
+        renderCatalog();
+      }
+    });
+  }
 
   // Expose global refresh catalog function
   window.refreshCatalog = () => {
@@ -318,12 +328,13 @@ function initAdminCatalog() {
       const file = e.target.files[0];
       if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
+        const compressed = await compressImageDataUrl(event.target.result, 800, 0.78);
         if (activeProductImages.length === 0) {
-          activeProductImages.push(event.target.result);
+          activeProductImages.push(compressed);
           selectedPhotoIndex = 0;
         } else {
-          activeProductImages[selectedPhotoIndex] = event.target.result;
+          activeProductImages[selectedPhotoIndex] = compressed;
         }
         renderProductGallery();
       };
@@ -345,8 +356,9 @@ function initAdminCatalog() {
       files.forEach(file => {
         if (!file.type.startsWith('image/')) return;
         const reader = new FileReader();
-        reader.onload = (event) => {
-          activeProductImages.push(event.target.result);
+        reader.onload = async (event) => {
+          const compressed = await compressImageDataUrl(event.target.result, 800, 0.78);
+          activeProductImages.push(compressed);
           selectedPhotoIndex = activeProductImages.length - 1; // Auto select newly added photo
           renderProductGallery();
         };
@@ -785,16 +797,15 @@ function initAdminCatalog() {
           }
         }
         
-        try {
-          localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
-        } catch (quotaErr) {
-          console.warn('localStorage QuotaExceededError, compressing images aggressively...', quotaErr);
-          catalogItems.forEach(p => {
-            if (p.images && Array.isArray(p.images)) {
-              p.images = p.images.map(img => (typeof img === 'string' && img.length > 300000) ? 'media/pk_cast_colored_v73.jpg?v=73' : img);
-            }
-          });
-          localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        if (window.PlastoKastDB && typeof window.PlastoKastDB.saveProducts === 'function') {
+          await window.PlastoKastDB.saveProducts(catalogItems);
+        } else {
+          try {
+            localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+          } catch (quotaErr) {
+            console.warn('localStorage QuotaExceededError, compressing images aggressively...', quotaErr);
+            localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+          }
         }
 
         updateMetrics();
@@ -856,7 +867,11 @@ function initAdminCatalog() {
         if (btnToggleDeleteMode) btnToggleDeleteMode.style.display = 'flex';
         if (btnAddNewProduct) btnAddNewProduct.style.display = 'flex';
         
-        localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        if (window.PlastoKastDB && typeof window.PlastoKastDB.saveProducts === 'function') {
+          window.PlastoKastDB.saveProducts(catalogItems);
+        } else {
+          localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        }
         updateMetrics();
         renderCatalog();
       };
@@ -884,7 +899,11 @@ function initAdminCatalog() {
       const doDelete = () => {
         catalogItems = catalogItems.filter(p => p.id !== currentEditProductId);
         selectedProductIds.delete(currentEditProductId);
-        localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        if (window.PlastoKastDB && typeof window.PlastoKastDB.saveProducts === 'function') {
+          window.PlastoKastDB.saveProducts(catalogItems);
+        } else {
+          localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        }
         productModal.classList.remove('show', 'active');
         productModal.style.display = 'none';
         updateMetrics();
@@ -1235,8 +1254,10 @@ function initAdminCatalog() {
     // Update activeCategories
     activeCategories = JSON.parse(JSON.stringify(modalCategories));
 
-    // Save Categories to localStorage
-    if (typeof saveCategoriesData === 'function') {
+    // Save Categories to Cloud Firestore + localStorage
+    if (window.PlastoKastDB && typeof window.PlastoKastDB.saveCategories === 'function') {
+      window.PlastoKastDB.saveCategories(activeCategories);
+    } else if (typeof saveCategoriesData === 'function') {
       saveCategoriesData(activeCategories);
     } else {
       localStorage.setItem('plastokast_categories', JSON.stringify(activeCategories));
@@ -1256,7 +1277,11 @@ function initAdminCatalog() {
       });
 
       if (productsUpdated) {
-        localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        if (window.PlastoKastDB && typeof window.PlastoKastDB.saveProducts === 'function') {
+          window.PlastoKastDB.saveProducts(catalogItems);
+        } else {
+          localStorage.setItem('plastokast_products', JSON.stringify(catalogItems));
+        }
       }
     }
 

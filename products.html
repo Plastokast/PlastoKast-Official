@@ -475,6 +475,14 @@
         });
       }
 
+      // Listen for Cloud Firestore Real-Time Catalog Updates
+      window.addEventListener("plastokast_products_updated", () => {
+        renderCatalog();
+      });
+      window.addEventListener("plastokast_categories_updated", () => {
+        renderCatalog();
+      });
+
       // Initial draw
       renderCatalog();
     });

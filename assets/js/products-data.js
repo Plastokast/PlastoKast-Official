@@ -771,15 +771,7 @@ const STATIC_PRODUCTS_DATA = [
 ];
 
 // Helper functions for data management
-const CURRENT_DB_VERSION = "102";
-
 function getProductsData() {
-  const storedVer = localStorage.getItem("plastokast_db_version");
-  if (storedVer !== CURRENT_DB_VERSION) {
-    localStorage.setItem("plastokast_db_version", CURRENT_DB_VERSION);
-    localStorage.setItem("plastokast_products", JSON.stringify(STATIC_PRODUCTS_DATA));
-    return STATIC_PRODUCTS_DATA;
-  }
   const local = localStorage.getItem("plastokast_products");
   if (local) {
     try {
@@ -791,7 +783,6 @@ function getProductsData() {
       console.warn("Failed to parse local products, resetting to static catalog.", e);
     }
   }
-  localStorage.setItem("plastokast_products", JSON.stringify(STATIC_PRODUCTS_DATA));
   return STATIC_PRODUCTS_DATA;
 }
 
@@ -815,13 +806,49 @@ function getCategoriesData() {
       }
     } catch(e) {}
   }
-  localStorage.setItem("plastokast_categories", JSON.stringify(DEFAULT_CATEGORIES));
   return DEFAULT_CATEGORIES;
 }
 
 window.getCategoriesData = getCategoriesData;
 window.saveCategoriesData = function(categories) {
-  localStorage.setItem("plastokast_categories", JSON.stringify(categories));
+  if (window.PlastoKastDB && typeof window.PlastoKastDB.saveCategories === "function") {
+    window.PlastoKastDB.saveCategories(categories);
+  } else {
+    localStorage.setItem("plastokast_categories", JSON.stringify(categories));
+  }
 };
 
-const PRODUCTS_DATA = getProductsData();
+// Global Reactive Products Data Reference
+var PRODUCTS_DATA = getProductsData();
+window.PRODUCTS_DATA = PRODUCTS_DATA;
+
+// Auto-subscribe to Cloud Firestore in real time
+function initCloudCatalogSync() {
+  if (window.PlastoKastDB) {
+    if (typeof window.PlastoKastDB.onProductsChange === "function") {
+      window.PlastoKastDB.onProductsChange((cloudProducts) => {
+        if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+          PRODUCTS_DATA = cloudProducts;
+          window.PRODUCTS_DATA = cloudProducts;
+        }
+      });
+    }
+    if (typeof window.PlastoKastDB.onCategoriesChange === "function") {
+      window.PlastoKastDB.onCategoriesChange((cloudCats) => {
+        if (Array.isArray(cloudCats) && cloudCats.length > 0) {
+          try {
+            localStorage.setItem("plastokast_categories", JSON.stringify(cloudCats));
+          } catch(e) {}
+        }
+      });
+    }
+  }
+}
+
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCloudCatalogSync);
+  } else {
+    initCloudCatalogSync();
+  }
+}

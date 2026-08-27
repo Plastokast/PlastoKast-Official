@@ -185,6 +185,254 @@
           console.error('[PlastoKast Firebase] Error deleting inquiries from Firestore:', err);
         }
       }
+    },
+
+    // -------------------------------------------------------------
+    // CATALOG PRODUCTS CLOUD SYNC (Real-Time across all devices)
+    // -------------------------------------------------------------
+    saveProducts: async function(productsList) {
+      if (!Array.isArray(productsList)) return;
+      
+      // Update local cache immediately
+      try {
+        localStorage.setItem('plastokast_products', JSON.stringify(productsList));
+      } catch (e) {
+        console.warn('[PlastoKast Firebase] Local storage write warning:', e);
+      }
+
+      if (typeof window !== 'undefined') {
+        window.PRODUCTS_DATA = productsList;
+        window.dispatchEvent(new CustomEvent('plastokast_products_updated', { detail: productsList }));
+      }
+
+      // Sync to Firebase Cloud Firestore
+      if (this.isAvailable()) {
+        try {
+          await db.collection('catalog').doc('products').set({
+            items: productsList,
+            lastUpdated: new Date().toISOString()
+          }, { merge: true });
+          console.log('[PlastoKast Firebase] Successfully synced products catalog to Cloud Firestore.');
+        } catch (err) {
+          console.error('[PlastoKast Firebase] Error syncing products to Firestore:', err);
+        }
+      }
+    },
+
+    onProductsChange: function(callback) {
+      if (!this.isAvailable()) {
+        if (typeof callback === 'function') {
+          const raw = localStorage.getItem('plastokast_products');
+          if (raw) {
+            try { callback(JSON.parse(raw)); } catch(e) {}
+          }
+        }
+        return () => {};
+      }
+
+      try {
+        return db.collection('catalog').doc('products').onSnapshot((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && Array.isArray(data.items) && data.items.length > 0) {
+              try {
+                localStorage.setItem('plastokast_products', JSON.stringify(data.items));
+              } catch(e) {}
+
+              if (typeof window !== 'undefined') {
+                window.PRODUCTS_DATA = data.items;
+                window.dispatchEvent(new CustomEvent('plastokast_products_updated', { detail: data.items }));
+              }
+
+              if (typeof callback === 'function') {
+                callback(data.items);
+              }
+              return;
+            }
+          }
+
+          // Initial cold start seed if Firestore empty
+          if (typeof STATIC_PRODUCTS_DATA !== 'undefined' && STATIC_PRODUCTS_DATA.length > 0) {
+            console.log('[PlastoKast Firebase] Seeding initial catalog to Firestore...');
+            db.collection('catalog').doc('products').set({
+              items: STATIC_PRODUCTS_DATA,
+              lastUpdated: new Date().toISOString()
+            }, { merge: true }).catch(()=>{});
+            if (typeof callback === 'function') callback(STATIC_PRODUCTS_DATA);
+          }
+        }, (error) => {
+          console.error('[PlastoKast Firebase] Products listener error:', error);
+          if (typeof callback === 'function') {
+            const raw = localStorage.getItem('plastokast_products');
+            if (raw) {
+              try { callback(JSON.parse(raw)); } catch(e) {}
+            }
+          }
+        });
+      } catch (err) {
+        console.error('[PlastoKast Firebase] Error subscribing to products:', err);
+        return () => {};
+      }
+    },
+
+    // -------------------------------------------------------------
+    // CATEGORIES CLOUD SYNC
+    // -------------------------------------------------------------
+    saveCategories: async function(categoriesList) {
+      if (!Array.isArray(categoriesList)) return;
+
+      try {
+        localStorage.setItem('plastokast_categories', JSON.stringify(categoriesList));
+      } catch(e) {}
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('plastokast_categories_updated', { detail: categoriesList }));
+      }
+
+      if (this.isAvailable()) {
+        try {
+          await db.collection('catalog').doc('categories').set({
+            items: categoriesList,
+            lastUpdated: new Date().toISOString()
+          }, { merge: true });
+          console.log('[PlastoKast Firebase] Successfully synced categories to Cloud Firestore.');
+        } catch (err) {
+          console.error('[PlastoKast Firebase] Error syncing categories to Firestore:', err);
+        }
+      }
+    },
+
+    onCategoriesChange: function(callback) {
+      if (!this.isAvailable()) {
+        if (typeof callback === 'function') {
+          const raw = localStorage.getItem('plastokast_categories');
+          if (raw) {
+            try { callback(JSON.parse(raw)); } catch(e) {}
+          }
+        }
+        return () => {};
+      }
+
+      try {
+        return db.collection('catalog').doc('categories').onSnapshot((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && Array.isArray(data.items) && data.items.length > 0) {
+              try {
+                localStorage.setItem('plastokast_categories', JSON.stringify(data.items));
+              } catch(e) {}
+
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('plastokast_categories_updated', { detail: data.items }));
+              }
+
+              if (typeof callback === 'function') {
+                callback(data.items);
+              }
+              return;
+            }
+          }
+
+          if (typeof DEFAULT_CATEGORIES !== 'undefined') {
+            db.collection('catalog').doc('categories').set({
+              items: DEFAULT_CATEGORIES,
+              lastUpdated: new Date().toISOString()
+            }, { merge: true }).catch(()=>{});
+            if (typeof callback === 'function') callback(DEFAULT_CATEGORIES);
+          }
+        }, (error) => {
+          console.error('[PlastoKast Firebase] Categories listener error:', error);
+        });
+      } catch (err) {
+        console.error('[PlastoKast Firebase] Error subscribing to categories:', err);
+        return () => {};
+      }
+    },
+
+    // -------------------------------------------------------------
+    // FAQS CLOUD SYNC
+    // -------------------------------------------------------------
+    saveFaqs: async function(faqsList) {
+      if (!Array.isArray(faqsList)) return;
+      try {
+        localStorage.setItem('plastokast_faqs_data', JSON.stringify(faqsList));
+      } catch(e) {}
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('plastokast_faqs_updated', { detail: faqsList }));
+      }
+
+      if (this.isAvailable()) {
+        try {
+          await db.collection('content').doc('faqs').set({
+            items: faqsList,
+            lastUpdated: new Date().toISOString()
+          }, { merge: true });
+        } catch(e) {}
+      }
+    },
+
+    onFaqsChange: function(callback) {
+      if (!this.isAvailable()) return () => {};
+      try {
+        return db.collection('content').doc('faqs').onSnapshot((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && Array.isArray(data.items)) {
+              try {
+                localStorage.setItem('plastokast_faqs_data', JSON.stringify(data.items));
+              } catch(e) {}
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('plastokast_faqs_updated', { detail: data.items }));
+              }
+              if (typeof callback === 'function') callback(data.items);
+            }
+          }
+        });
+      } catch(e) { return () => {}; }
+    },
+
+    // -------------------------------------------------------------
+    // CERTIFICATES CLOUD SYNC
+    // -------------------------------------------------------------
+    saveCertificates: async function(certsList) {
+      if (!Array.isArray(certsList)) return;
+      try {
+        localStorage.setItem('plastokast_certificates_data', JSON.stringify(certsList));
+      } catch(e) {}
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('plastokast_certificates_updated', { detail: certsList }));
+      }
+
+      if (this.isAvailable()) {
+        try {
+          await db.collection('content').doc('certificates').set({
+            items: certsList,
+            lastUpdated: new Date().toISOString()
+          }, { merge: true });
+        } catch(e) {}
+      }
+    },
+
+    onCertificatesChange: function(callback) {
+      if (!this.isAvailable()) return () => {};
+      try {
+        return db.collection('content').doc('certificates').onSnapshot((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && Array.isArray(data.items)) {
+              try {
+                localStorage.setItem('plastokast_certificates_data', JSON.stringify(data.items));
+              } catch(e) {}
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('plastokast_certificates_updated', { detail: data.items }));
+              }
+              if (typeof callback === 'function') callback(data.items);
+            }
+          }
+        });
+      } catch(e) { return () => {}; }
     }
   };
 })();

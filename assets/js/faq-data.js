@@ -67,8 +67,12 @@ function getFaqsData() {
 
 function saveFaqsData(faqs) {
   if (!Array.isArray(faqs)) return;
-  localStorage.setItem(FAQ_STORAGE_KEY, JSON.stringify(faqs));
-  window.dispatchEvent(new CustomEvent("plastokast_faqs_updated", { detail: faqs }));
+  if (window.PlastoKastDB && typeof window.PlastoKastDB.saveFaqs === 'function') {
+    window.PlastoKastDB.saveFaqs(faqs);
+  } else {
+    localStorage.setItem(FAQ_STORAGE_KEY, JSON.stringify(faqs));
+    window.dispatchEvent(new CustomEvent("plastokast_faqs_updated", { detail: faqs }));
+  }
 }
 
 function addFaq(faqItem) {

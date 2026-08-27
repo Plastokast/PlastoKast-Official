@@ -82,8 +82,12 @@ function getCertificatesData() {
 }
 
 function saveCertificatesData(certificates) {
-  localStorage.setItem(CERT_STORAGE_KEY, JSON.stringify(certificates));
-  window.dispatchEvent(new CustomEvent("plastokast_certificates_updated", { detail: certificates }));
+  if (window.PlastoKastDB && typeof window.PlastoKastDB.saveCertificates === 'function') {
+    window.PlastoKastDB.saveCertificates(certificates);
+  } else {
+    localStorage.setItem(CERT_STORAGE_KEY, JSON.stringify(certificates));
+    window.dispatchEvent(new CustomEvent("plastokast_certificates_updated", { detail: certificates }));
+  }
 }
 
 function addCertificate(cert) {

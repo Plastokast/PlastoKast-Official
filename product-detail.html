@@ -580,6 +580,15 @@
         errorSection.style.display = "block";
       }
 
+      window.addEventListener("plastokast_products_updated", () => {
+        const updatedProd = (typeof PRODUCTS_DATA !== "undefined") ? PRODUCTS_DATA.find(p => p.id === productId) : null;
+        if (updatedProd && mainImg) {
+          if (updatedProd.images && updatedProd.images.length > 0) {
+            mainImg.src = updatedProd.images[0];
+          }
+        }
+      });
+
       // Scroll top behavior
       window.addEventListener("scroll", () => {
         if (window.scrollY > 400) {
