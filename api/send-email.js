@@ -307,7 +307,7 @@ export default async function handler(req, res) {
 `;
 
     // -------------------------------------------------------------
-    // TEMPLATE 2: Admin Lead Alert Email (Sent to ankitdobariya34@gmail.com)
+    // TEMPLATE 2: Admin Lead Alert Email (Emerald Green Luxury Executive Design)
     // -------------------------------------------------------------
     const adminHTML = `
 <!DOCTYPE html>
@@ -317,90 +317,143 @@ export default async function handler(req, res) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🚨 New Lead Alert - PlastoKast</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #e2e8f0;">
-  <div style="max-width: 620px; margin: 30px auto; background-color: #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); border: 1.5px solid #334155;">
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; -webkit-font-smoothing: antialiased;">
+  <div style="max-width: 640px; margin: 30px auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 16px 45px rgba(5, 150, 105, 0.12); border: 1px solid #e2e8f0;">
     
-    <!-- Top Alert Header -->
-    <div style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); padding: 26px 32px; text-align: center;">
-      <span style="background: rgba(0, 0, 0, 0.25); color: #fee2e2; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 8px;">
-        High Priority Buyer Lead
-      </span>
-      <h1 style="margin: 0 0 4px 0; color: #ffffff; font-size: 22px; font-weight: 900; letter-spacing: -0.3px;">🚨 New Lead Alert: #${inquiryId}</h1>
-      <p style="margin: 0; color: #fecaca; font-size: 13px; font-weight: 600;">Received on ${formattedDate} via PlastoKast Website</p>
+    <!-- Top Executive Header with Emerald Green Gradient -->
+    <div style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); padding: 36px 32px 30px 32px; text-align: center; border-bottom: 3px solid #10b981;">
+      
+      <!-- HD Logo White Capsule Container -->
+      <div style="display: inline-block; background: #ffffff; padding: 14px 28px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18); text-align: center;">
+        <img src="https://www.plastokast.com/assets/images/logo.png" 
+             alt="PlastoKast" 
+             width="180" 
+             style="display: block; width: 180px; max-width: 100%; height: auto; margin: 0 auto; border: 0;" />
+      </div>
+
+      <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">🚨 New Lead Alert Received</h1>
+      <p style="margin: 0 0 12px 0; color: #a7f3d0; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;">
+        PlastoKast™ Admin Real-Time Commercial Intelligence Engine
+      </p>
+
+      <!-- Priority Alert Tag -->
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.25); padding: 5px 16px; border-radius: 50px;">
+        <span style="color: #fef08a; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;">
+          ★ High-Priority Buyer Lead &bull; Direct Website Inquiry
+        </span>
+      </div>
     </div>
 
-    <div style="padding: 28px 32px;">
+    <!-- Status Ribbon -->
+    <div style="background-color: #ecfdf5; border-bottom: 1px solid #a7f3d0; padding: 12px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+      <span style="color: #065f46; font-weight: 800; font-size: 13px;">
+        ✓ Lead Reference: <strong>#${inquiryId}</strong>
+      </span>
+      <span style="color: #047857; font-size: 12px; font-weight: 600;">
+        📅 Received: ${formattedDate}
+      </span>
+    </div>
+
+    <!-- Main Content Body -->
+    <div style="padding: 30px 32px;">
       
       <!-- Buyer Dossier Card -->
-      <div style="background-color: #0f172a; border-radius: 14px; border: 1px solid #334155; padding: 20px; margin-bottom: 24px;">
-        <h3 style="margin: 0 0 16px 0; color: #38bdf8; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1e293b; padding-bottom: 8px;">
-          👤 Customer Dossier
+      <div style="background-color: #f8fafc; border-radius: 16px; border: 1.5px solid #e2e8f0; padding: 22px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+        <h3 style="margin: 0 0 14px 0; color: #047857; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 8px;">
+          👤 Verified Buyer Dossier
         </h3>
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
           <tr>
-            <td style="padding: 6px 0; color: #94a3b8; width: 140px; font-weight: 600;">Buyer Name:</td>
-            <td style="padding: 6px 0; color: #ffffff; font-weight: 700; font-size: 15px;">${name}</td>
+            <td style="padding: 7px 0; color: #64748b; width: 140px; font-weight: 600;">Buyer Name:</td>
+            <td style="padding: 7px 0; color: #0f172a; font-weight: 800; font-size: 15px;">${name}</td>
           </tr>
           <tr>
-            <td style="padding: 6px 0; color: #94a3b8; font-weight: 600;">Country / Region:</td>
-            <td style="padding: 6px 0; color: #fef08a; font-weight: 700;">📍 ${country}</td>
+            <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Country / Region:</td>
+            <td style="padding: 7px 0; color: #047857; font-weight: 700;">📍 ${country}</td>
           </tr>
           <tr>
-            <td style="padding: 6px 0; color: #94a3b8; font-weight: 600;">Buyer Email:</td>
-            <td style="padding: 6px 0; color: #38bdf8; font-weight: 700;"><a href="mailto:${email}" style="color: #38bdf8; text-decoration: none;">${email || "Not provided"}</a></td>
+            <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Buyer Email:</td>
+            <td style="padding: 7px 0; font-weight: 700;">
+              ${email ? `<a href="mailto:${email}" style="color: #0284c7; text-decoration: none;">${email}</a>` : '<span style="color: #94a3b8;">Not provided</span>'}
+            </td>
           </tr>
           <tr>
-            <td style="padding: 6px 0; color: #94a3b8; font-weight: 600;">Phone / WhatsApp:</td>
-            <td style="padding: 6px 0; color: #4ade80; font-weight: 700;"><a href="tel:${phone}" style="color: #4ade80; text-decoration: none;">${phone || "Not provided"}</a></td>
+            <td style="padding: 7px 0; color: #64748b; font-weight: 600;">Phone / WhatsApp:</td>
+            <td style="padding: 7px 0; font-weight: 700;">
+              ${phone ? `<a href="tel:${phone}" style="color: #059669; text-decoration: none;">${phone}</a>` : '<span style="color: #94a3b8;">Not provided</span>'}
+            </td>
           </tr>
         </table>
       </div>
 
-      <!-- Inquired Products -->
-      <div style="background-color: #0f172a; border-radius: 14px; border: 1px solid #334155; overflow: hidden; margin-bottom: 24px;">
-        <div style="background-color: #1e293b; color: #e2e8f0; padding: 10px 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
-          📦 Requested Medical Products
+      <!-- Inquired Products Card -->
+      <div style="background-color: #f8fafc; border-radius: 16px; border: 1.5px solid #e2e8f0; overflow: hidden; margin-bottom: 26px; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+        <div style="background: linear-gradient(135deg, #059669 0%, #0d9488 100%); color: #ffffff; padding: 12px 18px; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+          📦 Requested Medical Products & Quantities
         </div>
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="background-color: #f1f5f9; border-bottom: 1px solid #e2e8f0;">
+              <th style="padding: 10px 18px; font-size: 12px; font-weight: 700; color: #475569;">Item Description</th>
+              <th style="padding: 10px 18px; font-size: 12px; font-weight: 700; color: #475569; text-align: right;">Quantity / Units</th>
+            </tr>
+          </thead>
           <tbody>
-            ${productListHTML.replace(/#0f172a/g, "#ffffff").replace(/#014E9E/g, "#38bdf8").replace(/#e2e8f0/g, "#334155")}
+            ${productListHTML}
           </tbody>
         </table>
         ${
           cleanNotes
             ? `
-        <div style="padding: 12px 16px; background-color: #1e293b; border-top: 1px solid #334155; font-size: 13px; color: #cbd5e1;">
-          <strong style="color: #fef08a;">Customer Notes:</strong> ${cleanNotes}
+        <div style="padding: 14px 18px; background-color: #ffffff; border-top: 1px solid #e2e8f0; font-size: 13px; color: #334155; line-height: 1.6;">
+          <strong style="color: #059669; display: block; margin-bottom: 2px;">Customer Message / Special Requirements:</strong>
+          <span style="color: #475569;">"${cleanNotes}"</span>
         </div>
         `
             : ""
         }
       </div>
 
-      <!-- 1-Click Action Buttons for Admin -->
-      <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-        ${
-          phone
-            ? `
-        <a href="https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9]/g, "")}&text=Hi%20${encodeURIComponent(
-                name
-              )},%20thank%20you%20for%20contacting%20PlastoKast%20regarding%20your%20inquiry%20(#${inquiryId})." 
-           style="display: block; width: 100%; text-align: center; background-color: #25d366; color: #ffffff; font-weight: 800; font-size: 14px; text-decoration: none; padding: 12px 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
-          💬 WhatsApp Buyer
-        </a>
-        `
-            : ""
-        }
-        <a href="https://www.plastokast.com/admin.html" 
-           style="display: block; width: 100%; text-align: center; background-color: #014E9E; color: #ffffff; font-weight: 800; font-size: 14px; text-decoration: none; padding: 12px 18px; border-radius: 12px;">
-          📊 Open CRM Panel
-        </a>
+      <!-- 1-Click Executive Action Center -->
+      <div style="background-color: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 18px; padding: 20px; text-align: center; margin-bottom: 26px;">
+        <h4 style="margin: 0 0 12px 0; color: #065f46; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+          ⚡ Quick Lead Actions
+        </h4>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          ${
+            phone
+              ? `
+          <a href="https://api.whatsapp.com/send?phone=${phone.replace(/[^0-9]/g, "")}&text=Hi%20${encodeURIComponent(
+                  name
+                )},%20thank%20you%20for%20contacting%20PlastoKast%20regarding%20your%20inquiry%20(#${inquiryId})." 
+             style="display: inline-block; background-color: #25d366; color: #ffffff; font-weight: 800; font-size: 13px; text-decoration: none; padding: 11px 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);">
+            💬 WhatsApp Buyer
+          </a>
+          `
+              : ""
+          }
+          ${
+            email
+              ? `
+          <a href="mailto:${email}?subject=Official%20Quote:%20PlastoKast%20Orthopedic%20Products%20[#${inquiryId}]" 
+             style="display: inline-block; background-color: #059669; color: #ffffff; font-weight: 800; font-size: 13px; text-decoration: none; padding: 11px 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);">
+            ✉️ Email Buyer
+          </a>
+          `
+              : ""
+          }
+          <a href="https://www.plastokast.com/admin.html" 
+             style="display: inline-block; background-color: #014E9E; color: #ffffff; font-weight: 800; font-size: 13px; text-decoration: none; padding: 11px 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(1, 78, 158, 0.3);">
+            📊 Open CRM Panel
+          </a>
+        </div>
       </div>
 
-      <!-- Footer Note -->
-      <p style="margin: 0; text-align: center; font-size: 11px; color: #64748b;">
-        PlastoKast™ CRM Autonomous Notification Engine &bull; Hostinger Verified
-      </p>
+      <!-- Executive Footer -->
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 18px; text-align: center; font-size: 12px; color: #64748b;">
+        <p style="margin: 0 0 4px 0; font-weight: 700; color: #047857;">PlastoKast™ CRM Autonomous Notification Engine</p>
+        <p style="margin: 0; font-size: 11px; color: #94a3b8;">Delivered via Hostinger Verified Enterprise Mail Backbone</p>
+      </div>
 
     </div>
   </div>
