@@ -214,40 +214,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="inq-field-group">
                   <label class="inq-label">Country / Region *</label>
                   <select id="inqCustCountry" class="inq-select" style="cursor: pointer;">
-                    <option value="India" data-code="+91" selected>🇮🇳 India (+91)</option>
-                    <option value="United States" data-code="+1">🇺🇸 United States (+1)</option>
-                    <option value="United Kingdom" data-code="+44">🇬🇧 United Kingdom (+44)</option>
-                    <option value="United Arab Emirates" data-code="+971">🇦🇪 United Arab Emirates (+971)</option>
-                    <option value="Saudi Arabia" data-code="+966">🇸🇦 Saudi Arabia (+966)</option>
-                    <option value="Germany" data-code="+49">🇩🇪 Germany (+49)</option>
-                    <option value="France" data-code="+33">🇫🇷 France (+33)</option>
-                    <option value="Australia" data-code="+61">🇦🇺 Australia (+61)</option>
-                    <option value="Canada" data-code="+1">🇨🇦 Canada (+1)</option>
-                    <option value="Singapore" data-code="+65">🇸🇬 Singapore (+65)</option>
-                    <option value="Japan" data-code="+81">🇯🇵 Japan (+81)</option>
-                    <option value="South Africa" data-code="+27">🇿🇦 South Africa (+27)</option>
-                    <option value="Brazil" data-code="+55">🇧🇷 Brazil (+55)</option>
-                    <option value="Malaysia" data-code="+60">🇲🇾 Malaysia (+60)</option>
-                    <option value="Qatar" data-code="+974">🇶🇦 Qatar (+974)</option>
-                    <option value="Kuwait" data-code="+965">🇰🇼 Kuwait (+965)</option>
-                    <option value="Oman" data-code="+968">🇴🇲 Oman (+968)</option>
-                    <option value="Bahrain" data-code="+973">🇧🇭 Bahrain (+973)</option>
-                    <option value="Italy" data-code="+39">🇮🇹 Italy (+39)</option>
-                    <option value="Spain" data-code="+34">🇪🇸 Spain (+34)</option>
-                    <option value="Netherlands" data-code="+31">🇳🇱 Netherlands (+31)</option>
-                    <option value="Switzerland" data-code="+41">🇨🇭 Switzerland (+41)</option>
-                    <option value="Turkey" data-code="+90">🇹🇷 Turkey (+90)</option>
-                    <option value="Egypt" data-code="+20">🇪🇬 Egypt (+20)</option>
-                    <option value="Nigeria" data-code="+234">🇳🇬 Nigeria (+234)</option>
-                    <option value="Kenya" data-code="+254">🇰🇪 Kenya (+254)</option>
-                    <option value="Thailand" data-code="+66">🇹🇭 Thailand (+66)</option>
-                    <option value="Indonesia" data-code="+62">🇮🇩 Indonesia (+62)</option>
-                    <option value="Vietnam" data-code="+84">🇻🇳 Vietnam (+84)</option>
-                    <option value="Mexico" data-code="+52">🇲🇽 Mexico (+52)</option>
-                    <option value="Pakistan" data-code="+92">🇵🇰 Pakistan (+92)</option>
-                    <option value="Bangladesh" data-code="+880">🇧🇩 Bangladesh (+880)</option>
-                    <option value="Sri Lanka" data-code="+94">🇱🇰 Sri Lanka (+94)</option>
-                    <option value="Nepal" data-code="+977">🇳🇵 Nepal (+977)</option>
+                    <option value="India" data-code="+91" data-placeholder="98765 43210" selected>🇮🇳 India (+91)</option>
+                    <option value="United States" data-code="+1" data-placeholder="(555) 012-3456">🇺🇸 United States (+1)</option>
+                    <option value="United Kingdom" data-code="+44" data-placeholder="7911 123456">🇬🇧 United Kingdom (+44)</option>
+                    <option value="United Arab Emirates" data-code="+971" data-placeholder="50 123 4567">🇦🇪 United Arab Emirates (+971)</option>
+                    <option value="Saudi Arabia" data-code="+966" data-placeholder="50 123 4567">🇸🇦 Saudi Arabia (+966)</option>
+                    <option value="Germany" data-code="+49" data-placeholder="151 23456789">🇩🇪 Germany (+49)</option>
+                    <option value="France" data-code="+33" data-placeholder="6 12 34 56 78">🇫🇷 France (+33)</option>
+                    <option value="Australia" data-code="+61" data-placeholder="412 345 678">🇦🇺 Australia (+61)</option>
+                    <option value="Canada" data-code="+1" data-placeholder="(555) 012-3456">🇨🇦 Canada (+1)</option>
+                    <option value="Singapore" data-code="+65" data-placeholder="8123 4567">🇸🇬 Singapore (+65)</option>
+                    <option value="Japan" data-code="+81" data-placeholder="90 1234 5678">🇯🇵 Japan (+81)</option>
+                    <option value="South Africa" data-code="+27" data-placeholder="71 234 5678">🇿🇦 South Africa (+27)</option>
+                    <option value="Brazil" data-code="+55" data-placeholder="11 98765-4321">🇧🇷 Brazil (+55)</option>
+                    <option value="Malaysia" data-code="+60" data-placeholder="12-345 6789">🇲🇾 Malaysia (+60)</option>
+                    <option value="Qatar" data-code="+974" data-placeholder="3312 3456">🇶🇦 Qatar (+974)</option>
+                    <option value="Kuwait" data-code="+965" data-placeholder="9123 4567">🇰🇼 Kuwait (+965)</option>
+                    <option value="Oman" data-code="+968" data-placeholder="9123 4567">🇴🇲 Oman (+968)</option>
+                    <option value="Bahrain" data-code="+973" data-placeholder="3612 3456">🇧🇭 Bahrain (+973)</option>
+                    <option value="Italy" data-code="+39" data-placeholder="312 345 6789">🇮🇹 Italy (+39)</option>
+                    <option value="Spain" data-code="+34" data-placeholder="612 34 56 78">🇪🇸 Spain (+34)</option>
+                    <option value="Netherlands" data-code="+31" data-placeholder="6 12345678">🇳🇱 Netherlands (+31)</option>
+                    <option value="Switzerland" data-code="+41" data-placeholder="79 123 45 67">🇨🇭 Switzerland (+41)</option>
+                    <option value="Turkey" data-code="+90" data-placeholder="532 123 45 67">🇹🇷 Turkey (+90)</option>
+                    <option value="Egypt" data-code="+20" data-placeholder="100 123 4567">🇪🇬 Egypt (+20)</option>
+                    <option value="Nigeria" data-code="+234" data-placeholder="802 123 4567">🇳🇬 Nigeria (+234)</option>
+                    <option value="Kenya" data-code="+254" data-placeholder="712 345678">🇰🇪 Kenya (+254)</option>
+                    <option value="Thailand" data-code="+66" data-placeholder="81 234 5678">🇹🇭 Thailand (+66)</option>
+                    <option value="Indonesia" data-code="+62" data-placeholder="812 3456 7890">🇮🇩 Indonesia (+62)</option>
+                    <option value="Vietnam" data-code="+84" data-placeholder="91 234 5678">🇻🇳 Vietnam (+84)</option>
+                    <option value="Mexico" data-code="+52" data-placeholder="55 1234 5678">🇲🇽 Mexico (+52)</option>
+                    <option value="Pakistan" data-code="+92" data-placeholder="300 1234567">🇵🇰 Pakistan (+92)</option>
+                    <option value="Bangladesh" data-code="+880" data-placeholder="1712 345678">🇧🇩 Bangladesh (+880)</option>
+                    <option value="Sri Lanka" data-code="+94" data-placeholder="71 234 5678">🇱🇰 Sri Lanka (+94)</option>
+                    <option value="Nepal" data-code="+977" data-placeholder="984 1234567">🇳🇵 Nepal (+977)</option>
                   </select>
                 </div>
                 <div class="inq-field-group">
@@ -416,12 +416,79 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Sync Country Select -> Phone Prefix
-  if (countrySelect && prefixSpan) {
-    countrySelect.addEventListener("change", () => {
-      const opt = countrySelect.options[countrySelect.selectedIndex];
-      const code = opt ? opt.getAttribute("data-code") : "+91";
-      prefixSpan.textContent = code || "+91";
+  // Dynamic Country Select -> Phone Prefix & Localized Placeholder
+  const phoneInput = document.getElementById("inqCustPhone");
+
+  function syncCountryPhoneConfig() {
+    if (!countrySelect) return;
+    const opt = countrySelect.options[countrySelect.selectedIndex];
+    const code = opt ? opt.getAttribute("data-code") || "+91" : "+91";
+    const placeholder = opt ? opt.getAttribute("data-placeholder") || "98765 43210" : "98765 43210";
+    
+    if (prefixSpan) {
+      prefixSpan.textContent = code;
+    }
+    if (phoneInput) {
+      phoneInput.placeholder = placeholder;
+    }
+  }
+
+  if (countrySelect) {
+    countrySelect.addEventListener("change", syncCountryPhoneConfig);
+    syncCountryPhoneConfig();
+  }
+
+  // Smart Mobile Number Formatting as user types
+  if (phoneInput) {
+    phoneInput.addEventListener("input", () => {
+      const opt = countrySelect ? countrySelect.options[countrySelect.selectedIndex] : null;
+      const code = opt ? opt.getAttribute("data-code") || "+91" : "+91";
+      const raw = phoneInput.value.replace(/[^0-9]/g, "");
+
+      if (!raw) return;
+
+      if (code === "+91") {
+        // India: 98765 43210 (5 + 5)
+        if (raw.length > 5) {
+          phoneInput.value = raw.slice(0, 5) + " " + raw.slice(5, 10);
+        } else {
+          phoneInput.value = raw;
+        }
+      } else if (code === "+1") {
+        // US / Canada: (555) 012-3456
+        if (raw.length > 6) {
+          phoneInput.value = "(" + raw.slice(0, 3) + ") " + raw.slice(3, 6) + "-" + raw.slice(6, 10);
+        } else if (raw.length > 3) {
+          phoneInput.value = "(" + raw.slice(0, 3) + ") " + raw.slice(3);
+        } else {
+          phoneInput.value = raw;
+        }
+      } else if (code === "+44" || code === "+880") {
+        // UK: 7911 123456
+        if (raw.length > 4) {
+          phoneInput.value = raw.slice(0, 4) + " " + raw.slice(4, 10);
+        } else {
+          phoneInput.value = raw;
+        }
+      } else if (code === "+971" || code === "+966" || code === "+27" || code === "+94" || code === "+84" || code === "+66") {
+        // UAE / Saudi: 50 123 4567
+        if (raw.length > 5) {
+          phoneInput.value = raw.slice(0, 2) + " " + raw.slice(2, 5) + " " + raw.slice(5, 9);
+        } else if (raw.length > 2) {
+          phoneInput.value = raw.slice(0, 2) + " " + raw.slice(2);
+        } else {
+          phoneInput.value = raw;
+        }
+      } else if (code === "+61" || code === "+92" || code === "+977" || code === "+20" || code === "+234") {
+        // Australia / Pakistan: 412 345 678
+        if (raw.length > 6) {
+          phoneInput.value = raw.slice(0, 3) + " " + raw.slice(3, 6) + " " + raw.slice(6, 10);
+        } else if (raw.length > 3) {
+          phoneInput.value = raw.slice(0, 3) + " " + raw.slice(3);
+        } else {
+          phoneInput.value = raw;
+        }
+      }
     });
   }
 
