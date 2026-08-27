@@ -106,13 +106,12 @@ export default async function handler(req, res) {
     <!-- Top Brand Header with HD Logo -->
     <div style="background: linear-gradient(135deg, #014E9E 0%, #002752 100%); padding: 36px 32px 32px 32px; text-align: center; border-bottom: 3px solid #0091ff;">
       
-      <!-- HD Logo White Capsule Container with Typography Fallback -->
-      <div style="display: inline-block; background: #ffffff; padding: 12px 28px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18); text-align: center;">
+      <!-- HD Logo White Capsule Container -->
+      <div style="display: inline-block; background: #ffffff; padding: 14px 28px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.18); text-align: center;">
         <img src="https://www.plastokast.com/assets/images/logo.png" 
              alt="PlastoKast" 
              width="180" 
              style="display: block; width: 180px; max-width: 100%; height: auto; margin: 0 auto; border: 0;" />
-        <div style="font-size: 22px; font-weight: 900; color: #014E9E; letter-spacing: -0.5px; margin-top: 2px;">Plasto<span style="color: #0091ff;">Kast</span>™</div>
       </div>
 
       <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">Inquiry Received Successfully</h1>
